@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<Title> Tango Device Server User's Guide </Title>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#7F00FF" ALINK="#FF0000">
+
+<P><!-------TITLE------></P>
+
+<TABLE BORDER="0" WIDTH="100%">
+    <TR>
+        <TD ALIGN="left">
+			<A HREF=http://www.esrf.fr>
+			<IMG SRC="http://www.esrf.fr/gifs/logo/80.gif" BORDER=0></A>
+		</Td>
+        <TD ALIGN="center">
+			<A HREF=http://www.elettra.trieste.it/>
+			<IMG SRC="http://www.esrf.fr/tango/elettra_logo.gif" BORDER=0></A>
+
+		</Td>
+        <TD ALIGN="right">
+			<A HREF=http://www.synchrotron-soleil.fr/>
+			<IMG SRC="http://www.esrf.fr/tango/soleil_logo.gif" BORDER=0></A>
+		</Td>
+    	 <Td>
+			<H1><FONT COLOR="#0000FF">
+			<Center>TANGO <Br> Device Server
+			</Center></FONT>
+    	</Td>
+    </TR>
+</TABLE>
+
+<HR WIDTH="100%"></H5>
+<Br>
+<center>
+<h1>
+RRontec		<Br>
+Device Commands Description 		<Br> <Br>
+Rontec Class	<Br>
+</h1>
+<b>
+Revision:  - Author: 
+</b>
+</center>
+
+
+<Center>
+<Br><Br>
+<A Href="DevCommandsFrame.html"> More Details on commands.... </a><Br>
+<Br> <Br>
+<Table Border=2 Cellpadding=3 CELLSPACING=0 WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td COLSPAN=3> <Font Size=+2><Center><b>Device Commands for Operator Level</b></td></Font></Center>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td><Center><b>Command name</b></td></Center>
+<Td><Center><b>Argument In</b></td></Center>
+<Td><Center><b>Argument Out</b></td></Center>
+<Tr><Td>Init</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>State</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_STATE</Td>
+<Tr><Td>Status</Td>
+<Td>DEV_VOID</Td>
+<Td>CONST_DEV_STRING</Td>
+<Tr><Td>Start</Td>
+<Td>DEV_FLOAT</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>Stop</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>SetStartingChannel</Td>
+<Td>DEV_LONG</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>SetEndingChannel</Td>
+<Td>DEV_LONG</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>GetSpectrumLimits</Td>
+<Td>DEV_VOID</Td>
+<Td>DEVVAR_LONGARRAY</Td>
+<Tr><Td>GetSpeedAndResolutionConfiguration</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_LONG</Td>
+<Tr><Td>SetSpeedAndResolutionConfiguration</Td>
+<Td>DEV_LONG</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>GetRemainingAcquisitionTime</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_DOUBLE</Td>
+<Tr><Td>SetROIParameters</Td>
+<Td>DEVVAR_LONGARRAY</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>GetROIParameters</Td>
+<Td>DEV_LONG</Td>
+<Td>DEVVAR_LONGARRAY</Td>
+<Tr><Td>GetRoiCount</Td>
+<Td>DEV_LONG</Td>
+<Td>DEV_LONG</Td>
+<Tr><Td>Reset</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_STRING</Td>
+<Tr><Td>Clear</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>InitSerialLine</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>GetDetectorTemperature</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_FLOAT</Td>
+<Tr><Td>GetInputCountRate</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_LONG</Td>
+<Tr><Td>GetOutputCountRate</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_LONG</Td>
+<Tr><Td>GetDeadTime</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_FLOAT</Td>
+<Tr><Td>GetCycleTime</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_LONG</Td>
+<Tr><Td>GetPartOfSpectrum</Td>
+<Td>DEVVAR_LONGARRAY</Td>
+<Td>DEVVAR_LONGARRAY</Td>
+<Tr><Td>GetEnergyRange</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_LONG</Td>
+<Tr><Td>GetOffsetGain</Td>
+<Td>DEV_VOID</Td>
+<Td>DEVVAR_LONGARRAY</Td>
+<Tr><Td>GetPauseStatus</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_STRING</Td>
+<Tr><Td>SetReadSize</Td>
+<Td>DEV_LONG</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>GetAcquisitionTime</Td>
+<Td>DEV_VOID</Td>
+<Td>DEV_DOUBLE</Td>
+<Tr><Td>SetEnergyRange</Td>
+<Td>DEV_LONG</Td>
+<Td>DEV_VOID</Td>
+<Tr><Td>SendRontecMessage</Td>
+<Td>DEV_STRING</Td>
+<Td>DEV_STRING</Td>
+
+
+
+</Table></Center>
+
+<Center>
+<Br>
+<HR WIDTH="100%"></H5>
+<H3> ESRF - Software Engineering Group </H33>
+</Center>
+</body>
+</html>

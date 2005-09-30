@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<Title> Tango Device Server User's Guide </Title>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#7F00FF" ALINK="#FF0000">
+
+<P><!-------TITLE------></P>
+
+<TABLE BORDER="0" WIDTH="100%">
+    <TR>
+        <TD ALIGN="left">
+			<A HREF=http://www.esrf.fr>
+			<IMG SRC="http://www.esrf.fr/gifs/logo/80.gif" BORDER=0></A>
+		</Td>
+        <TD ALIGN="center">
+			<A HREF=http://www.elettra.trieste.it/>
+			<IMG SRC="http://www.esrf.fr/tango/elettra_logo.gif" BORDER=0></A>
+
+		</Td>
+        <TD ALIGN="right">
+			<A HREF=http://www.synchrotron-soleil.fr/>
+			<IMG SRC="http://www.esrf.fr/tango/soleil_logo.gif" BORDER=0></A>
+		</Td>
+    	 <Td>
+			<H1><FONT COLOR="#0000FF">
+			<Center>TANGO <Br> Device Server
+			</Center></FONT>
+    	</Td>
+    </TR>
+</TABLE>
+
+<HR WIDTH="100%"></H5>
+<Br>
+<center>
+<h1>
+RRontec		<Br>
+Properties Description 		<Br> <Br>
+Rontec Class	<Br>
+</h1>
+<b>
+Revision:  - Author: 
+</b>
+</center>
+
+
+<Br> <Br> <Br> 
+<Center>
+<Br> <Br> <Br> 
+<Table Border=2 Cellpadding=3 CELLSPACING=0 WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td COLSPAN=3> <Font Size=+2><Center><b>Device Properties</b></td></Font></Center>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td><Center><b>Property name</b></td></Center>
+<Td><Center><b>Property type</b></td></Center>
+<Td><Center><b>Description</b></td></Center>
+<Tr><Td>Baud</Td>
+<Td>Tango::DEV_LONG</Td>
+<Td>baud rate set on the RONTEC
+Default is 38400 ( firmware default )
+to set another baud rate :
+set on the RONTEC a new baudrate, write it on the flash,
+then update the property with the new value
+restart SerialLine the Rontec DServers
+possible values : 600, 1200, 1800, 2400, 3600, 4800, 7200, 9600, 14400,
+19200, 28800, 38400, 57600, 76800, 115200, 230400.</Td></Tr>
+
+<Tr><Td>SerialLineUrl</Td>
+<Td>Tango::DEV_STRING</Td>
+<Td>Tango name of the serial line device
+the other serial line properties are fixed for the RONTEC RCL :
+N( no parity),8( data bits),1(stop bit), hardware handshake ( RTS/CTS</Td></Tr>
+
+<Tr><Td>ConnectedROIMask</Td>
+<Td>Tango::DEV_STRING</Td>
+<Td>list of the TTL outputs connected to a counter
+just for control and throw exception if try to configure a ROI that is not in the list
+8 TTL outputs are available with the current RONTEC MCA hardware
+example : 1 4 represents : ouptut1, output 4 connected
+default : 1</Td></Tr>
+
+<Tr><Td>NumberOfChannels</Td>
+<Td>Tango::DEV_LONG</Td>
+<Td>number of channels of the MCA.
+The current RONTEC MCA hardware has 4096 channels.
+this is for extentions purpose only,
+let the default value of 4096</Td></Tr>
+
+<Tr><Td>MaxFluoEnergy</Td>
+<Td>Tango::DEV_DOUBLE</Td>
+<Td>maximum fluo energy of the last MCA channel.
+with the current RONTEC MCA Hardware can be 10, 20, 40, or 80 KeV
+default : 80.0</Td></Tr>
+
+</Table>
+
+<Br><Br><Br>
+<Center><b>
+There is no Class properties.<Br><Br>
+</Center></b>
+
+<Center>
+<Br>
+<HR WIDTH="100%"></H5>
+<H3> ESRF - Software Engineering Group </H33>
+</Center>
+</body>
+</html>
