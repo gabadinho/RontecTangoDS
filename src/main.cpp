@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/main.cpp,v 1.1.1.1 2005-09-30 12:13:33 syldup Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/main.cpp,v 1.2 2006-07-24 14:48:18 tithub Exp $";
 //+=============================================================================
 //
 // file :        main.cpp
@@ -10,11 +10,14 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // project :     TANGO Device Server
 //
-// $Author: syldup $
+// $Author: tithub $
 //
-// $Revision: 1.1.1.1 $ $
+// $Revision: 1.2 $ $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.1.1.1  2005/09/30 12:13:33  syldup
+// initial import
+//
 // Revision 1.1  2005/09/09 15:38:21  coquet
 // initial import, tested with real hardware.
 // Raw version, a lot of functions are not implemented ( hard-coded ) but DS is usable

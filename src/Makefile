@@ -6,11 +6,14 @@
 #
 # project :     Makefile to generate a Tango server
 #
-# $Author: syldup $
+# $Author: tithub $
 #
-# $Revision: 1.1.1.1 $
+# $Revision: 1.2 $
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.1.1.1  2005/09/30 12:13:33  syldup
+# initial import
+#
 # Revision 1.1  2005/09/09 15:38:21  coquet
 # initial import, tested with real hardware.
 # Raw version, a lot of functions are not implemented ( hard-coded ) but DS is usable
@@ -27,6 +30,9 @@
 #         (c) - Software Engineering Group - ESRF
 #=============================================================================
 #
+
+CLASS =	Rontec
+RELEASE  = Release_1_0
 
 #-----------------------------------------
 #	Set default home directories
@@ -93,7 +99,7 @@ endif
 #-----------------------------------------
 #	Set  dependences
 #-----------------------------------------
-CLASS =	Rontec
+
 
 SVC_OBJS = 	main.o	\
 		ClassFactory.o	\
@@ -139,3 +145,14 @@ lib: clean
 	ar ruv $(TARGET_LIB) $(CLASS)Class.o
 	ar ruv $(TARGET_LIB) $(CLASS)StateMachine.o
 	ident  $(TARGET_LIB)
+
+#----------------------------------------------------
+#	Tag the CVS module corresponding to this class
+#----------------------------------------------------
+tag:
+	@cvstag "$(CLASS)-$(RELEASE)"
+	@make   $(CLASS)
+	@make show_tag
+
+show_tag:
+	@cvstag -d 

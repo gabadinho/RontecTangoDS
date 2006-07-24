@@ -10,11 +10,14 @@
 //			
 // project :      TANGO Device Server
 //
-// $Author: syldup $
+// $Author: tithub $
 //
-// $Revision: 1.1.1.1 $
+// $Revision: 1.2 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.1.1.1  2005/09/30 12:13:34  syldup
+// initial import
+//
 // Revision 1.1  2005/09/09 15:38:21  coquet
 // initial import, tested with real hardware.
 // Raw version, a lot of functions are not implemented ( hard-coded ) but DS is usable
@@ -36,7 +39,7 @@
 #define _RONTECCLASS_H
 
 #include <tango.h>
-#include <Rontec.h>
+#include "Rontec.h"
 
 
 namespace Rontec_ns
@@ -44,25 +47,257 @@ namespace Rontec_ns
 //=====================================
 //	Define classes for attributes
 //=====================================
-class fluoSpectrumAttrib: public Tango::SpectrumAttr
+class readDataSpectrumAttrib: public Tango::Attr
 {
 public:
-	fluoSpectrumAttrib():SpectrumAttr("fluoSpectrum", Tango::DEV_DOUBLE, Tango::READ, 8192) {};
-	~fluoSpectrumAttrib() {};
+	readDataSpectrumAttrib():Attr("readDataSpectrum", Tango::DEV_BOOLEAN, Tango::WRITE) {};
+	~readDataSpectrumAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_fluoSpectrum(att);}
+	{(static_cast<Rontec *>(dev))->read_readDataSpectrum(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_readDataSpectrum(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_fluoSpectrum_allowed(ty);}
+	{return (static_cast<Rontec *>(dev))->is_readDataSpectrum_allowed(ty);}
+};
+
+class offsetGainAttrib: public Tango::SpectrumAttr
+{
+public:
+	offsetGainAttrib():SpectrumAttr("offsetGain", Tango::DEV_LONG, Tango::READ, 2) {};
+	~offsetGainAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_offsetGain(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_offsetGain_allowed(ty);}
+};
+
+class energyRangeAttrib: public Tango::Attr
+{
+public:
+	energyRangeAttrib():Attr("energyRange", Tango::DEV_LONG, Tango::READ_WRITE) {};
+	~energyRangeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_energyRange(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_energyRange(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_energyRange_allowed(ty);}
+};
+
+class detectorTemperatureAttrib: public Tango::Attr
+{
+public:
+	detectorTemperatureAttrib():Attr("detectorTemperature", Tango::DEV_DOUBLE, Tango::READ) {};
+	~detectorTemperatureAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_detectorTemperature(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_detectorTemperature_allowed(ty);}
+};
+
+class endingChannelAttrib: public Tango::Attr
+{
+public:
+	endingChannelAttrib():Attr("endingChannel", Tango::DEV_SHORT, Tango::WRITE) {};
+	~endingChannelAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_endingChannel(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_endingChannel(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_endingChannel_allowed(ty);}
+};
+
+class startingChannelAttrib: public Tango::Attr
+{
+public:
+	startingChannelAttrib():Attr("startingChannel", Tango::DEV_SHORT, Tango::WRITE) {};
+	~startingChannelAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_startingChannel(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_startingChannel(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_startingChannel_allowed(ty);}
+};
+
+class cycleTimeAttrib: public Tango::Attr
+{
+public:
+	cycleTimeAttrib():Attr("cycleTime", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~cycleTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_cycleTime(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_cycleTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_cycleTime_allowed(ty);}
+};
+
+class roisEndsAttrib: public Tango::SpectrumAttr
+{
+public:
+	roisEndsAttrib():SpectrumAttr("roisEnds", Tango::DEV_LONG, Tango::READ, 40) {};
+	~roisEndsAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roisEnds(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roisEnds_allowed(ty);}
+};
+
+class roisStartsAttrib: public Tango::SpectrumAttr
+{
+public:
+	roisStartsAttrib():SpectrumAttr("roisStarts", Tango::DEV_LONG, Tango::READ, 40) {};
+	~roisStartsAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roisStarts(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roisStarts_allowed(ty);}
+};
+
+class roisStartsEndsAttrib: public Tango::SpectrumAttr
+{
+public:
+	roisStartsEndsAttrib():SpectrumAttr("roisStartsEnds", Tango::DEV_LONG, Tango::READ, 80) {};
+	~roisStartsEndsAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roisStartsEnds(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roisStartsEnds_allowed(ty);}
+};
+
+class liveTimeAttrib: public Tango::Attr
+{
+public:
+	liveTimeAttrib():Attr("liveTime", Tango::DEV_DOUBLE, Tango::READ) {};
+	~liveTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_liveTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_liveTime_allowed(ty);}
+};
+
+class realTimeAttrib: public Tango::Attr
+{
+public:
+	realTimeAttrib():Attr("realTime", Tango::DEV_DOUBLE, Tango::READ) {};
+	~realTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_realTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_realTime_allowed(ty);}
+};
+
+class countRateAttrib: public Tango::Attr
+{
+public:
+	countRateAttrib():Attr("countRate", Tango::DEV_DOUBLE, Tango::READ) {};
+	~countRateAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_countRate(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_countRate_allowed(ty);}
+};
+
+class deadTimeAttrib: public Tango::Attr
+{
+public:
+	deadTimeAttrib():Attr("deadTime", Tango::DEV_DOUBLE, Tango::READ) {};
+	~deadTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_deadTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_deadTime_allowed(ty);}
+};
+
+class dataSourceAttrib: public Tango::Attr
+{
+public:
+	dataSourceAttrib():Attr("dataSource", Tango::DEV_STRING, Tango::READ) {};
+	~dataSourceAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_dataSource(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_dataSource_allowed(ty);}
+};
+
+class timingTypeAttrib: public Tango::Attr
+{
+public:
+	timingTypeAttrib():Attr("timingType", Tango::DEV_SHORT, Tango::READ_WRITE) {};
+	~timingTypeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_timingType(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_timingType(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_timingType_allowed(ty);}
+};
+
+class integrationTimeAttrib: public Tango::Attr
+{
+public:
+	integrationTimeAttrib():Attr("integrationTime", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~integrationTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_integrationTime(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_integrationTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_integrationTime_allowed(ty);}
+};
+
+class nbChannelsAttrib: public Tango::Attr
+{
+public:
+	nbChannelsAttrib():Attr("nbChannels", Tango::DEV_SHORT, Tango::READ_WRITE) {};
+	~nbChannelsAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_nbChannels(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_nbChannels(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_nbChannels_allowed(ty);}
+};
+
+class dataSpectrumAttrib: public Tango::SpectrumAttr
+{
+public:
+	dataSpectrumAttrib():SpectrumAttr("dataSpectrum", Tango::DEV_DOUBLE, Tango::READ, 8192) {};
+	~dataSpectrumAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_dataSpectrum(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_dataSpectrum_allowed(ty);}
 };
 
 //=========================================
 //	Define classes for commands
 //=========================================
-class SendRontecMessageClass : public Tango::Command
+class StartCmd : public Tango::Command
 {
 public:
-	SendRontecMessageClass(const char   *name,
+	StartCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -70,23 +305,23 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	SendRontecMessageClass(const char   *name,
+	StartCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~SendRontecMessageClass() {};
+	~StartCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_SendRontecMessage_allowed(any);}
+	{return (static_cast<Rontec *>(dev))->is_Start_allowed(any);}
 };
 
 
 
-class SetEnergyRangeClass : public Tango::Command
+class SetSpeedAndResolutionConfigurationCmd : public Tango::Command
 {
 public:
-	SetEnergyRangeClass(const char   *name,
+	SetSpeedAndResolutionConfigurationCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -94,467 +329,11 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	SetEnergyRangeClass(const char   *name,
+	SetSpeedAndResolutionConfigurationCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~SetEnergyRangeClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_SetEnergyRange_allowed(any);}
-};
-
-
-
-class GetAcquisitionTimeClass : public Tango::Command
-{
-public:
-	GetAcquisitionTimeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetAcquisitionTimeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetAcquisitionTimeClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetAcquisitionTime_allowed(any);}
-};
-
-
-
-class SetReadSizeClass : public Tango::Command
-{
-public:
-	SetReadSizeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	SetReadSizeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~SetReadSizeClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_SetReadSize_allowed(any);}
-};
-
-
-
-class GetPauseStatusClass : public Tango::Command
-{
-public:
-	GetPauseStatusClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetPauseStatusClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetPauseStatusClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetPauseStatus_allowed(any);}
-};
-
-
-
-class GetOffsetGainClass : public Tango::Command
-{
-public:
-	GetOffsetGainClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetOffsetGainClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetOffsetGainClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetOffsetGain_allowed(any);}
-};
-
-
-
-class GetEnergyRangeClass : public Tango::Command
-{
-public:
-	GetEnergyRangeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetEnergyRangeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetEnergyRangeClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetEnergyRange_allowed(any);}
-};
-
-
-
-class GetPartOfSpectrumClass : public Tango::Command
-{
-public:
-	GetPartOfSpectrumClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetPartOfSpectrumClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetPartOfSpectrumClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetPartOfSpectrum_allowed(any);}
-};
-
-
-
-class GetCycleTimeClass : public Tango::Command
-{
-public:
-	GetCycleTimeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetCycleTimeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetCycleTimeClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetCycleTime_allowed(any);}
-};
-
-
-
-class GetDeadTimeClass : public Tango::Command
-{
-public:
-	GetDeadTimeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetDeadTimeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetDeadTimeClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetDeadTime_allowed(any);}
-};
-
-
-
-class GetOutputCountRateClass : public Tango::Command
-{
-public:
-	GetOutputCountRateClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetOutputCountRateClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetOutputCountRateClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetOutputCountRate_allowed(any);}
-};
-
-
-
-class GetInputCountRateClass : public Tango::Command
-{
-public:
-	GetInputCountRateClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetInputCountRateClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetInputCountRateClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetInputCountRate_allowed(any);}
-};
-
-
-
-class GetDetectorTemperatureClass : public Tango::Command
-{
-public:
-	GetDetectorTemperatureClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetDetectorTemperatureClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetDetectorTemperatureClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetDetectorTemperature_allowed(any);}
-};
-
-
-
-class InitSerialLineClass : public Tango::Command
-{
-public:
-	InitSerialLineClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	InitSerialLineClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~InitSerialLineClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_InitSerialLine_allowed(any);}
-};
-
-
-
-class ClearClass : public Tango::Command
-{
-public:
-	ClearClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	ClearClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~ClearClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_Clear_allowed(any);}
-};
-
-
-
-class ResetClass : public Tango::Command
-{
-public:
-	ResetClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	ResetClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~ResetClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_Reset_allowed(any);}
-};
-
-
-
-class GetROIDataClass : public Tango::Command
-{
-public:
-	GetROIDataClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetROIDataClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetROIDataClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetRoiCount_allowed(any);}
-};
-
-
-
-class GetROIParametersClass : public Tango::Command
-{
-public:
-	GetROIParametersClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetROIParametersClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetROIParametersClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetROIParameters_allowed(any);}
-};
-
-
-
-class SetROIParametersClass : public Tango::Command
-{
-public:
-	SetROIParametersClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	SetROIParametersClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~SetROIParametersClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_SetROIParameters_allowed(any);}
-};
-
-
-
-class GetRemainingAcquisitionTimeClass : public Tango::Command
-{
-public:
-	GetRemainingAcquisitionTimeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetRemainingAcquisitionTimeClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetRemainingAcquisitionTimeClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetRemainingAcquisitionTime_allowed(any);}
-};
-
-
-
-class SetSpeedAndResolutionConfigurationClass : public Tango::Command
-{
-public:
-	SetSpeedAndResolutionConfigurationClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	SetSpeedAndResolutionConfigurationClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~SetSpeedAndResolutionConfigurationClass() {};
+	~SetSpeedAndResolutionConfigurationCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
@@ -563,10 +342,10 @@ public:
 
 
 
-class GetSpeedAndResolutionConfigurationClass : public Tango::Command
+class SetSingleROICmd : public Tango::Command
 {
 public:
-	GetSpeedAndResolutionConfigurationClass(const char   *name,
+	SetSingleROICmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -574,11 +353,131 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	GetSpeedAndResolutionConfigurationClass(const char   *name,
+	SetSingleROICmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~GetSpeedAndResolutionConfigurationClass() {};
+	~SetSingleROICmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Rontec *>(dev))->is_SetSingleROI_allowed(any);}
+};
+
+
+
+class SetROIsCmd : public Tango::Command
+{
+public:
+	SetROIsCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	SetROIsCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~SetROIsCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Rontec *>(dev))->is_SetROIs_allowed(any);}
+};
+
+
+
+class SetReadSizeCmd : public Tango::Command
+{
+public:
+	SetReadSizeCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	SetReadSizeCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~SetReadSizeCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Rontec *>(dev))->is_SetReadSize_allowed(any);}
+};
+
+
+
+class SendRontecMessageCmd : public Tango::Command
+{
+public:
+	SendRontecMessageCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	SendRontecMessageCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~SendRontecMessageCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Rontec *>(dev))->is_SendRontecMessage_allowed(any);}
+};
+
+
+
+class ResetCmd : public Tango::Command
+{
+public:
+	ResetCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	ResetCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~ResetCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Rontec *>(dev))->is_Reset_allowed(any);}
+};
+
+
+
+class GetSpeedAndResolutionConfigurationCmd : public Tango::Command
+{
+public:
+	GetSpeedAndResolutionConfigurationCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	GetSpeedAndResolutionConfigurationCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~GetSpeedAndResolutionConfigurationCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
@@ -587,10 +486,10 @@ public:
 
 
 
-class GetSpectrumLimitsClass : public Tango::Command
+class GetPauseStatusCmd : public Tango::Command
 {
 public:
-	GetSpectrumLimitsClass(const char   *name,
+	GetPauseStatusCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -598,23 +497,23 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	GetSpectrumLimitsClass(const char   *name,
+	GetPauseStatusCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~GetSpectrumLimitsClass() {};
+	~GetPauseStatusCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_GetSpectrumLimits_allowed(any);}
+	{return (static_cast<Rontec *>(dev))->is_GetPauseStatus_allowed(any);}
 };
 
 
 
-class SetEndingChannelClass : public Tango::Command
+class GetPartOfSpectrumCmd : public Tango::Command
 {
 public:
-	SetEndingChannelClass(const char   *name,
+	GetPartOfSpectrumCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -622,23 +521,23 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	SetEndingChannelClass(const char   *name,
+	GetPartOfSpectrumCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~SetEndingChannelClass() {};
+	~GetPartOfSpectrumCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_SetEndingChannel_allowed(any);}
+	{return (static_cast<Rontec *>(dev))->is_GetPartOfSpectrum_allowed(any);}
 };
 
 
 
-class SetStartingChannelClass : public Tango::Command
+class ClearDataCmd : public Tango::Command
 {
 public:
-	SetStartingChannelClass(const char   *name,
+	ClearDataCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -646,23 +545,23 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	SetStartingChannelClass(const char   *name,
+	ClearDataCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~SetStartingChannelClass() {};
+	~ClearDataCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_SetStartingChannel_allowed(any);}
+	{return (static_cast<Rontec *>(dev))->is_ClearData_allowed(any);}
 };
 
 
 
-class StopClass : public Tango::Command
+class ArmCmd : public Tango::Command
 {
 public:
-	StopClass(const char   *name,
+	ArmCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -670,23 +569,23 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	StopClass(const char   *name,
+	ArmCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~StopClass() {};
+	~ArmCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_Stop_allowed(any);}
+	{return (static_cast<Rontec *>(dev))->is_Arm_allowed(any);}
 };
 
 
 
-class StartClass : public Tango::Command
+class AbortCmd : public Tango::Command
 {
 public:
-	StartClass(const char   *name,
+	AbortCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -694,15 +593,15 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	StartClass(const char   *name,
+	AbortCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~StartClass() {};
+	~AbortCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_Start_allowed(any);}
+	{return (static_cast<Rontec *>(dev))->is_Abort_allowed(any);}
 };
 
 
@@ -714,31 +613,38 @@ public:
 class RontecClass : public Tango::DeviceClass
 {
 public:
+//	properties member data
 
 //	add your own data members here
 //------------------------------------
 
 public:
 	Tango::DbData	cl_prop;
+	Tango::DbData	cl_def_prop;
+	Tango::DbData	dev_def_prop;
 
 //	Method prototypes
 	static RontecClass *init(const char *);
 	static RontecClass *instance();
 	~RontecClass();
 	Tango::DbDatum	get_class_property(string &);
+	Tango::DbDatum	get_default_device_property(string &);
+	Tango::DbDatum	get_default_class_property(string &);
 	
 protected:
 	RontecClass(string &);
 	static RontecClass *_instance;
 	void command_factory();
+	void get_class_property();
 	void attribute_factory(vector<Tango::Attr *> &);
 	void write_class_property();
+	void set_default_property();
 
 private:
 	void device_factory(const Tango::DevVarStringArray *);
 };
 
 
-}	//	namespace Rontec
+}	//	namespace Rontec_ns
 
 #endif // _RONTECCLASS_H

@@ -10,21 +10,23 @@
 <TABLE BORDER="0" WIDTH="100%">
     <TR>
         <TD ALIGN="left">
-			<A HREF=http://www.esrf.fr>
+			<A HREF="http://www.esrf.fr/" TARGET=new>
 			<IMG SRC="http://www.esrf.fr/gifs/logo/80.gif" BORDER=0></A>
 		</Td>
         <TD ALIGN="center">
-			<A HREF=http://www.elettra.trieste.it/>
-			<IMG SRC="http://www.esrf.fr/tango/elettra_logo.gif" BORDER=0></A>
+			<A HREF="http://www.elettra.trieste.it/" TARGET=new>
+			<IMG SRC="http://www.esrf.fr/computing/cs/tango/elettra_logo.gif" BORDER=0></A>
 
 		</Td>
         <TD ALIGN="right">
-			<A HREF=http://www.synchrotron-soleil.fr/>
-			<IMG SRC="http://www.esrf.fr/tango/soleil_logo.gif" BORDER=0></A>
+			<A HREF="http://www.synchrotron-soleil.fr/" TARGET=new>
+			<IMG SRC="http://www.esrf.fr/computing/cs/tango/soleil_logo.gif" BORDER=0></A>
 		</Td>
     	 <Td>
-			<H1><FONT COLOR="#0000FF">
-			<Center>TANGO <Br> Device Server
+    	 <Td>
+			<H2><FONT COLOR="#7F00FF">
+			<Center><A HREF="http://www.esrf.fr/Infrastructure/Computing/tango/" TARGET="_top">
+					 TANGO </a> <Br> Device Server
 			</Center></FONT>
     	</Td>
     </TR>
@@ -39,12 +41,65 @@ Device Attributes Description 		<Br> <Br>
 Rontec Class	<Br>
 </h1>
 <b>
-Revision:  - Author: 
+Revision:  - Author: syldup
 </b>
 </center>
 
 
 <Br>
+<Table Border=2 Cellpadding=3 CELLSPACING=0 WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td COLSPAN=4> <Font Size=+2><Center><b>Scalar Attributes</b></td></Font></Center>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td><Center><b>Attribute name</b></td></Center>
+<Td><Center><b>Data Type</b></td></Center>
+<Td><Center><b>R/W Type</b></td></Center>
+<Td><Center><b>Expert</b></td></Center>
+<Tr><Td><b><Center>nbChannels</b><Br>( Number of Channels to get from the DataSource )</Center></Td>
+<Td><Center>DEV_SHORT</Center></Td><Td><Center>READ_WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>integrationTime</b><Br>( Time of integration (ie counting time) )</Center></Td>
+<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ_WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>timingType</b><Br>( Type of timing:<BR> 0 -> Live (like an OS time)<BR> 1 -> Real (the real time according to deadTime). )</Center></Td>
+<Td><Center>DEV_SHORT</Center></Td><Td><Center>READ_WRITE</Center></Td><Td><Center>Yes</Center></Td></Tr>
+
+<Tr><Td><b><Center>dataSource</b><Br>( Display the current data source or NONE if not open )</Center></Td>
+<Td><Center>DEV_STRING</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>deadTime</b><Br>( Dead time = [(Real - Live ) / Real] * 100 )</Center></Td>
+<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>countRate</b><Br>( This is the input count rate.  Rem : output count rate = countRate * (1-deadTime / 100) )</Center></Td>
+<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>realTime</b><Br>( Real Time : time taking into account the dead time )</Center></Td>
+<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>liveTime</b><Br>( Live Time: time which does not take into account the dead time. Should be shorter than real time )</Center></Td>
+<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>cycleTime</b></Center></Td>
+<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ_WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>startingChannel</b></Center></Td>
+<Td><Center>DEV_SHORT</Center></Td><Td><Center>WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>endingChannel</b></Center></Td>
+<Td><Center>DEV_SHORT</Center></Td><Td><Center>WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>detectorTemperature</b></Center></Td>
+<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>energyRange</b></Center></Td>
+<Td><Center>DEV_LONG</Center></Td><Td><Center>READ_WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>readDataSpectrum</b></Center></Td>
+<Td><Center>DEV_BOOLEAN</Center></Td><Td><Center>WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+
+</Table>
+</Center>
+<Br><Br><Br><Br><Br>
 <Table Border=2 Cellpadding=3 CELLSPACING=0 WIDTH="100%">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <Td COLSPAN=4> <Font Size=+2><Center><b>Spectrum Attributes</b></td></Font></Center>
@@ -53,8 +108,20 @@ Revision:  - Author:
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>X Data Length</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b><Center>fluoSpectrum</b><Br>( fluo spectrum returned by the RONTEC MCA max channels number set in NumberOfChannels property starting channel fixed by SetStartingChannel, ending channel set by SetEndingChannel )</Center></Td>
+<Tr><Td><b><Center>dataSpectrum</b><Br>( fluo spectrum returned by the RONTEC MCA max channels number set in NumberOfChannels property starting channel fixed by SetStartingChannel, ending channel set by SetEndingChannel )</Center></Td>
 <Td><Center>DEV_DOUBLE</Center></Td><Td><Center>8192</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>roisStartsEnds</b><Br>( All the ROIs starts ends: they are in pair : start-end. )</Center></Td>
+<Td><Center>DEV_LONG</Center></Td><Td><Center>80</Center></Td><Td><Center>Yes</Center></Td></Tr>
+
+<Tr><Td><b><Center>roisStarts</b></Center></Td>
+<Td><Center>DEV_LONG</Center></Td><Td><Center>40</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>roisEnds</b><Br>( End Positions of the ROIs )</Center></Td>
+<Td><Center>DEV_LONG</Center></Td><Td><Center>40</Center></Td><Td><Center>No</Center></Td></Tr>
+
+<Tr><Td><b><Center>offsetGain</b></Center></Td>
+<Td><Center>DEV_LONG</Center></Td><Td><Center>2</Center></Td><Td><Center>No</Center></Td></Tr>
 
 </Table>
 </Center>
