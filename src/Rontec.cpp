@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.2 2006-07-24 14:48:18 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.3 2006-07-25 07:56:05 tithub Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: tithub $
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.2  2006/07/24 14:48:18  tithub
+// Nouvelle interface Tango
+//
 // Revision 1.1.1.1  2005/09/30 12:13:33  syldup
 // initial import
 //
@@ -88,8 +91,9 @@ Rontec::Rontec(Tango::DeviceClass *cl,string &s)
 {
 	try {
 		init_device();
-	} catch(...) { 
-		set_state(Tango::FAULT);
+	} catch(...) {
+		set_state(Tango::INIT);
+		set_status("The device was not successfully initialized !");
 	}
 }
 
@@ -98,7 +102,10 @@ Rontec::Rontec(Tango::DeviceClass *cl,const char *s)
 {
 	try {
 		init_device();
-	} catch(...) { }
+	} catch(...) {
+		set_state(Tango::INIT);
+		set_status("The device was not successfully initialized !");
+	}
 }
 
 Rontec::Rontec(Tango::DeviceClass *cl,const char *s,const char *d)
@@ -106,7 +113,10 @@ Rontec::Rontec(Tango::DeviceClass *cl,const char *s,const char *d)
 {
 	try {
 		init_device();
-	} catch(...) { }
+	} catch(...) {
+		set_state(Tango::INIT);
+		set_status("The device was not successfully initialized !");
+	}
 }
 //+----------------------------------------------------------------------------
 //
@@ -193,7 +203,9 @@ void Rontec::init_device()
 
 	// rontec implementation class
 	_mca = new RontecImpl(this);
-	_mca->init(serialLineUrl,baud,1000); 
+	_mca->init(serialLineUrl,baud,1000);
+
+	set_state(Tango::UNKNOWN);
 }
 
 //+----------------------------------------------------------------------------
@@ -328,23 +340,33 @@ void Rontec::get_device_property()
 //-----------------------------------------------------------------------------
 void Rontec::always_executed_hook()
 {
-	if(!_mca) {
-		set_state(Tango::FAULT);
-		set_status("_mca not initialized !");
-	} 
-	else {
-		std::string rontec_status = _mca->get_pause_status();
-		std::string reader_status = "PAUSE";
-		if(_mca->is_reading_thread_running()) {
-			reader_status = "RUNNING";
+	if(get_state()!=Tango::INIT) {
+		try {
+			if(!_mca) {
+				set_state(Tango::INIT);
+				set_status("_mca not initialized !");
+			}
+			else {
+				std::string rontec_status = _mca->get_pause_status();
+				std::string reader_status;
+				if(_mca->is_reading_thread_running()) {
+					reader_status = "RUNNING";
+				}
+				else {
+					reader_status = "PAUSE";
+				}
+				if(rontec_status=="RUNNING" || reader_status=="RUNNING") {
+					set_state(Tango::RUNNING);
+				}
+				else {
+					set_state(Tango::OFF);
+				}
+				set_status("Rontec: " + rontec_status + ", Reading thread: " + reader_status);
+			}
+		} catch(...) {
+			set_state(Tango::INIT);
+			set_status("Unknown error while trying to get Rontec status.");
 		}
-		if(rontec_status=="RUNNING" || reader_status=="RUNNING") {
-			set_state(Tango::RUNNING);
-		}
-		else {
-			set_state(Tango::OFF);
-		}
-		set_status("Rontec: " + rontec_status + ", Reading thread: " + reader_status);
 	}
 }
 //+----------------------------------------------------------------------------
