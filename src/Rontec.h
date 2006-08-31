@@ -8,9 +8,12 @@
 //
 // $Author: tithub $
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.2  2006/07/24 14:48:18  tithub
+// Nouvelle interface Tango
+//
 // Revision 1.1.1.1  2005/09/30 12:13:33  syldup
 // initial import
 //
@@ -37,17 +40,16 @@
 #include <DeviceProxyHelper.h>
 #include "RontecImpl.h"
 
+#define NB_MAX_ROI 8
 //using namespace Tango;
 
 /**
  * @author	$Author: tithub $
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
  //	Add your own constants definitions here.
  //-----------------------------------------------
-#define NB_MAX_ROI 8
-
 namespace Rontec_ns
 {
 /**
@@ -57,15 +59,16 @@ namespace Rontec_ns
 
 /*
  *	Device States Description:
- *  Tango::STANDBY :  RONTEC OK, ready to accept command
+ *  Tango::FAULT :    command error
+ *
+ *  Tango::INIT :     *
  *
  *  Tango::RUNNING :  acquisition in progress
  *
- *  Tango::FAULT :    command error
+ *  Tango::STANDBY :  RONTEC OK, ready to accept command
  *
  *  Tango::UNKNOWN :  communication loosed with RONTEC
- *
- *  Tango::INIT :      */
+ */
 
 
 class Rontec: public Tango::Device_3Impl
@@ -73,7 +76,6 @@ class Rontec: public Tango::Device_3Impl
 public :
 	//	Add your own data members here
 	//-----------------------------------------
-	Tango::DevLong *attr_roi_read[NB_MAX_ROI];
 
 	//	Here is the Start of the automatic code generation part
 	//-------------------------------------------------------------	
@@ -82,30 +84,38 @@ public :
  *	Attributs member data.
  */
 //@{
-		Tango::DevDouble	*attr_dataSpectrum_read;
-		Tango::DevShort	*attr_nbChannels_read;
-		Tango::DevShort	attr_nbChannels_write;
-		Tango::DevDouble	*attr_integrationTime_read;
-		Tango::DevDouble	attr_integrationTime_write;
-		Tango::DevShort	*attr_timingType_read;
-		Tango::DevShort	attr_timingType_write;
-		Tango::DevString	*attr_dataSource_read;
-		Tango::DevDouble	*attr_deadTime_read;
 		Tango::DevDouble	*attr_countRate_read;
-		Tango::DevDouble	*attr_realTime_read;
-		Tango::DevDouble	*attr_liveTime_read;
-		Tango::DevLong	*attr_roisStartsEnds_read;
-		Tango::DevLong	*attr_roisStarts_read;
-		Tango::DevLong	*attr_roisEnds_read;
 		Tango::DevDouble	*attr_cycleTime_read;
 		Tango::DevDouble	attr_cycleTime_write;
-		Tango::DevShort	attr_startingChannel_write;
-		Tango::DevShort	attr_endingChannel_write;
+		Tango::DevString	*attr_dataSource_read;
+		Tango::DevDouble	*attr_dataSpectrum_read;
+		Tango::DevDouble	*attr_deadTime_read;
 		Tango::DevDouble	*attr_detectorTemperature_read;
+		Tango::DevShort	attr_endingChannel_write;
 		Tango::DevLong	*attr_energyRange_read;
 		Tango::DevLong	attr_energyRange_write;
+		Tango::DevDouble	*attr_integrationTime_read;
+		Tango::DevDouble	attr_integrationTime_write;
+		Tango::DevDouble	*attr_liveTime_read;
+		Tango::DevShort	*attr_nbChannels_read;
+		Tango::DevShort	attr_nbChannels_write;
 		Tango::DevLong	*attr_offsetGain_read;
 		Tango::DevBoolean	attr_readDataSpectrum_write;
+		Tango::DevDouble	*attr_realTime_read;
+		Tango::DevLong	*attr_roi1_read;
+		Tango::DevLong	*attr_roi2_read;
+		Tango::DevLong	*attr_roi3_read;
+		Tango::DevLong	*attr_roi4_read;
+		Tango::DevLong	*attr_roi5_read;
+		Tango::DevLong	*attr_roi6_read;
+		Tango::DevLong	*attr_roi7_read;
+		Tango::DevLong	*attr_roi8_read;
+		Tango::DevLong	*attr_roisEnds_read;
+		Tango::DevLong	*attr_roisStarts_read;
+		Tango::DevLong	*attr_roisStartsEnds_read;
+		Tango::DevShort	attr_startingChannel_write;
+		Tango::DevShort	*attr_timingType_read;
+		Tango::DevShort	attr_timingType_write;
 //@}
 		
 /**
@@ -113,23 +123,6 @@ public :
  *	Device properties member data.
  */
 //@{
-/**
- *	baud rate set on the RONTEC
- *	Default is 38400 ( firmware default )
- *	to set another baud rate :
- *	set on the RONTEC a new baudrate, write it on the flash,
- *	then update the property with the new value
- *	restart SerialLine the Rontec DServers
- *	possible values : 600, 1200, 1800, 2400, 3600, 4800, 7200, 9600, 14400,
- *	19200, 28800, 38400, 57600, 76800, 115200, 230400.
- */
-	Tango::DevLong	baud;
-/**
- *	Tango name of the serial line device
- *	the other serial line properties are fixed for the RONTEC RCL :
- *	N( no parity),8( data bits),1(stop bit), hardware handshake ( RTS/CTS
- */
-	string	serialLineUrl;
 /**
  *	list of the TTL outputs connected to a counter
  *	just for control and throw exception if try to configure a ROI that is not in the list
@@ -139,6 +132,12 @@ public :
  */
 	string	connectedROIMask;
 /**
+ *	maximum fluo energy of the last MCA channel.
+ *	with the current RONTEC MCA Hardware can be 10, 20, 40, or 80 KeV
+ *	default : 80.0
+ */
+	Tango::DevDouble	maxFluoEnergy;
+/**
  *	number of channels of the MCA.
  *	The current RONTEC MCA hardware has 4096 channels.
  *	this is for extentions purpose only,
@@ -146,11 +145,15 @@ public :
  */
 	Tango::DevLong	numberOfChannels;
 /**
- *	maximum fluo energy of the last MCA channel.
- *	with the current RONTEC MCA Hardware can be 10, 20, 40, or 80 KeV
- *	default : 80.0
+ *	Tango name of the serial line device
+ *	the other serial line properties are fixed for the RONTEC RCL :
+ *	N( no parity),8( data bits),1(stop bit), hardware handshake ( RTS/CTS
  */
-	Tango::DevDouble	maxFluoEnergy;
+	string	serialLineUrl;
+/**
+ *	Spectrum read packet size used in reading thread
+ */
+	Tango::DevLong	spectrumPacketSize;
 //@}
 
 /**@name Constructors
@@ -217,65 +220,9 @@ public :
  */
 	virtual void read_attr_hardware(vector<long> &attr_list);
 /**
- *	Extract real attribute values for dataSpectrum acquisition result.
- */
-	virtual void read_dataSpectrum(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for nbChannels acquisition result.
- */
-	virtual void read_nbChannels(Tango::Attribute &attr);
-/**
- *	Write nbChannels attribute values to hardware.
- */
-	virtual void write_nbChannels(Tango::WAttribute &attr);
-/**
- *	Extract real attribute values for integrationTime acquisition result.
- */
-	virtual void read_integrationTime(Tango::Attribute &attr);
-/**
- *	Write integrationTime attribute values to hardware.
- */
-	virtual void write_integrationTime(Tango::WAttribute &attr);
-/**
- *	Extract real attribute values for timingType acquisition result.
- */
-	virtual void read_timingType(Tango::Attribute &attr);
-/**
- *	Write timingType attribute values to hardware.
- */
-	virtual void write_timingType(Tango::WAttribute &attr);
-/**
- *	Extract real attribute values for dataSource acquisition result.
- */
-	virtual void read_dataSource(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for deadTime acquisition result.
- */
-	virtual void read_deadTime(Tango::Attribute &attr);
-/**
  *	Extract real attribute values for countRate acquisition result.
  */
 	virtual void read_countRate(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for realTime acquisition result.
- */
-	virtual void read_realTime(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for liveTime acquisition result.
- */
-	virtual void read_liveTime(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for roisStartsEnds acquisition result.
- */
-	virtual void read_roisStartsEnds(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for roisStarts acquisition result.
- */
-	virtual void read_roisStarts(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for roisEnds acquisition result.
- */
-	virtual void read_roisEnds(Tango::Attribute &attr);
 /**
  *	Extract real attribute values for cycleTime acquisition result.
  */
@@ -285,13 +232,21 @@ public :
  */
 	virtual void write_cycleTime(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for startingChannel acquisition result.
+ *	Extract real attribute values for dataSource acquisition result.
  */
-	virtual void read_startingChannel(Tango::Attribute &attr);
+	virtual void read_dataSource(Tango::Attribute &attr);
 /**
- *	Write startingChannel attribute values to hardware.
+ *	Extract real attribute values for dataSpectrum acquisition result.
  */
-	virtual void write_startingChannel(Tango::WAttribute &attr);
+	virtual void read_dataSpectrum(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for deadTime acquisition result.
+ */
+	virtual void read_deadTime(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for detectorTemperature acquisition result.
+ */
+	virtual void read_detectorTemperature(Tango::Attribute &attr);
 /**
  *	Extract real attribute values for endingChannel acquisition result.
  */
@@ -301,10 +256,6 @@ public :
  */
 	virtual void write_endingChannel(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for detectorTemperature acquisition result.
- */
-	virtual void read_detectorTemperature(Tango::Attribute &attr);
-/**
  *	Extract real attribute values for energyRange acquisition result.
  */
 	virtual void read_energyRange(Tango::Attribute &attr);
@@ -312,6 +263,26 @@ public :
  *	Write energyRange attribute values to hardware.
  */
 	virtual void write_energyRange(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for integrationTime acquisition result.
+ */
+	virtual void read_integrationTime(Tango::Attribute &attr);
+/**
+ *	Write integrationTime attribute values to hardware.
+ */
+	virtual void write_integrationTime(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for liveTime acquisition result.
+ */
+	virtual void read_liveTime(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for nbChannels acquisition result.
+ */
+	virtual void read_nbChannels(Tango::Attribute &attr);
+/**
+ *	Write nbChannels attribute values to hardware.
+ */
+	virtual void write_nbChannels(Tango::WAttribute &attr);
 /**
  *	Extract real attribute values for offsetGain acquisition result.
  */
@@ -325,73 +296,113 @@ public :
  */
 	virtual void write_readDataSpectrum(Tango::WAttribute &attr);
 /**
- *	Read/Write allowed for dataSpectrum attribute.
+ *	Extract real attribute values for realTime acquisition result.
  */
-	virtual bool is_dataSpectrum_allowed(Tango::AttReqType type);
+	virtual void read_realTime(Tango::Attribute &attr);
 /**
- *	Read/Write allowed for nbChannels attribute.
+ *	Extract real attribute values for roi1 acquisition result.
  */
-	virtual bool is_nbChannels_allowed(Tango::AttReqType type);
+	virtual void read_roi1(Tango::Attribute &attr);
 /**
- *	Read/Write allowed for integrationTime attribute.
+ *	Extract real attribute values for roi2 acquisition result.
  */
-	virtual bool is_integrationTime_allowed(Tango::AttReqType type);
+	virtual void read_roi2(Tango::Attribute &attr);
 /**
- *	Read/Write allowed for timingType attribute.
+ *	Extract real attribute values for roi3 acquisition result.
  */
-	virtual bool is_timingType_allowed(Tango::AttReqType type);
+	virtual void read_roi3(Tango::Attribute &attr);
 /**
- *	Read/Write allowed for dataSource attribute.
+ *	Extract real attribute values for roi4 acquisition result.
  */
-	virtual bool is_dataSource_allowed(Tango::AttReqType type);
+	virtual void read_roi4(Tango::Attribute &attr);
 /**
- *	Read/Write allowed for deadTime attribute.
+ *	Extract real attribute values for roi5 acquisition result.
  */
-	virtual bool is_deadTime_allowed(Tango::AttReqType type);
+	virtual void read_roi5(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for roi6 acquisition result.
+ */
+	virtual void read_roi6(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for roi7 acquisition result.
+ */
+	virtual void read_roi7(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for roi8 acquisition result.
+ */
+	virtual void read_roi8(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for roisEnds acquisition result.
+ */
+	virtual void read_roisEnds(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for roisStarts acquisition result.
+ */
+	virtual void read_roisStarts(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for roisStartsEnds acquisition result.
+ */
+	virtual void read_roisStartsEnds(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for startingChannel acquisition result.
+ */
+	virtual void read_startingChannel(Tango::Attribute &attr);
+/**
+ *	Write startingChannel attribute values to hardware.
+ */
+	virtual void write_startingChannel(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for timingType acquisition result.
+ */
+	virtual void read_timingType(Tango::Attribute &attr);
+/**
+ *	Write timingType attribute values to hardware.
+ */
+	virtual void write_timingType(Tango::WAttribute &attr);
 /**
  *	Read/Write allowed for countRate attribute.
  */
 	virtual bool is_countRate_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for realTime attribute.
- */
-	virtual bool is_realTime_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for liveTime attribute.
- */
-	virtual bool is_liveTime_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for roisStartsEnds attribute.
- */
-	virtual bool is_roisStartsEnds_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for roisStarts attribute.
- */
-	virtual bool is_roisStarts_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for roisEnds attribute.
- */
-	virtual bool is_roisEnds_allowed(Tango::AttReqType type);
-/**
  *	Read/Write allowed for cycleTime attribute.
  */
 	virtual bool is_cycleTime_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for startingChannel attribute.
+ *	Read/Write allowed for dataSource attribute.
  */
-	virtual bool is_startingChannel_allowed(Tango::AttReqType type);
+	virtual bool is_dataSource_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for endingChannel attribute.
+ *	Read/Write allowed for dataSpectrum attribute.
  */
-	virtual bool is_endingChannel_allowed(Tango::AttReqType type);
+	virtual bool is_dataSpectrum_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for deadTime attribute.
+ */
+	virtual bool is_deadTime_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for detectorTemperature attribute.
  */
 	virtual bool is_detectorTemperature_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for endingChannel attribute.
+ */
+	virtual bool is_endingChannel_allowed(Tango::AttReqType type);
+/**
  *	Read/Write allowed for energyRange attribute.
  */
 	virtual bool is_energyRange_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for integrationTime attribute.
+ */
+	virtual bool is_integrationTime_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for liveTime attribute.
+ */
+	virtual bool is_liveTime_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for nbChannels attribute.
+ */
+	virtual bool is_nbChannels_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for offsetGain attribute.
  */
@@ -400,6 +411,62 @@ public :
  *	Read/Write allowed for readDataSpectrum attribute.
  */
 	virtual bool is_readDataSpectrum_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for realTime attribute.
+ */
+	virtual bool is_realTime_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roi1 attribute.
+ */
+	virtual bool is_roi1_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roi2 attribute.
+ */
+	virtual bool is_roi2_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roi3 attribute.
+ */
+	virtual bool is_roi3_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roi4 attribute.
+ */
+	virtual bool is_roi4_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roi5 attribute.
+ */
+	virtual bool is_roi5_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roi6 attribute.
+ */
+	virtual bool is_roi6_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roi7 attribute.
+ */
+	virtual bool is_roi7_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roi8 attribute.
+ */
+	virtual bool is_roi8_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roisEnds attribute.
+ */
+	virtual bool is_roisEnds_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roisStarts attribute.
+ */
+	virtual bool is_roisStarts_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roisStartsEnds attribute.
+ */
+	virtual bool is_roisStartsEnds_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for startingChannel attribute.
+ */
+	virtual bool is_startingChannel_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for timingType attribute.
+ */
+	virtual bool is_timingType_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Abort command.
  */
@@ -432,10 +499,6 @@ public :
  *	Execution allowed for SendRontecMessage command.
  */
 	virtual bool is_SendRontecMessage_allowed(const CORBA::Any &any);
-/**
- *	Execution allowed for SetReadSize command.
- */
-	virtual bool is_SetReadSize_allowed(const CORBA::Any &any);
 /**
  *	Execution allowed for SetROIs command.
  */
@@ -502,14 +565,6 @@ public :
  */
 	Tango::DevString	send_rontec_message(Tango::DevString);
 /**
- * for the readin thread ,
- *	the number of channels to read in 1 shoot on the RONTEC MCA.
- *	low number increases the speed of reading.
- *	@param	argin	size to read in 1 shoot
- *	@exception DevFailed
- */
-	void	set_read_size(Tango::DevLong);
-/**
  * Set the ROIs. the parameter is an array with values going by pair: tab[0]=126, tab[1]=238 -> first ROI starts from 126, ends to 238 tab[2]=1569,tab[3]=2368 -> second ROI starts from 1569, ends to 2368.
  *	@param	argin	starts and ends of the ROI. eg: tab[0]=126, tab[1]=238, tab[2]=1569,tab[3]=2368
  *	@exception DevFailed
@@ -555,12 +610,6 @@ public :
 
 	// DYNAMIC ATTRIBUTES
 	//--------------------
-protected:
-	void create_dynamic_attributes();
-public:
-	virtual void read_roi(Tango::Attribute &attr,long num_roi);
-	virtual bool is_roi_allowed(Tango::AttReqType type,long num_roi);
-
 protected :	
 	//	Add your own data members here
 	//-----------------------------------------
@@ -570,7 +619,7 @@ protected :
 	// Rontec MCA implementation class
 	RontecImpl* _mca;
 
-	float _integration_time;	// integration time used with start() command
+	double _integration_time;	// integration time used with start() command
 	bool _live_time;			// false = integration time in real time, true = integration time in live time
 	bool _start_reading_thread;
 };

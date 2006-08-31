@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/main.cpp,v 1.2 2006-07-24 14:48:18 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/main.cpp,v 1.3 2006-08-31 15:51:10 tithub Exp $";
 //+=============================================================================
 //
 // file :        main.cpp
@@ -12,9 +12,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: tithub $
 //
-// $Revision: 1.2 $ $
+// $Revision: 1.3 $ $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.2  2006/07/24 14:48:18  tithub
+// Nouvelle interface Tango
+//
 // Revision 1.1.1.1  2005/09/30 12:13:33  syldup
 // initial import
 //
@@ -48,6 +51,7 @@ int main(int argc,char *argv[])
 		//----------------------------------------
 		tg = Tango::Util::init(argc,argv);
 
+		cout << "ds_Rontec.exe version 060831c" << endl;
 		// Create the device server singleton 
 		//	which will create everything
 		//----------------------------------------

@@ -12,9 +12,12 @@
 //
 // $Author: tithub $
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.2  2006/07/24 14:48:18  tithub
+// Nouvelle interface Tango
+//
 // Revision 1.1.1.1  2005/09/30 12:13:34  syldup
 // initial import
 //
@@ -39,14 +42,185 @@
 #define _RONTECCLASS_H
 
 #include <tango.h>
-#include "Rontec.h"
-
+#include <Rontec.h>
 
 namespace Rontec_ns
 {
 //=====================================
 //	Define classes for attributes
 //=====================================
+class timingTypeAttrib: public Tango::Attr
+{
+public:
+	timingTypeAttrib():Attr("timingType", Tango::DEV_SHORT, Tango::READ_WRITE) {};
+	~timingTypeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_timingType(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_timingType(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_timingType_allowed(ty);}
+};
+
+class startingChannelAttrib: public Tango::Attr
+{
+public:
+	startingChannelAttrib():Attr("startingChannel", Tango::DEV_SHORT, Tango::WRITE) {};
+	~startingChannelAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_startingChannel(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_startingChannel(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_startingChannel_allowed(ty);}
+};
+
+class roisStartsEndsAttrib: public Tango::SpectrumAttr
+{
+public:
+	roisStartsEndsAttrib():SpectrumAttr("roisStartsEnds", Tango::DEV_LONG, Tango::READ, 80) {};
+	~roisStartsEndsAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roisStartsEnds(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roisStartsEnds_allowed(ty);}
+};
+
+class roisStartsAttrib: public Tango::SpectrumAttr
+{
+public:
+	roisStartsAttrib():SpectrumAttr("roisStarts", Tango::DEV_LONG, Tango::READ, 40) {};
+	~roisStartsAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roisStarts(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roisStarts_allowed(ty);}
+};
+
+class roisEndsAttrib: public Tango::SpectrumAttr
+{
+public:
+	roisEndsAttrib():SpectrumAttr("roisEnds", Tango::DEV_LONG, Tango::READ, 40) {};
+	~roisEndsAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roisEnds(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roisEnds_allowed(ty);}
+};
+
+class roi8Attrib: public Tango::Attr
+{
+public:
+	roi8Attrib():Attr("roi8", Tango::DEV_LONG, Tango::READ) {};
+	~roi8Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roi8(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roi8_allowed(ty);}
+};
+
+class roi7Attrib: public Tango::Attr
+{
+public:
+	roi7Attrib():Attr("roi7", Tango::DEV_LONG, Tango::READ) {};
+	~roi7Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roi7(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roi7_allowed(ty);}
+};
+
+class roi6Attrib: public Tango::Attr
+{
+public:
+	roi6Attrib():Attr("roi6", Tango::DEV_LONG, Tango::READ) {};
+	~roi6Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roi6(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roi6_allowed(ty);}
+};
+
+class roi5Attrib: public Tango::Attr
+{
+public:
+	roi5Attrib():Attr("roi5", Tango::DEV_LONG, Tango::READ) {};
+	~roi5Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roi5(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roi5_allowed(ty);}
+};
+
+class roi4Attrib: public Tango::Attr
+{
+public:
+	roi4Attrib():Attr("roi4", Tango::DEV_LONG, Tango::READ) {};
+	~roi4Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roi4(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roi4_allowed(ty);}
+};
+
+class roi3Attrib: public Tango::Attr
+{
+public:
+	roi3Attrib():Attr("roi3", Tango::DEV_LONG, Tango::READ) {};
+	~roi3Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roi3(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roi3_allowed(ty);}
+};
+
+class roi2Attrib: public Tango::Attr
+{
+public:
+	roi2Attrib():Attr("roi2", Tango::DEV_LONG, Tango::READ) {};
+	~roi2Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roi2(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roi2_allowed(ty);}
+};
+
+class roi1Attrib: public Tango::Attr
+{
+public:
+	roi1Attrib():Attr("roi1", Tango::DEV_LONG, Tango::READ) {};
+	~roi1Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_roi1(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_roi1_allowed(ty);}
+};
+
+class realTimeAttrib: public Tango::Attr
+{
+public:
+	realTimeAttrib():Attr("realTime", Tango::DEV_DOUBLE, Tango::READ) {};
+	~realTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_realTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_realTime_allowed(ty);}
+};
+
 class readDataSpectrumAttrib: public Tango::Attr
 {
 public:
@@ -73,108 +247,18 @@ public:
 	{return (static_cast<Rontec *>(dev))->is_offsetGain_allowed(ty);}
 };
 
-class energyRangeAttrib: public Tango::Attr
+class nbChannelsAttrib: public Tango::Attr
 {
 public:
-	energyRangeAttrib():Attr("energyRange", Tango::DEV_LONG, Tango::READ_WRITE) {};
-	~energyRangeAttrib() {};
+	nbChannelsAttrib():Attr("nbChannels", Tango::DEV_SHORT, Tango::READ_WRITE) {};
+	~nbChannelsAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_energyRange(att);}
+	{(static_cast<Rontec *>(dev))->read_nbChannels(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_energyRange(att);}
+	{(static_cast<Rontec *>(dev))->write_nbChannels(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_energyRange_allowed(ty);}
-};
-
-class detectorTemperatureAttrib: public Tango::Attr
-{
-public:
-	detectorTemperatureAttrib():Attr("detectorTemperature", Tango::DEV_DOUBLE, Tango::READ) {};
-	~detectorTemperatureAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_detectorTemperature(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_detectorTemperature_allowed(ty);}
-};
-
-class endingChannelAttrib: public Tango::Attr
-{
-public:
-	endingChannelAttrib():Attr("endingChannel", Tango::DEV_SHORT, Tango::WRITE) {};
-	~endingChannelAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_endingChannel(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_endingChannel(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_endingChannel_allowed(ty);}
-};
-
-class startingChannelAttrib: public Tango::Attr
-{
-public:
-	startingChannelAttrib():Attr("startingChannel", Tango::DEV_SHORT, Tango::WRITE) {};
-	~startingChannelAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_startingChannel(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_startingChannel(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_startingChannel_allowed(ty);}
-};
-
-class cycleTimeAttrib: public Tango::Attr
-{
-public:
-	cycleTimeAttrib():Attr("cycleTime", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
-	~cycleTimeAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_cycleTime(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_cycleTime(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_cycleTime_allowed(ty);}
-};
-
-class roisEndsAttrib: public Tango::SpectrumAttr
-{
-public:
-	roisEndsAttrib():SpectrumAttr("roisEnds", Tango::DEV_LONG, Tango::READ, 40) {};
-	~roisEndsAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_roisEnds(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_roisEnds_allowed(ty);}
-};
-
-class roisStartsAttrib: public Tango::SpectrumAttr
-{
-public:
-	roisStartsAttrib():SpectrumAttr("roisStarts", Tango::DEV_LONG, Tango::READ, 40) {};
-	~roisStartsAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_roisStarts(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_roisStarts_allowed(ty);}
-};
-
-class roisStartsEndsAttrib: public Tango::SpectrumAttr
-{
-public:
-	roisStartsEndsAttrib():SpectrumAttr("roisStartsEnds", Tango::DEV_LONG, Tango::READ, 80) {};
-	~roisStartsEndsAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_roisStartsEnds(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_roisStartsEnds_allowed(ty);}
+	{return (static_cast<Rontec *>(dev))->is_nbChannels_allowed(ty);}
 };
 
 class liveTimeAttrib: public Tango::Attr
@@ -187,68 +271,6 @@ public:
 	{(static_cast<Rontec *>(dev))->read_liveTime(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Rontec *>(dev))->is_liveTime_allowed(ty);}
-};
-
-class realTimeAttrib: public Tango::Attr
-{
-public:
-	realTimeAttrib():Attr("realTime", Tango::DEV_DOUBLE, Tango::READ) {};
-	~realTimeAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_realTime(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_realTime_allowed(ty);}
-};
-
-class countRateAttrib: public Tango::Attr
-{
-public:
-	countRateAttrib():Attr("countRate", Tango::DEV_DOUBLE, Tango::READ) {};
-	~countRateAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_countRate(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_countRate_allowed(ty);}
-};
-
-class deadTimeAttrib: public Tango::Attr
-{
-public:
-	deadTimeAttrib():Attr("deadTime", Tango::DEV_DOUBLE, Tango::READ) {};
-	~deadTimeAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_deadTime(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_deadTime_allowed(ty);}
-};
-
-class dataSourceAttrib: public Tango::Attr
-{
-public:
-	dataSourceAttrib():Attr("dataSource", Tango::DEV_STRING, Tango::READ) {};
-	~dataSourceAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_dataSource(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_dataSource_allowed(ty);}
-};
-
-class timingTypeAttrib: public Tango::Attr
-{
-public:
-	timingTypeAttrib():Attr("timingType", Tango::DEV_SHORT, Tango::READ_WRITE) {};
-	~timingTypeAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_timingType(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_timingType(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_timingType_allowed(ty);}
 };
 
 class integrationTimeAttrib: public Tango::Attr
@@ -265,18 +287,56 @@ public:
 	{return (static_cast<Rontec *>(dev))->is_integrationTime_allowed(ty);}
 };
 
-class nbChannelsAttrib: public Tango::Attr
+class energyRangeAttrib: public Tango::Attr
 {
 public:
-	nbChannelsAttrib():Attr("nbChannels", Tango::DEV_SHORT, Tango::READ_WRITE) {};
-	~nbChannelsAttrib() {};
+	energyRangeAttrib():Attr("energyRange", Tango::DEV_LONG, Tango::READ_WRITE) {};
+	~energyRangeAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_nbChannels(att);}
+	{(static_cast<Rontec *>(dev))->read_energyRange(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_nbChannels(att);}
+	{(static_cast<Rontec *>(dev))->write_energyRange(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_nbChannels_allowed(ty);}
+	{return (static_cast<Rontec *>(dev))->is_energyRange_allowed(ty);}
+};
+
+class endingChannelAttrib: public Tango::Attr
+{
+public:
+	endingChannelAttrib():Attr("endingChannel", Tango::DEV_SHORT, Tango::WRITE) {};
+	~endingChannelAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_endingChannel(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_endingChannel(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_endingChannel_allowed(ty);}
+};
+
+class detectorTemperatureAttrib: public Tango::Attr
+{
+public:
+	detectorTemperatureAttrib():Attr("detectorTemperature", Tango::DEV_DOUBLE, Tango::READ) {};
+	~detectorTemperatureAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_detectorTemperature(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_detectorTemperature_allowed(ty);}
+};
+
+class deadTimeAttrib: public Tango::Attr
+{
+public:
+	deadTimeAttrib():Attr("deadTime", Tango::DEV_DOUBLE, Tango::READ) {};
+	~deadTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_deadTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_deadTime_allowed(ty);}
 };
 
 class dataSpectrumAttrib: public Tango::SpectrumAttr
@@ -289,6 +349,44 @@ public:
 	{(static_cast<Rontec *>(dev))->read_dataSpectrum(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Rontec *>(dev))->is_dataSpectrum_allowed(ty);}
+};
+
+class dataSourceAttrib: public Tango::Attr
+{
+public:
+	dataSourceAttrib():Attr("dataSource", Tango::DEV_STRING, Tango::READ) {};
+	~dataSourceAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_dataSource(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_dataSource_allowed(ty);}
+};
+
+class cycleTimeAttrib: public Tango::Attr
+{
+public:
+	cycleTimeAttrib():Attr("cycleTime", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~cycleTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_cycleTime(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_cycleTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_cycleTime_allowed(ty);}
+};
+
+class countRateAttrib: public Tango::Attr
+{
+public:
+	countRateAttrib():Attr("countRate", Tango::DEV_DOUBLE, Tango::READ) {};
+	~countRateAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_countRate(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_countRate_allowed(ty);}
 };
 
 //=========================================
@@ -386,30 +484,6 @@ public:
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
 	{return (static_cast<Rontec *>(dev))->is_SetROIs_allowed(any);}
-};
-
-
-
-class SetReadSizeCmd : public Tango::Command
-{
-public:
-	SetReadSizeCmd(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	SetReadSizeCmd(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~SetReadSizeCmd() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Rontec *>(dev))->is_SetReadSize_allowed(any);}
 };
 
 

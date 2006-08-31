@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.3 2006-07-25 07:56:05 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.4 2006-08-31 15:51:10 tithub Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: tithub $
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.3  2006/07/25 07:56:05  tithub
+// no message
+//
 // Revision 1.2  2006/07/24 14:48:18  tithub
 // Nouvelle interface Tango
 //
@@ -58,7 +61,6 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //  GetSpeedAndResolutionConfiguration  |  get_speed_and_resolution_configuration()
 //  Reset                               |  reset()
 //  SendRontecMessage                   |  send_rontec_message()
-//  SetReadSize                         |  set_read_size()
 //  SetROIs                             |  set_rois()
 //  SetSingleROI                        |  set_single_roi()
 //  SetSpeedAndResolutionConfiguration  |  set_speed_and_resolution_configuration()
@@ -68,8 +70,8 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 
 
 #include <tango.h>
-#include "Rontec.h"
-#include "RontecClass.h"
+#include <Rontec.h>
+#include <RontecClass.h>
 #include <PogoHelper.h>
 //#include <XString.h>
 
@@ -140,9 +142,14 @@ void Rontec::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_detectorTemperature_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_energyRange_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_timingType_read);
-	for(long i=0; i<NB_MAX_ROI; i++) {
-		DELETE_SCALAR_ATTRIBUTE(attr_roi_read[i]);
-	}
+	DELETE_SCALAR_ATTRIBUTE(attr_roi1_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_roi2_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_roi3_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_roi4_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_roi5_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_roi6_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_roi7_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_roi8_read);
 
 	DELETE_SPECTRUM_ATTRIBUTE(attr_roisStartsEnds_read);
 	DELETE_SPECTRUM_ATTRIBUTE(attr_roisStarts_read);
@@ -172,7 +179,7 @@ void Rontec::init_device()
 	//--------------------------------------------
 	get_device_property();
 
-	create_dynamic_attributes();
+	//create_dynamic_attributes();
 
 	string dataSource = "Rontec";
 	CREATE_DEVSTRING_ATTRIBUTE(attr_dataSource_read,dataSource.size()+1,dataSource.c_str());
@@ -187,9 +194,14 @@ void Rontec::init_device()
 	CREATE_SCALAR_ATTRIBUTE(attr_detectorTemperature_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_energyRange_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_timingType_read);
-	for(long i=0; i<NB_MAX_ROI; i++) {
-		CREATE_SCALAR_ATTRIBUTE(attr_roi_read[i]);
-	}
+	CREATE_SCALAR_ATTRIBUTE(attr_roi1_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_roi2_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_roi3_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_roi4_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_roi5_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_roi6_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_roi7_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_roi8_read);
 
 	CREATE_SPECTRUM_ATTRIBUTE(attr_roisStartsEnds_read,2*NB_MAX_ROI);
 	CREATE_SPECTRUM_ATTRIBUTE(attr_roisStarts_read,NB_MAX_ROI);
@@ -203,7 +215,7 @@ void Rontec::init_device()
 
 	// rontec implementation class
 	_mca = new RontecImpl(this);
-	_mca->init(serialLineUrl,baud,1000);
+	_mca->init(serialLineUrl,/*baud,timeout,*/spectrumPacketSize);
 
 	set_state(Tango::UNKNOWN);
 }
@@ -220,22 +232,22 @@ void Rontec::get_device_property()
 	//	Initialize your default values here.
 	//------------------------------------------
 
-	baud =38400;
 	serialLineUrl = "rontec/test/serial";
-	connectedROIMask = "1 2";
+	connectedROIMask = "";
 	numberOfChannels = 4096;
 	maxFluoEnergy = 80.0;
+	spectrumPacketSize = 256;
 
 	//	Read device properties from database.(Automatic code generation)
 	//-------------------------------------------------------------
 	if (Tango::Util::instance()->_UseDb==false)
 		return;
 	Tango::DbData	dev_prop;
-	dev_prop.push_back(Tango::DbDatum("Baud"));
-	dev_prop.push_back(Tango::DbDatum("SerialLineUrl"));
 	dev_prop.push_back(Tango::DbDatum("ConnectedROIMask"));
-	dev_prop.push_back(Tango::DbDatum("NumberOfChannels"));
 	dev_prop.push_back(Tango::DbDatum("MaxFluoEnergy"));
+	dev_prop.push_back(Tango::DbDatum("NumberOfChannels"));
+	dev_prop.push_back(Tango::DbDatum("SerialLineUrl"));
+	dev_prop.push_back(Tango::DbDatum("SpectrumPacketSize"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -244,24 +256,6 @@ void Rontec::get_device_property()
 	RontecClass	*ds_class =
 		(static_cast<RontecClass *>(get_device_class()));
 	int	i = -1;
-
-	//	Try to initialize Baud from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  baud;
-	//	Try to initialize Baud from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  baud;
-	//	And try to extract Baud value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  baud;
-
-	//	Try to initialize SerialLineUrl from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  serialLineUrl;
-	//	Try to initialize SerialLineUrl from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  serialLineUrl;
-	//	And try to extract SerialLineUrl value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  serialLineUrl;
 
 	//	Try to initialize ConnectedROIMask from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -272,15 +266,6 @@ void Rontec::get_device_property()
 	//	And try to extract ConnectedROIMask value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  connectedROIMask;
 
-	//	Try to initialize NumberOfChannels from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  numberOfChannels;
-	//	Try to initialize NumberOfChannels from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  numberOfChannels;
-	//	And try to extract NumberOfChannels value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  numberOfChannels;
-
 	//	Try to initialize MaxFluoEnergy from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  maxFluoEnergy;
@@ -290,11 +275,39 @@ void Rontec::get_device_property()
 	//	And try to extract MaxFluoEnergy value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  maxFluoEnergy;
 
+	//	Try to initialize NumberOfChannels from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  numberOfChannels;
+	//	Try to initialize NumberOfChannels from default device value
+	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+	if (def_prop.is_empty()==false)	def_prop  >>  numberOfChannels;
+	//	And try to extract NumberOfChannels value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  numberOfChannels;
+
+	//	Try to initialize SerialLineUrl from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  serialLineUrl;
+	//	Try to initialize SerialLineUrl from default device value
+	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+	if (def_prop.is_empty()==false)	def_prop  >>  serialLineUrl;
+	//	And try to extract SerialLineUrl value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  serialLineUrl;
+
+	//	Try to initialize SpectrumPacketSize from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  spectrumPacketSize;
+	//	Try to initialize SpectrumPacketSize from default device value
+	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+	if (def_prop.is_empty()==false)	def_prop  >>  spectrumPacketSize;
+	//	And try to extract SpectrumPacketSize value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  spectrumPacketSize;
+
 
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 	// create properties ( init to default values ) if necessary
+	/*
 	Tango::DbData data_put;
 	if (dev_prop[0].is_empty()==true)
 	{
@@ -327,9 +340,7 @@ void Rontec::get_device_property()
 		data_put.push_back(property);
 	}
 	get_db_device()->put_property(data_put);
-
-
-
+	*/
 }
 //+----------------------------------------------------------------------------
 //
@@ -419,8 +430,11 @@ void Rontec::read_dataSpectrum(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Rontec::read_dataSpectrum(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
-	unsigned long* data;
-	long length = _mca->get_spectrum(data);
+	//unsigned long* data;
+	long length = _mca->get_read_spectrum_length();
+	long first = _mca->get_read_spectrum_first_channel();
+	unsigned long* data = new unsigned long[length];
+	_mca->get_spectrum(data,first,length);
 	for(int i = 0; i < length; i++) {
 		attr_dataSpectrum_read[i] = ( Tango::DevDouble)(data[i]);
 	}
@@ -560,7 +574,7 @@ void Rontec::read_deadTime(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rontec::read_deadTime(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 
-	float dead = _mca->get_dead_time();
+	double dead = _mca->get_dead_time();
 	*attr_deadTime_read = dead;
 	attr.set_value(attr_deadTime_read);
 }
@@ -577,7 +591,7 @@ void Rontec::read_countRate(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rontec::read_countRate(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 	
-	long count = _mca->get_input_count_rate();
+	double count = _mca->get_input_count_rate();
 	*attr_countRate_read = count;
 	attr.set_value(attr_countRate_read);
 }
@@ -594,7 +608,7 @@ void Rontec::read_realTime(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rontec::read_realTime(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 	
-	long real = _mca->get_elapsed_acquisition_real_time();
+	double real = _mca->get_elapsed_acquisition_real_time();
 	*attr_realTime_read = real;
 	attr.set_value(attr_realTime_read);
 }
@@ -611,7 +625,7 @@ void Rontec::read_liveTime(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rontec::read_liveTime(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 	
-	long live = _mca->get_elapsed_acquisition_live_time();
+	double live = _mca->get_elapsed_acquisition_live_time();
 	*attr_liveTime_read = live;
 	attr.set_value(attr_liveTime_read);
 }
@@ -708,7 +722,7 @@ void Rontec::read_cycleTime(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rontec::read_cycleTime(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 	
-	long cycle = _mca->get_cycle_time();
+	double cycle = _mca->get_cycle_time();
 	*attr_cycleTime_read = cycle;
 	attr.set_value(attr_cycleTime_read);
 }
@@ -799,7 +813,7 @@ void Rontec::read_detectorTemperature(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rontec::read_detectorTemperature(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 	
-	float temp = _mca->get_detector_temperature();
+	double temp = _mca->get_detector_temperature();
 	*attr_detectorTemperature_read = temp;
 	attr.set_value(attr_detectorTemperature_read);
 }
@@ -856,6 +870,197 @@ void Rontec::read_offsetGain(Tango::Attribute &attr)
 	attr_offsetGain_read[1] = g;
 	attr.set_value(attr_offsetGain_read,2);
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_roi1
+// 
+// description : 	Extract real attribute values for roi1 acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_roi1(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_roi1(Tango::Attribute &attr) entering... "<< endl;
+	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+	if(!is_ROI_configured(1) )
+	{
+		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+		Tango::Except::throw_exception (
+			(const char *)"DATA_OUT_OF_RANGE",
+			(const char *)" ttl output number not configured in property ",
+			(const char *)"Rontec::get_roi_count");
+
+	}
+	*(attr_roi1_read) = _mca->roi_get_count(1);
+	attr.set_value(attr_roi1_read);
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_roi2
+// 
+// description : 	Extract real attribute values for roi2 acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_roi2(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_roi2(Tango::Attribute &attr) entering... "<< endl;
+	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+	if(!is_ROI_configured(2) )
+	{
+		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+		Tango::Except::throw_exception (
+			(const char *)"DATA_OUT_OF_RANGE",
+			(const char *)" ttl output number not configured in property ",
+			(const char *)"Rontec::get_roi_count");
+
+	}
+	*(attr_roi2_read) = _mca->roi_get_count(2);
+	attr.set_value(attr_roi2_read);
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_roi3
+// 
+// description : 	Extract real attribute values for roi3 acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_roi3(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_roi3(Tango::Attribute &attr) entering... "<< endl;
+	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+	if(!is_ROI_configured(3) )
+	{
+		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+		Tango::Except::throw_exception (
+			(const char *)"DATA_OUT_OF_RANGE",
+			(const char *)" ttl output number not configured in property ",
+			(const char *)"Rontec::get_roi_count");
+
+	}
+	*(attr_roi3_read) = _mca->roi_get_count(3);
+	attr.set_value(attr_roi3_read);
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_roi4
+// 
+// description : 	Extract real attribute values for roi4 acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_roi4(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_roi4(Tango::Attribute &attr) entering... "<< endl;
+	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+	if(!is_ROI_configured(4) )
+	{
+		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+		Tango::Except::throw_exception (
+			(const char *)"DATA_OUT_OF_RANGE",
+			(const char *)" ttl output number not configured in property ",
+			(const char *)"Rontec::get_roi_count");
+
+	}
+	*(attr_roi4_read) = _mca->roi_get_count(4);
+	attr.set_value(attr_roi4_read);
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_roi5
+// 
+// description : 	Extract real attribute values for roi5 acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_roi5(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_roi5(Tango::Attribute &attr) entering... "<< endl;
+	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+	if(!is_ROI_configured(5) )
+	{
+		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+		Tango::Except::throw_exception (
+			(const char *)"DATA_OUT_OF_RANGE",
+			(const char *)" ttl output number not configured in property ",
+			(const char *)"Rontec::get_roi_count");
+
+	}
+	*(attr_roi5_read) = _mca->roi_get_count(5);
+	attr.set_value(attr_roi5_read);
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_roi6
+// 
+// description : 	Extract real attribute values for roi6 acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_roi6(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_roi6(Tango::Attribute &attr) entering... "<< endl;
+	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+	if(!is_ROI_configured(6) )
+	{
+		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+		Tango::Except::throw_exception (
+			(const char *)"DATA_OUT_OF_RANGE",
+			(const char *)" ttl output number not configured in property ",
+			(const char *)"Rontec::get_roi_count");
+
+	}
+	*(attr_roi6_read) = _mca->roi_get_count(6);
+	attr.set_value(attr_roi6_read);
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_roi7
+// 
+// description : 	Extract real attribute values for roi7 acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_roi7(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_roi7(Tango::Attribute &attr) entering... "<< endl;
+	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+	if(!is_ROI_configured(7) )
+	{
+		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+		Tango::Except::throw_exception (
+			(const char *)"DATA_OUT_OF_RANGE",
+			(const char *)" ttl output number not configured in property ",
+			(const char *)"Rontec::get_roi_count");
+
+	}
+	*(attr_roi7_read) = _mca->roi_get_count(7);
+	attr.set_value(attr_roi7_read);
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_roi8
+// 
+// description : 	Extract real attribute values for roi8 acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_roi8(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_roi8(Tango::Attribute &attr) entering... "<< endl;
+	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+	if(!is_ROI_configured(8) )
+	{
+		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+		Tango::Except::throw_exception (
+			(const char *)"DATA_OUT_OF_RANGE",
+			(const char *)" ttl output number not configured in property ",
+			(const char *)"Rontec::get_roi_count");
+
+	}
+	*(attr_roi8_read) = _mca->roi_get_count(8);
+	attr.set_value(attr_roi8_read);
+}
 
 //+------------------------------------------------------------------
 /**
@@ -895,78 +1100,39 @@ void Rontec::start()
 //+------------------------------------------------------------------
 Tango::DevVarLongArray *Rontec::get_part_of_spectrum(const Tango::DevVarLongArray *argin)
 {
-	/*
-	DEBUG_STREAM << "Rontec::get_part_of_spectrum(): entering... !" << endl;
-	if(!_mca) return 0;
-	//	Add your own code to control device here
-	// control argin
 	long len = argin->length();
-	if(len < 2 )
-	{
+	long start = 0;
+	long size = 0;
+	if(len==2) {
+		start = (*argin)[0];
+		size = (*argin)[1];
+	}
+	if(start<0 || size<=0) {
 		ERROR_STREAM	<< "DATA_OUT_OF_RANGE Rontec::get_part_of_spectrum() must provide [0] : start channel, [1] : size " << endl;
 		Tango::Except::throw_exception (
 				(const char *)"DATA_OUT_OF_RANGE",
 				(const char *)" must provide [0] : start channel, [1] : size ",
 				(const char *)"Rontec::get_part_of_spectrum");
 	}
-	unsigned long * dat;
-
-	try
-	{
-		dat = 0;
-		dat = new unsigned long[((*argin)[1])];
-
-		if (dat == 0)
-		{
-			ERROR_STREAM	<< "Rontec::get_part_of_spectrum() long buff allocation failed " << endl;
-			Tango::Except::throw_exception (
-					(const char *)"OUT_OF_MEMORY",
-					(const char *)" long buff allocation failed ",
-					(const char *)"Rontec::get_part_of_spectrum()");
-		}
-		::memset( (void *)dat, 0,  (*argin)[1] * sizeof(long) );
-	}
-	catch(...)
-	{
-		FATAL_STREAM	<< "OUT_OF_MEMORY Rontec::get_part_of_spectrum() : failed to create long	" << endl;
-		Tango::Except::throw_exception (
-				(const char *)"OUT_OF_MEMORY",
-				(const char *)" failed to create long",
-				(const char *)"Rontec::get_part_of_spectrum()");
-	}
-
-		// use of automatic_mutex :
-		// la classe locke le mutex passé en argument ( pointeur ) a la creation 
-		// unlock du mutex a la destruction de la classe ( en fin de visibilité si statique 
-		// c'est la fin de visibilite qui nous interesse le mutex est unlocked de facon sure
-		// donc alloc statique
-		// dans un bloc de code marqué pour la visibilité
-		{
-			automatic_mutex m(&serial_access);
-			_mca->get_spectrum_data_2( (*argin)[0], (*argin)[1], dat );
-		}
-	try
-	{
 	Tango::DevVarLongArray	*argout  = new Tango::DevVarLongArray();
-		argout->length( ((*argin)[1]) );
-		for( int i = 0; i < ((*argin)[1]); i++)
-		{
-			(*argout)[i] = dat[i];
-		}
-		delete[] dat;
-		return argout;
-	}
-	catch(...)
-	{
-		FATAL_STREAM	<< "OUT_OF_MEMORY Rontec::get_part_of_spectrum() : error on DevVarLongArray  " << endl;
-		Tango::Except::throw_exception (
-				(const char *)"OUT_OF_MEMORY",
-				(const char *)" error on DevVarLongArray ",
-				(const char *)"Rontec::get_part_of_spectrum()");
 
+	unsigned long* data = new unsigned long[size];
+
+	if(_mca->is_reading_thread_running()) {
+		// get part of last read spectrum
+		_mca->get_spectrum(data,start,size);
 	}
-	*/
-	Tango::DevVarLongArray	*argout  = new Tango::DevVarLongArray();
+	else {
+		// read part of spectrum
+		_mca->read_spectrum(data,start,size);
+	}
+
+	argout->length(size);
+	for(long i=0; i<size; i++) {
+		(*argout)[i] = data[i];
+	}
+	delete [] data;
+
 	return argout;
 }
 
@@ -1011,7 +1177,7 @@ Tango::DevLong Rontec::get_speed_and_resolution_configuration()
 	DEBUG_STREAM << "Rontec::get_speed_and_resolution_configuration(): entering... !" << endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 	//	Add your own code to control device here
-	argout =	_mca->get_filter_setting();
+	argout = _mca->get_filter_setting();
 	return argout;
 }
 
@@ -1081,27 +1247,6 @@ bool Rontec::is_ROI_configured(long ttl_number)
 		found = (connected_num == ttl_number);
 	}
 	return found;
-}
-
-
-//+------------------------------------------------------------------
-/**
- *	method:	Rontec::set_read_size
- *
- *	description:	method to execute "SetReadSize"
- *	for the readin thread ,
- *	the number of channels to read in 1 shoot on the RONTEC MCA.
- *	low number increases the speed of reading.
- *
- * @param	argin	size to read in 1 shoot
- *
- */
-//+------------------------------------------------------------------
-void Rontec::set_read_size(Tango::DevLong argin)
-{
-	DEBUG_STREAM << "Rontec::set_read_size(): entering... !" << endl;
-	DEBUG_STREAM << "Not yet implemented" << endl;
-	//	Add your own code to control device here
 }
 
 //+------------------------------------------------------------------

@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecStateMachine.cpp,v 1.2 2006-07-24 14:48:18 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecStateMachine.cpp,v 1.3 2006-08-31 15:51:11 tithub Exp $";
 //+=============================================================================
 //
 // file :         RontecStateMachine.cpp
@@ -10,9 +10,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: tithub $
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.2  2006/07/24 14:48:18  tithub
+// Nouvelle interface Tango
+//
 // Revision 1.1.1.1  2005/09/30 12:13:34  syldup
 // initial import
 //
@@ -415,6 +418,119 @@ bool Rontec::is_readDataSpectrum_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_roi1_allowed
+// 
+// description : 	Read/Write allowed for roi1 attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_roi1_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_roi2_allowed
+// 
+// description : 	Read/Write allowed for roi2 attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_roi2_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_roi3_allowed
+// 
+// description : 	Read/Write allowed for roi3 attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_roi3_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_roi4_allowed
+// 
+// description : 	Read/Write allowed for roi4 attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_roi4_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_roi5_allowed
+// 
+// description : 	Read/Write allowed for roi5 attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_roi5_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_roi6_allowed
+// 
+// description : 	Read/Write allowed for roi6 attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_roi6_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_roi7_allowed
+// 
+// description : 	Read/Write allowed for roi7 attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_roi7_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_roi8_allowed
+// 
+// description : 	Read/Write allowed for roi8 attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_roi8_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+
 
 //=================================================
 //		Commands Allowed Methods
@@ -561,25 +677,6 @@ bool Rontec::is_Reset_allowed(const CORBA::Any &any)
 //
 //-----------------------------------------------------------------------------
 bool Rontec::is_SendRontecMessage_allowed(const CORBA::Any &any)
-{
-	if (get_state() == Tango::UNKNOWN	||
-		get_state() == Tango::INIT)
-	{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Rontec::is_SetReadSize_allowed
-// 
-// description : 	Execution allowed for SetReadSize command.
-//
-//-----------------------------------------------------------------------------
-bool Rontec::is_SetReadSize_allowed(const CORBA::Any &any)
 {
 	if (get_state() == Tango::UNKNOWN	||
 		get_state() == Tango::INIT)

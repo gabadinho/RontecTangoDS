@@ -41,7 +41,7 @@ Device Commands Description 		<Br> <Br>
 Rontec Class	<Br>
 </h1>
 <b>
-Revision:  - Author: syldup
+Revision:  - Author: tithub -  CVS repository: sourceforge(tango-ds)
 </b>
 </center>
 
@@ -63,7 +63,7 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : none.<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT<Li>Tango::UNKNOWN<Li>Tango::INIT</Ul>
+<Li>Tango::FAULT<Li>Tango::INIT<Li>Tango::RUNNING<Li>Tango::STANDBY<Li>Tango::UNKNOWN</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -77,7 +77,7 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>DEV_STATE</Strong>
  : State Code<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT<Li>Tango::UNKNOWN<Li>Tango::INIT</Ul>
+<Li>Tango::FAULT<Li>Tango::INIT<Li>Tango::RUNNING<Li>Tango::STANDBY<Li>Tango::UNKNOWN</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -91,7 +91,7 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>CONST_DEV_STRING</Strong>
  : Status descrition<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT<Li>Tango::UNKNOWN<Li>Tango::INIT</Ul>
+<Li>Tango::FAULT<Li>Tango::INIT<Li>Tango::RUNNING<Li>Tango::STANDBY<Li>Tango::UNKNOWN</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -105,7 +105,7 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -119,7 +119,7 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -133,7 +133,7 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -148,7 +148,7 @@ for argin[1] channel truncated if exceeds the end_channel configured<Br>&nbsp
 <Li><Strong>Argout:<Br>DEVVAR_LONGARRAY</Strong>
  : the data <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -162,7 +162,7 @@ for argin[1] channel truncated if exceeds the end_channel configured<Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_STRING</Strong>
  : PAUSE/RUNNING<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -177,7 +177,7 @@ for argin[1] channel truncated if exceeds the end_channel configured<Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_LONG</Strong>
  : processor number actually selected<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -191,7 +191,7 @@ for argin[1] channel truncated if exceeds the end_channel configured<Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_STRING</Strong>
  : string returend by the rontec<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -205,29 +205,13 @@ for argin[1] channel truncated if exceeds the end_channel configured<Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_STRING</Strong>
  : the rontec answer as string<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="SetReadSize"><!-- --></A>
-<A NAME="SetReadSize"><!-- --></A>
-<h2>12 - SetReadSize</h2>
-<ul>
-<Li><Strong>Description: </Strong> for the readin thread ,
-the number of channels to read in 1 shoot on the RONTEC MCA.
-low number increases the speed of reading.<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_LONG</Strong>
- : size to read in 1 shoot<Br>&nbsp
-<Li><Strong>Argout:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
 <A NAME="SetROIs"><!-- --></A>
 <A NAME="SetROIs"><!-- --></A>
-<h2>13 - SetROIs</h2>
+<h2>12 - SetROIs</h2>
 <ul>
 <Li><Strong>Description: </Strong> Set the ROIs. the parameter is an array with values going by pair: tab[0]=126, tab[1]=238 -> first ROI starts from 126, ends to 238 tab[2]=1569,tab[3]=2368 -> second ROI starts from 1569, ends to 2368.<Br>&nbsp
 <Li><Strong>Argin:<Br>DEVVAR_LONGARRAY</Strong>
@@ -235,13 +219,13 @@ low number increases the speed of reading.<Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
 <A NAME="SetSingleROI"><!-- --></A>
 <A NAME="SetSingleROI"><!-- --></A>
-<h2>14 - SetSingleROI</h2>
+<h2>13 - SetSingleROI</h2>
 <ul>
 <Li><Strong>Description: </Strong> configures the TTL output number for pulse output photons processed with
 low_channel < energy < high_channel
@@ -254,13 +238,13 @@ Exception if ROI number not in the ConnectedROIMask property<Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
 <A NAME="SetSpeedAndResolutionConfiguration"><!-- --></A>
 <A NAME="SetSpeedAndResolutionConfiguration"><!-- --></A>
-<h2>15 - SetSpeedAndResolutionConfiguration</h2>
+<h2>14 - SetSpeedAndResolutionConfiguration</h2>
 <ul>
 <Li><Strong>Description: </Strong> selects the processor
 0 : max cps ...... 3 : min cps
@@ -271,13 +255,13 @@ exception if error<Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::RUNNING<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
 <A NAME="Start"><!-- --></A>
 <A NAME="Start"><!-- --></A>
-<h2>16 - Start</h2>
+<h2>15 - Start</h2>
 <ul>
 <Li><Strong>Description: </Strong> starts a acquisition previously configured with attributes startingChannel, endingChannel, integrationTime
 for time given in integrationTime
@@ -288,7 +272,7 @@ for continuous acquisition : integrationTime=0<Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::FAULT</Ul>
+<Li>Tango::FAULT<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>

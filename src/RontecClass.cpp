@@ -1,5 +1,5 @@
 
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.2 2006-07-24 14:48:18 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.3 2006-08-31 15:51:10 tithub Exp $";
 
 static const char *TagName   = "$Name: not supported by cvs2svn $";
 
@@ -22,9 +22,12 @@ static const char *RCSfile = "$RCSfile: RontecClass.cpp,v $";
 //
 // $Author: tithub $
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.2  2006/07/24 14:48:18  tithub
+// Nouvelle interface Tango
+//
 // Revision 1.1.1.1  2005/09/30 12:13:34  syldup
 // initial import
 //
@@ -48,8 +51,8 @@ static const char *RCSfile = "$RCSfile: RontecClass.cpp,v $";
 
 #include <tango.h>
 
-#include "Rontec.h"
-#include "RontecClass.h"
+#include <Rontec.h>
+#include <RontecClass.h>
 
 
 namespace Rontec_ns
@@ -104,30 +107,6 @@ CORBA::Any *SetROIsCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_a
 	return new CORBA::Any();
 }
 
-//+----------------------------------------------------------------------------
-//
-// method : 		SetReadSizeCmd::execute()
-// 
-// description : 	method to trigger the execution of the command.
-//                PLEASE DO NOT MODIFY this method core without pogo   
-//
-// in : - device : The device on which the command must be excuted
-//		- in_any : The command input data
-//
-// returns : The command output data (packed in the Any object)
-//
-//-----------------------------------------------------------------------------
-CORBA::Any *SetReadSizeCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
-{
-
-	cout2 << "SetReadSizeCmd::execute(): arrived" << endl;
-
-	Tango::DevLong	argin;
-	extract(in_any, argin);
-
-	((static_cast<Rontec *>(device))->set_read_size(argin));
-	return new CORBA::Any();
-}
 
 //+----------------------------------------------------------------------------
 //
@@ -493,11 +472,6 @@ void RontecClass::command_factory()
 		"the command and arguments to be sent",
 		"the rontec answer as string",
 		Tango::OPERATOR));
-	command_list.push_back(new SetReadSizeCmd("SetReadSize",
-		Tango::DEV_LONG, Tango::DEV_VOID,
-		"size to read in 1 shoot",
-		"",
-		Tango::OPERATOR));
 	command_list.push_back(new SetROIsCmd("SetROIs",
 		Tango::DEVVAR_LONGARRAY, Tango::DEV_VOID,
 		"starts and ends of the ROI. eg: tab[0]=126, tab[1]=238, tab[2]=1569,tab[3]=2368",
@@ -613,42 +587,16 @@ void RontecClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 //-----------------------------------------------------------------------------
 void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
-	//	Attribute : dataSpectrum
-	dataSpectrumAttrib	*data_spectrum = new dataSpectrumAttrib();
-	Tango::UserDefaultAttrProp	data_spectrum_prop;
-	data_spectrum_prop.set_label("fluo spectrum");
-	data_spectrum_prop.set_description("fluo spectrum returned by the RONTEC MCA\nmax channels number set in NumberOfChannels property\nstarting channel fixed by SetStartingChannel,\nending channel set by SetEndingChannel");
-	data_spectrum->set_default_properties(data_spectrum_prop);
-	att_list.push_back(data_spectrum);
+	//	Attribute : countRate
+	countRateAttrib	*count_rate = new countRateAttrib();
+	Tango::UserDefaultAttrProp	count_rate_prop;
+	count_rate_prop.set_description("This is the input count rate. \nRem : output count rate = countRate * (1-deadTime / 100)");
+	count_rate->set_default_properties(count_rate_prop);
+	att_list.push_back(count_rate);
 
-	//	Attribute : nbChannels
-	nbChannelsAttrib	*nb_channels = new nbChannelsAttrib();
-	Tango::UserDefaultAttrProp	nb_channels_prop;
-	nb_channels_prop.set_label("Nb Channels");
-	nb_channels_prop.set_max_value("16384");
-	nb_channels_prop.set_min_value("0");
-	nb_channels_prop.set_description("Number of Channels to get from the DataSource");
-	nb_channels->set_default_properties(nb_channels_prop);
-	att_list.push_back(nb_channels);
-
-	//	Attribute : integrationTime
-	integrationTimeAttrib	*integration_time = new integrationTimeAttrib();
-	Tango::UserDefaultAttrProp	integration_time_prop;
-	integration_time_prop.set_label("Integration Time");
-	integration_time_prop.set_display_unit("s.");
-	integration_time_prop.set_description("Time of integration (ie counting time)");
-	integration_time->set_default_properties(integration_time_prop);
-	att_list.push_back(integration_time);
-
-	//	Attribute : timingType
-	timingTypeAttrib	*timing_type = new timingTypeAttrib();
-	Tango::UserDefaultAttrProp	timing_type_prop;
-	timing_type_prop.set_label("Timing Type");
-	timing_type_prop.set_format("%1d");
-	timing_type_prop.set_description("Type of timing:<BR>\n0 -> Live (like an OS time)<BR>\n1 -> Real (the real time according to deadTime).");
-	timing_type->set_default_properties(timing_type_prop);
-	timing_type->set_disp_level(Tango::EXPERT);
-	att_list.push_back(timing_type);
+	//	Attribute : cycleTime
+	cycleTimeAttrib	*cycle_time = new cycleTimeAttrib();
+	att_list.push_back(cycle_time);
 
 	//	Attribute : dataSource
 	dataSourceAttrib	*data_source = new dataSourceAttrib();
@@ -658,6 +606,14 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	data_source_prop.set_description("Display the current data source or NONE if not open");
 	data_source->set_default_properties(data_source_prop);
 	att_list.push_back(data_source);
+
+	//	Attribute : dataSpectrum
+	dataSpectrumAttrib	*data_spectrum = new dataSpectrumAttrib();
+	Tango::UserDefaultAttrProp	data_spectrum_prop;
+	data_spectrum_prop.set_label("fluo spectrum");
+	data_spectrum_prop.set_description("fluo spectrum returned by the RONTEC MCA\nmax channels number set in NumberOfChannels property\nstarting channel fixed by SetStartingChannel,\nending channel set by SetEndingChannel");
+	data_spectrum->set_default_properties(data_spectrum_prop);
+	att_list.push_back(data_spectrum);
 
 	//	Attribute : deadTime
 	deadTimeAttrib	*dead_time = new deadTimeAttrib();
@@ -669,22 +625,28 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	dead_time->set_default_properties(dead_time_prop);
 	att_list.push_back(dead_time);
 
-	//	Attribute : countRate
-	countRateAttrib	*count_rate = new countRateAttrib();
-	Tango::UserDefaultAttrProp	count_rate_prop;
-	count_rate_prop.set_description("This is the input count rate. \nRem : output count rate = countRate * (1-deadTime / 100)");
-	count_rate->set_default_properties(count_rate_prop);
-	att_list.push_back(count_rate);
+	//	Attribute : detectorTemperature
+	detectorTemperatureAttrib	*detector_temperature = new detectorTemperatureAttrib();
+	att_list.push_back(detector_temperature);
 
-	//	Attribute : realTime
-	realTimeAttrib	*real_time = new realTimeAttrib();
-	Tango::UserDefaultAttrProp	real_time_prop;
-	real_time_prop.set_label("Real Time");
-	real_time_prop.set_display_unit("s");
-	real_time_prop.set_format("%4.1f");
-	real_time_prop.set_description("Real Time : time taking into account the dead time");
-	real_time->set_default_properties(real_time_prop);
-	att_list.push_back(real_time);
+	//	Attribute : endingChannel
+	endingChannelAttrib	*ending_channel = new endingChannelAttrib();
+	ending_channel->set_memorized();
+	ending_channel->set_memorized_init(true);
+	att_list.push_back(ending_channel);
+
+	//	Attribute : energyRange
+	energyRangeAttrib	*energy_range = new energyRangeAttrib();
+	att_list.push_back(energy_range);
+
+	//	Attribute : integrationTime
+	integrationTimeAttrib	*integration_time = new integrationTimeAttrib();
+	Tango::UserDefaultAttrProp	integration_time_prop;
+	integration_time_prop.set_label("Integration Time");
+	integration_time_prop.set_display_unit("s.");
+	integration_time_prop.set_description("Time of integration (ie counting time)");
+	integration_time->set_default_properties(integration_time_prop);
+	att_list.push_back(integration_time);
 
 	//	Attribute : liveTime
 	liveTimeAttrib	*live_time = new liveTimeAttrib();
@@ -696,19 +658,65 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	live_time->set_default_properties(live_time_prop);
 	att_list.push_back(live_time);
 
-	//	Attribute : roisStartsEnds
-	roisStartsEndsAttrib	*rois_starts_ends = new roisStartsEndsAttrib();
-	Tango::UserDefaultAttrProp	rois_starts_ends_prop;
-	rois_starts_ends_prop.set_label("ROIs");
-	rois_starts_ends_prop.set_format("%6d");
-	rois_starts_ends_prop.set_description("All the ROIs starts ends: they are in pair\n: start-end.");
-	rois_starts_ends->set_default_properties(rois_starts_ends_prop);
-	rois_starts_ends->set_disp_level(Tango::EXPERT);
-	att_list.push_back(rois_starts_ends);
+	//	Attribute : nbChannels
+	nbChannelsAttrib	*nb_channels = new nbChannelsAttrib();
+	Tango::UserDefaultAttrProp	nb_channels_prop;
+	nb_channels_prop.set_label("Nb Channels");
+	nb_channels_prop.set_max_value("16384");
+	nb_channels_prop.set_min_value("0");
+	nb_channels_prop.set_description("Number of Channels to get from the DataSource");
+	nb_channels->set_default_properties(nb_channels_prop);
+	att_list.push_back(nb_channels);
 
-	//	Attribute : roisStarts
-	roisStartsAttrib	*rois_starts = new roisStartsAttrib();
-	att_list.push_back(rois_starts);
+	//	Attribute : offsetGain
+	offsetGainAttrib	*offset_gain = new offsetGainAttrib();
+	att_list.push_back(offset_gain);
+
+	//	Attribute : readDataSpectrum
+	readDataSpectrumAttrib	*read_data_spectrum = new readDataSpectrumAttrib();
+	att_list.push_back(read_data_spectrum);
+
+	//	Attribute : realTime
+	realTimeAttrib	*real_time = new realTimeAttrib();
+	Tango::UserDefaultAttrProp	real_time_prop;
+	real_time_prop.set_label("Real Time");
+	real_time_prop.set_display_unit("s");
+	real_time_prop.set_format("%4.1f");
+	real_time_prop.set_description("Real Time : time taking into account the dead time");
+	real_time->set_default_properties(real_time_prop);
+	att_list.push_back(real_time);
+
+	//	Attribute : roi1
+	roi1Attrib	*roi1 = new roi1Attrib();
+	att_list.push_back(roi1);
+
+	//	Attribute : roi2
+	roi2Attrib	*roi2 = new roi2Attrib();
+	att_list.push_back(roi2);
+
+	//	Attribute : roi3
+	roi3Attrib	*roi3 = new roi3Attrib();
+	att_list.push_back(roi3);
+
+	//	Attribute : roi4
+	roi4Attrib	*roi4 = new roi4Attrib();
+	att_list.push_back(roi4);
+
+	//	Attribute : roi5
+	roi5Attrib	*roi5 = new roi5Attrib();
+	att_list.push_back(roi5);
+
+	//	Attribute : roi6
+	roi6Attrib	*roi6 = new roi6Attrib();
+	att_list.push_back(roi6);
+
+	//	Attribute : roi7
+	roi7Attrib	*roi7 = new roi7Attrib();
+	att_list.push_back(roi7);
+
+	//	Attribute : roi8
+	roi8Attrib	*roi8 = new roi8Attrib();
+	att_list.push_back(roi8);
 
 	//	Attribute : roisEnds
 	roisEndsAttrib	*rois_ends = new roisEndsAttrib();
@@ -719,33 +727,35 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	rois_ends->set_default_properties(rois_ends_prop);
 	att_list.push_back(rois_ends);
 
-	//	Attribute : cycleTime
-	cycleTimeAttrib	*cycle_time = new cycleTimeAttrib();
-	att_list.push_back(cycle_time);
+	//	Attribute : roisStarts
+	roisStartsAttrib	*rois_starts = new roisStartsAttrib();
+	att_list.push_back(rois_starts);
+
+	//	Attribute : roisStartsEnds
+	roisStartsEndsAttrib	*rois_starts_ends = new roisStartsEndsAttrib();
+	Tango::UserDefaultAttrProp	rois_starts_ends_prop;
+	rois_starts_ends_prop.set_label("ROIs");
+	rois_starts_ends_prop.set_format("%6d");
+	rois_starts_ends_prop.set_description("All the ROIs starts ends: they are in pair\n: start-end.");
+	rois_starts_ends->set_default_properties(rois_starts_ends_prop);
+	rois_starts_ends->set_disp_level(Tango::EXPERT);
+	att_list.push_back(rois_starts_ends);
 
 	//	Attribute : startingChannel
 	startingChannelAttrib	*starting_channel = new startingChannelAttrib();
+	starting_channel->set_memorized();
+	starting_channel->set_memorized_init(true);
 	att_list.push_back(starting_channel);
 
-	//	Attribute : endingChannel
-	endingChannelAttrib	*ending_channel = new endingChannelAttrib();
-	att_list.push_back(ending_channel);
-
-	//	Attribute : detectorTemperature
-	detectorTemperatureAttrib	*detector_temperature = new detectorTemperatureAttrib();
-	att_list.push_back(detector_temperature);
-
-	//	Attribute : energyRange
-	energyRangeAttrib	*energy_range = new energyRangeAttrib();
-	att_list.push_back(energy_range);
-
-	//	Attribute : offsetGain
-	offsetGainAttrib	*offset_gain = new offsetGainAttrib();
-	att_list.push_back(offset_gain);
-
-	//	Attribute : readDataSpectrum
-	readDataSpectrumAttrib	*read_data_spectrum = new readDataSpectrumAttrib();
-	att_list.push_back(read_data_spectrum);
+	//	Attribute : timingType
+	timingTypeAttrib	*timing_type = new timingTypeAttrib();
+	Tango::UserDefaultAttrProp	timing_type_prop;
+	timing_type_prop.set_label("Timing Type");
+	timing_type_prop.set_format("%1d");
+	timing_type_prop.set_description("Type of timing:<BR>\n0 -> Live (like an OS time)<BR>\n1 -> Real (the real time according to deadTime).");
+	timing_type->set_default_properties(timing_type_prop);
+	timing_type->set_disp_level(Tango::EXPERT);
+	att_list.push_back(timing_type);
 
 }
 
@@ -797,48 +807,11 @@ void RontecClass::set_default_property()
 	vector<string>	vect_data;
 	//	Set Default Class Properties
 	//	Set Default Device Properties
-	prop_name = "Baud";
-	prop_desc = "baud rate set on the RONTEC\nDefault is 38400 ( firmware default )\nto set another baud rate :\nset on the RONTEC a new baudrate, write it on the flash,\nthen update the property with the new value\nrestart SerialLine the Rontec DServers\npossible values : 600, 1200, 1800, 2400, 3600, 4800, 7200, 9600, 14400,\n19200, 28800, 38400, 57600, 76800, 115200, 230400.";
-	prop_def  = "";
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "SerialLineUrl";
-	prop_desc = "Tango name of the serial line device\nthe other serial line properties are fixed for the RONTEC RCL :\nN( no parity),8( data bits),1(stop bit), hardware handshake ( RTS/CTS";
-	prop_def  = "";
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
 	prop_name = "ConnectedROIMask";
 	prop_desc = "list of the TTL outputs connected to a counter\njust for control and throw exception if try to configure a ROI that is not in the list\n8 TTL outputs are available with the current RONTEC MCA hardware\nexample : 1 4 represents : ouptut1, output 4 connected\ndefault : 1";
-	prop_def  = "";
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "NumberOfChannels";
-	prop_desc = "number of channels of the MCA.\nThe current RONTEC MCA hardware has 4096 channels.\nthis is for extentions purpose only,\nlet the default value of 4096";
-	prop_def  = "";
+	prop_def  = "1 2 3 4";
+	vect_data.clear();
+	vect_data.push_back("toto");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -851,7 +824,54 @@ void RontecClass::set_default_property()
 
 	prop_name = "MaxFluoEnergy";
 	prop_desc = "maximum fluo energy of the last MCA channel.\nwith the current RONTEC MCA Hardware can be 10, 20, 40, or 80 KeV\ndefault : 80.0";
-	prop_def  = "";
+	prop_def  = "80";
+	vect_data.clear();
+	vect_data.push_back("80");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "NumberOfChannels";
+	prop_desc = "number of channels of the MCA.\nThe current RONTEC MCA hardware has 4096 channels.\nthis is for extentions purpose only,\nlet the default value of 4096";
+	prop_def  = "4096";
+	vect_data.clear();
+	vect_data.push_back("4096");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "SerialLineUrl";
+	prop_desc = "Tango name of the serial line device\nthe other serial line properties are fixed for the RONTEC RCL :\nN( no parity),8( data bits),1(stop bit), hardware handshake ( RTS/CTS";
+	prop_def  = "test/rontec/serial";
+	vect_data.clear();
+	vect_data.push_back("test/rontec/dev1");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "SpectrumPacketSize";
+	prop_desc = "Spectrum read packet size used in reading thread";
+	prop_def  = "256";
+	vect_data.clear();
+	vect_data.push_back("256");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

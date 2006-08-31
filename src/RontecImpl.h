@@ -10,7 +10,7 @@ public:
 	RontecImpl(Tango::DeviceImpl* dev);
 	~RontecImpl();
 
-	void init(string proxy_name = "",unsigned long baud = 38400,short timeout = 1000) throw (Tango::DevFailed);
+	void init(string proxy_name = "",/*unsigned long baud = 38400,short timeout = 1000,*/long read_size = 256) throw (Tango::DevFailed);
 
 // resets the RONTEC controller,	command $##
 // Tango::DevFailed exception if RONTEC returns an error
@@ -22,39 +22,39 @@ public:
 
 // gets the input ( seen by the amplifier ) count rate from the hard	command $BC
 // Tango::DevFailed exception if RONTEC returns an error
-	long get_input_count_rate(void) throw (Tango::DevFailed);
+	double get_input_count_rate(void) throw (Tango::DevFailed);
 
 // gets the output ( processed ) count rate from the hard  command $NC
 // Tango::DevFailed exception if RONTEC returns an error
-	long get_output_count_rate(void) throw (Tango::DevFailed);
+	double get_output_count_rate(void) throw (Tango::DevFailed);
 
 // returns the dead time ( the % of events not processed )
 // dead time = (input count rate - output count rate ) / input count rate
-	float get_dead_time(void) throw (Tango::DevFailed);
+	double get_dead_time(void) throw (Tango::DevFailed);
 
 // gets the cycle time for input and output count rate from the hard command $TC
 // Tango::DevFailed exception if RONTEC returns an error
-	long get_cycle_time(void) throw (Tango::DevFailed);
+	double get_cycle_time(void) throw (Tango::DevFailed);
 
 // sets the cycle time for input and output count rate from the hard command $CT
 // Tango::DevFailed exception if RONTEC returns an error
-	void set_cycle_time(long time) throw (Tango::DevFailed);
+	void set_cycle_time(double time) throw (Tango::DevFailed);
 
 // returns the remaining acquisition time  in real time mode
 // Tango::DevFailed exception if RONTEC returns an error command $MR
-	long get_remaining_acquisition_real_time(void) throw (Tango::DevFailed);
+	double get_remaining_acquisition_real_time(void) throw (Tango::DevFailed);
 
 // returns the elapsed acquisition time  in real time mode
 // Tango::DevFailed exception if RONTEC returns an error command $MR
-	long get_elapsed_acquisition_real_time(void) throw (Tango::DevFailed);
+	double get_elapsed_acquisition_real_time(void) throw (Tango::DevFailed);
 
 // returns the elapsed acquisition time  in live time mode
 // Tango::DevFailed exception if RONTEC returns an error command $MR
-	long get_elapsed_acquisition_live_time(void) throw (Tango::DevFailed);
+	double get_elapsed_acquisition_live_time(void) throw (Tango::DevFailed);
 
 // returns the temperature of the sensor in celsius degrees command $DT
 // Tango::DevFailed exception if RONTEC returns an error
-	float get_detector_temperature(void) throw (Tango::DevFailed);
+	double get_detector_temperature(void) throw (Tango::DevFailed);
 
 // set the filter setting ( processor )  command $SF
 // value can be from 0 to 3 : from max cps to min cps
@@ -114,7 +114,7 @@ public:
 // live : the acquisition is in live time (true) or in real time (false)
 // start_reading_thread : start the reading (true) or not (false)
 // Tango::DevFailed exception if RONTEC returns an error
-	void start_acquisition(float time,bool live = false,bool start_reading_thread = true) throw (Tango::DevFailed);
+	void start_acquisition(double time,bool live = false,bool start_reading_thread = true) throw (Tango::DevFailed);
 
 // read partial spectrum beginning at begin for length channel and write them in buffertac
 // Taco DS like code
@@ -132,7 +132,10 @@ public:
 
 // get_partial spectrum 
 // returns : pointer on data read back
-	long get_spectrum(unsigned long* &dest) throw (Tango::DevFailed);
+	long get_spectrum(unsigned long* dest,long begin, long length) throw (Tango::DevFailed);
+
+	long get_read_spectrum_first_channel();
+	long get_read_spectrum_length();
 
 // sends the command to the serial line device
 // Tango::DevFailed exception if RONTEC returns an error
@@ -176,7 +179,7 @@ public:
 //	roi_get_count(long ttl_num)
 // returns the count of pulses on the selected ttl output
 
-	long roi_get_count(long ttl_num) throw (Tango::DevFailed);
+	double roi_get_count(long ttl_num) throw (Tango::DevFailed);
 
 //  return true if the reading thread is running
 	bool is_reading_thread_running();
@@ -188,8 +191,8 @@ protected:
 	omni_mutex _proxy_mutex;
 
 	std::string _proxy_name;
-	unsigned long _baud;
-	short _timeout;
+//	unsigned long _baud;
+//	short _timeout;
 
 	long _min_index;
 	long _max_index;
@@ -202,12 +205,14 @@ protected:
 };
 
 class RontecThread : public omni_thread, public Tango::LogAdapter {
+	friend class RontecImpl;
 public:
 	RontecThread(RontecImpl* impl);
 	void go();
 	void abort();
 	bool is_running() { return _running; }
-	long get_spectrum(unsigned long* &dest);
+	//long get_spectrum(unsigned long* &dest);
+	long get_spectrum(unsigned long* dest,long begin, long length);
 protected:
 	RontecImpl* _impl;
 	bool _go_on;
