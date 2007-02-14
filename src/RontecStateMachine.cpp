@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecStateMachine.cpp,v 1.3 2006-08-31 15:51:11 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecStateMachine.cpp,v 1.4 2007-02-14 08:40:27 tithub Exp $";
 //+=============================================================================
 //
 // file :         RontecStateMachine.cpp
@@ -10,9 +10,15 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: tithub $
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.3  2006/08/31 15:51:11  tithub
+// * Les temps sont exprimés en seconde au lieu de millisecondes
+// * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
+// * La commande ClearData arrête le thread de lecture
+// * Attributs StartingChannel et EndingChannel mémorisés
+//
 // Revision 1.2  2006/07/24 14:48:18  tithub
 // Nouvelle interface Tango
 //
@@ -307,44 +313,6 @@ bool Rontec::is_cycleTime_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Rontec::is_startingChannel_allowed
-// 
-// description : 	Read/Write allowed for startingChannel attribute.
-//
-//-----------------------------------------------------------------------------
-bool Rontec::is_startingChannel_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::UNKNOWN	||
-		get_state() == Tango::INIT)
-	{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Rontec::is_endingChannel_allowed
-// 
-// description : 	Read/Write allowed for endingChannel attribute.
-//
-//-----------------------------------------------------------------------------
-bool Rontec::is_endingChannel_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::UNKNOWN	||
-		get_state() == Tango::INIT)
-	{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
 // method : 		Rontec::is_detectorTemperature_allowed
 // 
 // description : 	Read/Write allowed for detectorTemperature attribute.
@@ -531,6 +499,58 @@ bool Rontec::is_roi8_allowed(Tango::AttReqType type)
 	return true;
 }
 
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_spectrumEndValue_allowed
+// 
+// description : 	Read/Write allowed for spectrumEndValue attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_spectrumEndValue_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::UNKNOWN	||
+		get_state() == Tango::INIT)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_spectrumStartValue_allowed
+// 
+// description : 	Read/Write allowed for spectrumStartValue attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_spectrumStartValue_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::UNKNOWN	||
+		get_state() == Tango::INIT)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::is_energySpectrum_allowed
+// 
+// description : 	Read/Write allowed for energySpectrum attribute.
+//
+//-----------------------------------------------------------------------------
+bool Rontec::is_energySpectrum_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods

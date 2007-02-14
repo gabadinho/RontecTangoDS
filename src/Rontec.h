@@ -8,9 +8,15 @@
 //
 // $Author: tithub $
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.3  2006/08/31 15:51:10  tithub
+// * Les temps sont exprimés en seconde au lieu de millisecondes
+// * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
+// * La commande ClearData arrête le thread de lecture
+// * Attributs StartingChannel et EndingChannel mémorisés
+//
 // Revision 1.2  2006/07/24 14:48:18  tithub
 // Nouvelle interface Tango
 //
@@ -45,7 +51,7 @@
 
 /**
  * @author	$Author: tithub $
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 
  //	Add your own constants definitions here.
@@ -59,15 +65,11 @@ namespace Rontec_ns
 
 /*
  *	Device States Description:
- *  Tango::FAULT :    command error
- *
- *  Tango::INIT :     *
- *
- *  Tango::RUNNING :  acquisition in progress
- *
- *  Tango::STANDBY :  RONTEC OK, ready to accept command
- *
- *  Tango::UNKNOWN :  communication loosed with RONTEC
+*  Tango::FAULT :    command error
+*  Tango::INIT :     *
+*  Tango::RUNNING :  acquisition in progress
+*  Tango::STANDBY :  RONTEC OK, ready to accept command
+*  Tango::UNKNOWN :  communication loosed with RONTEC
  */
 
 
@@ -91,7 +93,7 @@ public :
 		Tango::DevDouble	*attr_dataSpectrum_read;
 		Tango::DevDouble	*attr_deadTime_read;
 		Tango::DevDouble	*attr_detectorTemperature_read;
-		Tango::DevShort	attr_endingChannel_write;
+		Tango::DevDouble	attr_spectrumEndValue_write;
 		Tango::DevLong	*attr_energyRange_read;
 		Tango::DevLong	attr_energyRange_write;
 		Tango::DevDouble	*attr_integrationTime_read;
@@ -110,12 +112,13 @@ public :
 		Tango::DevLong	*attr_roi6_read;
 		Tango::DevLong	*attr_roi7_read;
 		Tango::DevLong	*attr_roi8_read;
-		Tango::DevLong	*attr_roisEnds_read;
-		Tango::DevLong	*attr_roisStarts_read;
-		Tango::DevLong	*attr_roisStartsEnds_read;
-		Tango::DevShort	attr_startingChannel_write;
+		Tango::DevDouble	*attr_roisEnds_read;
+		Tango::DevDouble	*attr_roisStarts_read;
+		Tango::DevDouble	*attr_roisStartsEnds_read;
+		Tango::DevDouble	attr_spectrumStartValue_write;
 		Tango::DevShort	*attr_timingType_read;
 		Tango::DevShort	attr_timingType_write;
+		Tango::DevDouble	*attr_energySpectrum_read;
 //@}
 		
 /**
@@ -154,6 +157,22 @@ public :
  *	Spectrum read packet size used in reading thread
  */
 	Tango::DevLong	spectrumPacketSize;
+/**
+ *	Energy mode or channel mode selection
+ */
+	Tango::DevBoolean	energyMode;
+/**
+ *	Energy conversion polynomial coefficient order 0
+ */
+	Tango::DevDouble	energyCoeff0;
+/**
+ *	Energy conversion polynomial coefficient order 0
+ */
+	Tango::DevDouble	energyCoeff1;
+/**
+ *	Energy conversion polynomial coefficient order 2
+ */
+	Tango::DevDouble	energyCoeff2;
 //@}
 
 /**@name Constructors
@@ -248,13 +267,13 @@ public :
  */
 	virtual void read_detectorTemperature(Tango::Attribute &attr);
 /**
- *	Extract real attribute values for endingChannel acquisition result.
+ *	Extract real attribute values for spectrumEndValue acquisition result.
  */
-	virtual void read_endingChannel(Tango::Attribute &attr);
+	virtual void read_spectrumEndValue(Tango::Attribute &attr);
 /**
- *	Write endingChannel attribute values to hardware.
+ *	Write spectrumEndValue attribute values to hardware.
  */
-	virtual void write_endingChannel(Tango::WAttribute &attr);
+	virtual void write_spectrumEndValue(Tango::WAttribute &attr);
 /**
  *	Extract real attribute values for energyRange acquisition result.
  */
@@ -344,13 +363,13 @@ public :
  */
 	virtual void read_roisStartsEnds(Tango::Attribute &attr);
 /**
- *	Extract real attribute values for startingChannel acquisition result.
+ *	Extract real attribute values for spectrumStartValue acquisition result.
  */
-	virtual void read_startingChannel(Tango::Attribute &attr);
+	virtual void read_spectrumStartValue(Tango::Attribute &attr);
 /**
- *	Write startingChannel attribute values to hardware.
+ *	Write spectrumStartValue attribute values to hardware.
  */
-	virtual void write_startingChannel(Tango::WAttribute &attr);
+	virtual void write_spectrumStartValue(Tango::WAttribute &attr);
 /**
  *	Extract real attribute values for timingType acquisition result.
  */
@@ -359,6 +378,10 @@ public :
  *	Write timingType attribute values to hardware.
  */
 	virtual void write_timingType(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for energySpectrum acquisition result.
+ */
+	virtual void read_energySpectrum(Tango::Attribute &attr);
 /**
  *	Read/Write allowed for countRate attribute.
  */
@@ -384,9 +407,9 @@ public :
  */
 	virtual bool is_detectorTemperature_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for endingChannel attribute.
+ *	Read/Write allowed for spectrumEndValue attribute.
  */
-	virtual bool is_endingChannel_allowed(Tango::AttReqType type);
+	virtual bool is_spectrumEndValue_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for energyRange attribute.
  */
@@ -460,13 +483,17 @@ public :
  */
 	virtual bool is_roisStartsEnds_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for startingChannel attribute.
+ *	Read/Write allowed for spectrumStartValue attribute.
  */
-	virtual bool is_startingChannel_allowed(Tango::AttReqType type);
+	virtual bool is_spectrumStartValue_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for timingType attribute.
  */
 	virtual bool is_timingType_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for energySpectrum attribute.
+ */
+	virtual bool is_energySpectrum_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Abort command.
  */
@@ -537,7 +564,7 @@ public :
  *	@return	the data 
  *	@exception DevFailed
  */
-	Tango::DevVarLongArray	*get_part_of_spectrum(const Tango::DevVarLongArray *);
+	Tango::DevVarLongArray	*get_part_of_spectrum(const Tango::DevVarDoubleArray *);
 /**
  * returns PAUSE or RUNNING according to acquisition stopped or running
  *	@return	PAUSE/RUNNING
@@ -569,7 +596,7 @@ public :
  *	@param	argin	starts and ends of the ROI. eg: tab[0]=126, tab[1]=238, tab[2]=1569,tab[3]=2368
  *	@exception DevFailed
  */
-	void	set_rois(const Tango::DevVarLongArray *);
+	void	set_rois(const Tango::DevVarDoubleArray *);
 /**
  * configures the TTL output number for pulse output photons processed with
  *	low_channel < energy < high_channel
@@ -580,7 +607,7 @@ public :
  *	@param	argin	[0] : TTL output number, [1] low channel, [2] high channel
  *	@exception DevFailed
  */
-	void	set_single_roi(const Tango::DevVarLongArray *);
+	void	set_single_roi(const Tango::DevVarDoubleArray *);
 /**
  * selects the processor
  *	0 : max cps ...... 3 : min cps
@@ -622,6 +649,9 @@ protected :
 	double _integration_time;	// integration time used with start() command
 	bool _live_time;			// false = integration time in real time, true = integration time in live time
 	bool _start_reading_thread;
+
+	double get_energy_from_channel(long channel);
+	long get_channel_from_energy(double energy);
 };
 
 } // namespace

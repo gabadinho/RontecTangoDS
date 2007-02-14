@@ -18,11 +18,14 @@
 			<IMG SRC="http://www.esrf.fr/computing/cs/tango/elettra_logo.gif" BORDER=0></A>
 
 		</Td>
-        <TD ALIGN="right">
+        <TD ALIGN="center">
 			<A HREF="http://www.synchrotron-soleil.fr/" TARGET=new>
 			<IMG SRC="http://www.esrf.fr/computing/cs/tango/soleil_logo.gif" BORDER=0></A>
 		</Td>
-    	 <Td>
+        <TD ALIGN="right">
+			<A HREF="http://www.cells.es/" TARGET=new>
+			<IMG SRC="http://www.esrf.fr/computing/cs/tango/alba.jpg" BORDER=0></A>
+		</Td>
     	 <Td>
 			<H2><FONT COLOR="#7F00FF">
 			<Center><A HREF="http://www.esrf.fr/Infrastructure/Computing/tango/" TARGET="_top">
@@ -41,7 +44,7 @@ Device Attributes Description 		<Br> <Br>
 Rontec Class	<Br>
 </h1>
 <b>
-Revision:  - Author: tithub -  CVS repository: sourceforge(tango-ds)
+Revision:  - Author: tithub
 </b>
 </center>
 
@@ -55,71 +58,93 @@ Revision:  - Author: tithub -  CVS repository: sourceforge(tango-ds)
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>R/W Type</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b><Center>countRate</b><Br>( This is the input count rate.  Rem : output count rate = countRate * (1-deadTime / 100) )</Center></Td>
-<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>countRate</b>: <Font Size=-1>This is the input count rate.  Rem : output count rate = countRate * (1-deadTime / 100)</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>cycleTime</b></Center></Td>
-<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ_WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>cycleTime</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>dataSource</b><Br>( Display the current data source or NONE if not open )</Center></Td>
-<Td><Center>DEV_STRING</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>dataSource</b>: <Font Size=-1>Display the current data source or NONE if not open</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>deadTime</b><Br>( Dead time = [(Real - Live ) / Real] * 100 )</Center></Td>
-<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>deadTime</b>: <Font Size=-1>Dead time = [(Real - Live ) / Real] * 100</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>detectorTemperature</b></Center></Td>
-<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>detectorTemperature</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>endingChannel</b></Center></Td>
-<Td><Center>DEV_SHORT</Center></Td><Td><Center>WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>spectrumEndValue</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>energyRange</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>READ_WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>energyRange</b></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>integrationTime</b><Br>( Time of integration (ie counting time) )</Center></Td>
-<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ_WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>integrationTime</b>: <Font Size=-1>Time of integration (ie counting time)</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>liveTime</b><Br>( Live Time: time which does not take into account the dead time. Should be shorter than real time )</Center></Td>
-<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>liveTime</b>: <Font Size=-1>Live Time: time which does not take into account the dead time. Should be shorter than real time</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>nbChannels</b><Br>( Number of Channels to get from the DataSource )</Center></Td>
-<Td><Center>DEV_SHORT</Center></Td><Td><Center>READ_WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>nbChannels</b>: <Font Size=-1>Number of Channels to get from the DataSource</Font></Td>
+<Td><Center><Font Size=-1>DEV_SHORT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>readDataSpectrum</b></Center></Td>
-<Td><Center>DEV_BOOLEAN</Center></Td><Td><Center>WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>readDataSpectrum</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>realTime</b><Br>( Real Time : time taking into account the dead time )</Center></Td>
-<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>realTime</b>: <Font Size=-1>Real Time : time taking into account the dead time</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roi1</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>roi1</b></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roi2</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>roi2</b></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roi3</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>roi3</b></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roi4</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>roi4</b></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roi5</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>roi5</b></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roi6</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>roi6</b></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roi7</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>roi7</b></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roi8</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>READ</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>roi8</b></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>startingChannel</b></Center></Td>
-<Td><Center>DEV_SHORT</Center></Td><Td><Center>WRITE</Center></Td><Td><Center>No</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>spectrumStartValue</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>timingType</b><Br>( Type of timing:<BR> 0 -> Live (like an OS time)<BR> 1 -> Real (the real time according to deadTime). )</Center></Td>
-<Td><Center>DEV_SHORT</Center></Td><Td><Center>READ_WRITE</Center></Td><Td><Center>Yes</Center></Td></Tr>
+<Font Size=-1>
+<Tr><Td><b>timingType</b>: <Font Size=-1>Type of timing:<BR> 0 -> Live (like an OS time)<BR> 1 -> Real (the real time according to deadTime).</Font></Td>
+<Td><Center><Font Size=-1>DEV_SHORT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 </Table>
 </Center>
@@ -132,20 +157,23 @@ Revision:  - Author: tithub -  CVS repository: sourceforge(tango-ds)
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>X Data Length</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b><Center>dataSpectrum</b><Br>( fluo spectrum returned by the RONTEC MCA max channels number set in NumberOfChannels property starting channel fixed by SetStartingChannel, ending channel set by SetEndingChannel )</Center></Td>
-<Td><Center>DEV_DOUBLE</Center></Td><Td><Center>8192</Center></Td><Td><Center>No</Center></Td></Tr>
+<Tr><Td><b>dataSpectrum</b>: <Font Size=-1>fluo spectrum returned by the RONTEC MCA max channels number set in NumberOfChannels property starting channel fixed by SetStartingChannel, ending channel set by SetEndingChannel</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>8192</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>offsetGain</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>2</Center></Td><Td><Center>No</Center></Td></Tr>
+<Tr><Td><b>offsetGain</b></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>2</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roisEnds</b><Br>( End Positions of the ROIs )</Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>40</Center></Td><Td><Center>No</Center></Td></Tr>
+<Tr><Td><b>roisEnds</b>: <Font Size=-1>End Positions of the ROIs</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>40</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roisStarts</b></Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>40</Center></Td><Td><Center>No</Center></Td></Tr>
+<Tr><Td><b>roisStarts</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>40</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b><Center>roisStartsEnds</b><Br>( All the ROIs starts ends: they are in pair : start-end. )</Center></Td>
-<Td><Center>DEV_LONG</Center></Td><Td><Center>80</Center></Td><Td><Center>Yes</Center></Td></Tr>
+<Tr><Td><b>roisStartsEnds</b>: <Font Size=-1>All the ROIs starts ends: they are in pair : start-end.</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>80</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>energySpectrum</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>8192</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>
@@ -154,7 +182,7 @@ Revision:  - Author: tithub -  CVS repository: sourceforge(tango-ds)
 <Center>
 <Br>
 <HR WIDTH="100%"></H5>
-<H3> ESRF - Software Engineering Group </H33>
+<H3> ESRF - Software Engineering Group </H3>
 </Center>
 </body>
 </html>

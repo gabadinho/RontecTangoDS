@@ -1,5 +1,5 @@
 
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.3 2006-08-31 15:51:10 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.4 2007-02-14 08:40:27 tithub Exp $";
 
 static const char *TagName   = "$Name: not supported by cvs2svn $";
 
@@ -22,9 +22,15 @@ static const char *RCSfile = "$RCSfile: RontecClass.cpp,v $";
 //
 // $Author: tithub $
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.3  2006/08/31 15:51:10  tithub
+// * Les temps sont exprimés en seconde au lieu de millisecondes
+// * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
+// * La commande ClearData arrête le thread de lecture
+// * Attributs StartingChannel et EndingChannel mémorisés
+//
 // Revision 1.2  2006/07/24 14:48:18  tithub
 // Nouvelle interface Tango
 //
@@ -100,7 +106,7 @@ CORBA::Any *SetROIsCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_a
 
 	cout2 << "SetROIsCmd::execute(): arrived" << endl;
 
-	const Tango::DevVarLongArray	*argin;
+	const Tango::DevVarDoubleArray	*argin;
 	extract(in_any, argin);
 
 	((static_cast<Rontec *>(device))->set_rois(argin));
@@ -214,7 +220,7 @@ CORBA::Any *GetPartOfSpectrumCmd::execute(Tango::DeviceImpl *device,const CORBA:
 
 	cout2 << "GetPartOfSpectrumCmd::execute(): arrived" << endl;
 
-	const Tango::DevVarLongArray	*argin;
+	const Tango::DevVarDoubleArray	*argin;
 	extract(in_any, argin);
 
 	return insert((static_cast<Rontec *>(device))->get_part_of_spectrum(argin));
@@ -336,7 +342,7 @@ CORBA::Any *SetSingleROICmd::execute(Tango::DeviceImpl *device,const CORBA::Any 
 
 	cout2 << "SetSingleROICmd::execute(): arrived" << endl;
 
-	const Tango::DevVarLongArray	*argin;
+	const Tango::DevVarDoubleArray	*argin;
 	extract(in_any, argin);
 
 	((static_cast<Rontec *>(device))->set_single_roi(argin));
@@ -448,7 +454,7 @@ void RontecClass::command_factory()
 		"",
 		Tango::OPERATOR));
 	command_list.push_back(new GetPartOfSpectrumCmd("GetPartOfSpectrum",
-		Tango::DEVVAR_LONGARRAY, Tango::DEVVAR_LONGARRAY,
+		Tango::DEVVAR_DOUBLEARRAY, Tango::DEVVAR_LONGARRAY,
 		"[0]starting channel, [1] size of channel",
 		"the data ",
 		Tango::OPERATOR));
@@ -473,12 +479,12 @@ void RontecClass::command_factory()
 		"the rontec answer as string",
 		Tango::OPERATOR));
 	command_list.push_back(new SetROIsCmd("SetROIs",
-		Tango::DEVVAR_LONGARRAY, Tango::DEV_VOID,
+		Tango::DEVVAR_DOUBLEARRAY, Tango::DEV_VOID,
 		"starts and ends of the ROI. eg: tab[0]=126, tab[1]=238, tab[2]=1569,tab[3]=2368",
 		"",
 		Tango::OPERATOR));
 	command_list.push_back(new SetSingleROICmd("SetSingleROI",
-		Tango::DEVVAR_LONGARRAY, Tango::DEV_VOID,
+		Tango::DEVVAR_DOUBLEARRAY, Tango::DEV_VOID,
 		"[0] : TTL output number, [1] low channel, [2] high channel",
 		"",
 		Tango::OPERATOR));
@@ -510,7 +516,7 @@ void RontecClass::command_factory()
 //+----------------------------------------------------------------------------
 Tango::DbDatum RontecClass::get_class_property(string &prop_name)
 {
-	for (int i=0 ; i<cl_prop.size() ; i++)
+	for (unsigned int i=0 ; i<cl_prop.size() ; i++)
 		if (cl_prop[i].name == prop_name)
 			return cl_prop[i];
 	//	if not found, return  an empty DbDatum
@@ -525,7 +531,7 @@ Tango::DbDatum RontecClass::get_class_property(string &prop_name)
 //-----------------------------------------------------------------------------
 Tango::DbDatum RontecClass::get_default_device_property(string &prop_name)
 {
-	for (int i=0 ; i<dev_def_prop.size() ; i++)
+	for (unsigned int i=0 ; i<dev_def_prop.size() ; i++)
 		if (dev_def_prop[i].name == prop_name)
 			return dev_def_prop[i];
 	//	if not found, return  an empty DbDatum
@@ -541,7 +547,7 @@ Tango::DbDatum RontecClass::get_default_device_property(string &prop_name)
 //-----------------------------------------------------------------------------
 Tango::DbDatum RontecClass::get_default_class_property(string &prop_name)
 {
-	for (int i=0 ; i<cl_def_prop.size() ; i++)
+	for (unsigned int i=0 ; i<cl_def_prop.size() ; i++)
 		if (cl_def_prop[i].name == prop_name)
 			return cl_def_prop[i];
 	//	if not found, return  an empty DbDatum
@@ -629,11 +635,11 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	detectorTemperatureAttrib	*detector_temperature = new detectorTemperatureAttrib();
 	att_list.push_back(detector_temperature);
 
-	//	Attribute : endingChannel
-	endingChannelAttrib	*ending_channel = new endingChannelAttrib();
-	ending_channel->set_memorized();
-	ending_channel->set_memorized_init(true);
-	att_list.push_back(ending_channel);
+	//	Attribute : spectrumEndValue
+	spectrumEndValueAttrib	*spectrum_end_value = new spectrumEndValueAttrib();
+	spectrum_end_value->set_memorized();
+	spectrum_end_value->set_memorized_init(true);
+	att_list.push_back(spectrum_end_value);
 
 	//	Attribute : energyRange
 	energyRangeAttrib	*energy_range = new energyRangeAttrib();
@@ -741,11 +747,11 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	rois_starts_ends->set_disp_level(Tango::EXPERT);
 	att_list.push_back(rois_starts_ends);
 
-	//	Attribute : startingChannel
-	startingChannelAttrib	*starting_channel = new startingChannelAttrib();
-	starting_channel->set_memorized();
-	starting_channel->set_memorized_init(true);
-	att_list.push_back(starting_channel);
+	//	Attribute : spectrumStartValue
+	spectrumStartValueAttrib	*spectrum_start_value = new spectrumStartValueAttrib();
+	spectrum_start_value->set_memorized();
+	spectrum_start_value->set_memorized_init(true);
+	att_list.push_back(spectrum_start_value);
 
 	//	Attribute : timingType
 	timingTypeAttrib	*timing_type = new timingTypeAttrib();
@@ -757,6 +763,12 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	timing_type->set_disp_level(Tango::EXPERT);
 	att_list.push_back(timing_type);
 
+	//	Attribute : energySpectrum
+	energySpectrumAttrib	*energy_spectrum = new energySpectrumAttrib();
+	att_list.push_back(energy_spectrum);
+
+	//	End of Automatic code generation
+	//-------------------------------------------------------------
 }
 
 //+----------------------------------------------------------------------------
@@ -773,12 +785,11 @@ void RontecClass::get_class_property()
 
 	//	Read class properties from database.(Automatic code generation)
 	//------------------------------------------------------------------
-	if (Tango::Util::instance()->_UseDb==false)
-		return;
 
 	//	Call database and extract values
 	//--------------------------------------------
-	get_db_class()->get_property(cl_prop);
+	if (Tango::Util::instance()->_UseDb==true)
+		get_db_class()->get_property(cl_prop);
 	Tango::DbDatum	def_prop;
 	int	i = -1;
 
@@ -811,7 +822,7 @@ void RontecClass::set_default_property()
 	prop_desc = "list of the TTL outputs connected to a counter\njust for control and throw exception if try to configure a ROI that is not in the list\n8 TTL outputs are available with the current RONTEC MCA hardware\nexample : 1 4 represents : ouptut1, output 4 connected\ndefault : 1";
 	prop_def  = "1 2 3 4";
 	vect_data.clear();
-	vect_data.push_back("toto");
+	vect_data.push_back("1 2 3 4");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -856,7 +867,7 @@ void RontecClass::set_default_property()
 	prop_desc = "Tango name of the serial line device\nthe other serial line properties are fixed for the RONTEC RCL :\nN( no parity),8( data bits),1(stop bit), hardware handshake ( RTS/CTS";
 	prop_def  = "test/rontec/serial";
 	vect_data.clear();
-	vect_data.push_back("test/rontec/dev1");
+	vect_data.push_back("test/rontec/serial");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -872,6 +883,66 @@ void RontecClass::set_default_property()
 	prop_def  = "256";
 	vect_data.clear();
 	vect_data.push_back("256");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "EnergyMode";
+	prop_desc = "Energy mode or channel mode selection";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "EnergyCoeff0";
+	prop_desc = "Energy conversion polynomial coefficient order 0";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "EnergyCoeff1";
+	prop_desc = "Energy conversion polynomial coefficient order 0";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "EnergyCoeff2";
+	prop_desc = "Energy conversion polynomial coefficient order 2";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -946,7 +1017,7 @@ void RontecClass::write_class_property()
 	start = header.length();
 	string	endstr(" $");
 	end   = tagname.find(endstr);
-	if (end>start)
+	if (end!=string::npos && end>start)
 	{
 		string	strtag = tagname.substr(start, end-start);
 		Tango::DbDatum	cvs_tag("cvs_tag");
@@ -962,6 +1033,13 @@ void RontecClass::write_class_property()
 		db_doc_url << httpServ;
 		data.push_back(db_doc_url);
 	}
+
+	//  Put inheritance
+	Tango::DbDatum	inher_datum("InheritedFrom");
+	vector<string> inheritance;
+	inheritance.push_back("Device_3Impl");
+	inher_datum << inheritance;
+	data.push_back(inher_datum);
 
 	//	Call database and and values
 	//--------------------------------------------

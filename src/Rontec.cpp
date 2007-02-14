@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.4 2006-08-31 15:51:10 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.5 2007-02-14 08:40:27 tithub Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,15 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: tithub $
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.4  2006/08/31 15:51:10  tithub
+// * Les temps sont exprimés en seconde au lieu de millisecondes
+// * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
+// * La commande ClearData arrête le thread de lecture
+// * Attributs StartingChannel et EndingChannel mémorisés
+//
 // Revision 1.3  2006/07/25 07:56:05  tithub
 // no message
 //
@@ -46,7 +52,7 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 
 //===================================================================
 //
-//	The folowing table gives the correspondance
+//	The following table gives the correspondance
 //	between commands and method's name.
 //
 //  Command's name                      |  Method's name
@@ -74,6 +80,7 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 #include <RontecClass.h>
 #include <PogoHelper.h>
 //#include <XString.h>
+#include <math.h>
 
 namespace Rontec_ns
 {
@@ -156,6 +163,8 @@ void Rontec::delete_device()
 	DELETE_SPECTRUM_ATTRIBUTE(attr_roisEnds_read);
 	DELETE_SPECTRUM_ATTRIBUTE(attr_offsetGain_read);
 	DELETE_SPECTRUM_ATTRIBUTE(attr_dataSpectrum_read);
+	DELETE_SPECTRUM_ATTRIBUTE(attr_energySpectrum_read);
+
 
 	// Rontec MCA implementation class
 	if(_mca) {
@@ -174,6 +183,13 @@ void Rontec::delete_device()
 void Rontec::init_device()
 {
 	INFO_STREAM << "Rontec::Rontec() create device " << device_name << endl;
+
+	attr_roisStartsEnds_read = 0;
+	attr_roisStarts_read = 0;
+	attr_roisEnds_read = 0;
+	attr_offsetGain_read = 0;
+	attr_dataSpectrum_read = 0;
+	attr_energySpectrum_read = 0;
 
 	// Initialise variables to default values
 	//--------------------------------------------
@@ -208,6 +224,7 @@ void Rontec::init_device()
 	CREATE_SPECTRUM_ATTRIBUTE(attr_roisEnds_read,NB_MAX_ROI);
 	CREATE_SPECTRUM_ATTRIBUTE(attr_offsetGain_read,2);
 	CREATE_SPECTRUM_ATTRIBUTE(attr_dataSpectrum_read, numberOfChannels);
+	CREATE_SPECTRUM_ATTRIBUTE(attr_energySpectrum_read, numberOfChannels);
 
 	_integration_time = 0;
 	_live_time = false;
@@ -237,21 +254,28 @@ void Rontec::get_device_property()
 	numberOfChannels = 4096;
 	maxFluoEnergy = 80.0;
 	spectrumPacketSize = 256;
+	energyMode = false;
+	energyCoeff0 = 0.0;
+	energyCoeff0 = 0.0;
+	energyCoeff0 = 0.0;
 
 	//	Read device properties from database.(Automatic code generation)
 	//-------------------------------------------------------------
-	if (Tango::Util::instance()->_UseDb==false)
-		return;
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("ConnectedROIMask"));
 	dev_prop.push_back(Tango::DbDatum("MaxFluoEnergy"));
 	dev_prop.push_back(Tango::DbDatum("NumberOfChannels"));
 	dev_prop.push_back(Tango::DbDatum("SerialLineUrl"));
 	dev_prop.push_back(Tango::DbDatum("SpectrumPacketSize"));
+	dev_prop.push_back(Tango::DbDatum("EnergyMode"));
+	dev_prop.push_back(Tango::DbDatum("EnergyCoeff0"));
+	dev_prop.push_back(Tango::DbDatum("EnergyCoeff1"));
+	dev_prop.push_back(Tango::DbDatum("EnergyCoeff2"));
 
 	//	Call database and extract values
 	//--------------------------------------------
-	get_db_device()->get_property(dev_prop);
+	if (Tango::Util::instance()->_UseDb==true)
+		get_db_device()->get_property(dev_prop);
 	Tango::DbDatum	def_prop, cl_prop;
 	RontecClass	*ds_class =
 		(static_cast<RontecClass *>(get_device_class()));
@@ -301,6 +325,42 @@ void Rontec::get_device_property()
 	if (def_prop.is_empty()==false)	def_prop  >>  spectrumPacketSize;
 	//	And try to extract SpectrumPacketSize value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  spectrumPacketSize;
+
+	//	Try to initialize EnergyMode from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  energyMode;
+	//	Try to initialize EnergyMode from default device value
+	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+	if (def_prop.is_empty()==false)	def_prop  >>  energyMode;
+	//	And try to extract EnergyMode value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  energyMode;
+
+	//	Try to initialize EnergyCoeff0 from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  energyCoeff0;
+	//	Try to initialize EnergyCoeff0 from default device value
+	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+	if (def_prop.is_empty()==false)	def_prop  >>  energyCoeff0;
+	//	And try to extract EnergyCoeff0 value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  energyCoeff0;
+
+	//	Try to initialize EnergyCoeff1 from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  energyCoeff1;
+	//	Try to initialize EnergyCoeff1 from default device value
+	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+	if (def_prop.is_empty()==false)	def_prop  >>  energyCoeff1;
+	//	And try to extract EnergyCoeff1 value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  energyCoeff1;
+
+	//	Try to initialize EnergyCoeff2 from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  energyCoeff2;
+	//	Try to initialize EnergyCoeff2 from default device value
+	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+	if (def_prop.is_empty()==false)	def_prop  >>  energyCoeff2;
+	//	And try to extract EnergyCoeff2 value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  energyCoeff2;
 
 
 
@@ -394,6 +454,83 @@ void Rontec::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		Rontec::read_spectrumEndValue
+// 
+// description : 	Extract real attribute values for spectrumEndValue acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_spectrumEndValue(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_spectrumEndValue(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::write_spectrumEndValue
+// 
+// description : 	Write spectrumEndValue attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Rontec::write_spectrumEndValue(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Rontec::write_spectrumEndValue(Tango::WAttribute &attr) entering... "<< endl;
+	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+
+	attr.get_write_value(attr_spectrumEndValue_write);
+	long channel = get_channel_from_energy(attr_spectrumEndValue_write);
+	_mca->set_spectrum_reading_last_channel(channel);
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_spectrumStartValue
+// 
+// description : 	Extract real attribute values for spectrumStartValue acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_spectrumStartValue(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_spectrumStartValue(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::write_spectrumStartValue
+// 
+// description : 	Write spectrumStartValue attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Rontec::write_spectrumStartValue(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Rontec::write_spectrumStartValue(Tango::WAttribute &attr) entering... "<< endl;
+	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+
+	attr.get_write_value(attr_spectrumStartValue_write);
+	long channel = get_channel_from_energy(attr_spectrumStartValue_write);
+	_mca->set_spectrum_reading_first_channel(channel);
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_energySpectrum
+// 
+// description : 	Extract real attribute values for energySpectrum acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_energySpectrum(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_energySpectrum(Tango::Attribute &attr) entering... "<< endl;
+	long first = _mca->get_read_spectrum_first_channel();
+	long length = _mca->get_read_spectrum_length();
+	double* energy = new double[length];
+	for(long i=0; i<length; ++i) {
+		attr_energySpectrum_read[i] = (Tango::DevDouble) get_energy_from_channel(first+i);
+	}
+	attr.set_value(attr_energySpectrum_read,length);
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		Rontec::read_readDataSpectrum
 // 
 // description : 	Extract real attribute values for readDataSpectrum acquisition result.
@@ -430,13 +567,13 @@ void Rontec::read_dataSpectrum(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Rontec::read_dataSpectrum(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
-	//unsigned long* data;
+
 	long length = _mca->get_read_spectrum_length();
 	long first = _mca->get_read_spectrum_first_channel();
 	unsigned long* data = new unsigned long[length];
 	_mca->get_spectrum(data,first,length);
 	for(int i = 0; i < length; i++) {
-		attr_dataSpectrum_read[i] = ( Tango::DevDouble)(data[i]);
+		attr_dataSpectrum_read[i] = (Tango::DevDouble)(data[i]);
 	}
 	delete [] data;
 	attr.set_value(attr_dataSpectrum_read, length);
@@ -745,64 +882,6 @@ void Rontec::write_cycleTime(Tango::WAttribute &attr)
 
 //+----------------------------------------------------------------------------
 //
-// method : 		Rontec::read_startingChannel
-// 
-// description : 	Extract real attribute values for startingChannel acquisition result.
-//
-//-----------------------------------------------------------------------------
-void Rontec::read_startingChannel(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Rontec::read_startingChannel(Tango::Attribute &attr) entering... "<< endl;
-	DEBUG_STREAM << "Not to be implemented"<< endl;
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		Rontec::write_startingChannel
-// 
-// description : 	Write startingChannel attribute values to hardware.
-//
-//-----------------------------------------------------------------------------
-void Rontec::write_startingChannel(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "Rontec::write_startingChannel(Tango::WAttribute &attr) entering... "<< endl;
-	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
-	
-	attr.get_write_value(attr_startingChannel_write);
-	_mca->set_spectrum_reading_first_channel(attr_startingChannel_write);
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		Rontec::read_endingChannel
-// 
-// description : 	Extract real attribute values for endingChannel acquisition result.
-//
-//-----------------------------------------------------------------------------
-void Rontec::read_endingChannel(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Rontec::read_endingChannel(Tango::Attribute &attr) entering... "<< endl;
-	DEBUG_STREAM << "Not to be implemented"<< endl;
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		Rontec::write_endingChannel
-// 
-// description : 	Write endingChannel attribute values to hardware.
-//
-//-----------------------------------------------------------------------------
-void Rontec::write_endingChannel(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "Rontec::write_endingChannel(Tango::WAttribute &attr) entering... "<< endl;
-	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
-	
-	attr.get_write_value(attr_endingChannel_write);
-	_mca->set_spectrum_reading_last_channel(attr_endingChannel_write);
-}
-
-//+----------------------------------------------------------------------------
-//
 // method : 		Rontec::read_detectorTemperature
 // 
 // description : 	Extract real attribute values for detectorTemperature acquisition result.
@@ -1098,14 +1177,20 @@ void Rontec::start()
  *
  */
 //+------------------------------------------------------------------
-Tango::DevVarLongArray *Rontec::get_part_of_spectrum(const Tango::DevVarLongArray *argin)
+Tango::DevVarLongArray *Rontec::get_part_of_spectrum(const Tango::DevVarDoubleArray *argin)
 {
+	Tango::DevVarLongArray	*argout  = new Tango::DevVarLongArray();
 	long len = argin->length();
 	long start = 0;
+	long end = 0;
 	long size = 0;
 	if(len==2) {
-		start = (*argin)[0];
-		size = (*argin)[1];
+		start = get_channel_from_energy((*argin)[0]);
+		end = get_channel_from_energy((*argin)[1]);
+		if(start<end)
+			size = end - start;
+		else
+			size = 0;
 	}
 	if(start<0 || size<=0) {
 		ERROR_STREAM	<< "DATA_OUT_OF_RANGE Rontec::get_part_of_spectrum() must provide [0] : start channel, [1] : size " << endl;
@@ -1114,16 +1199,15 @@ Tango::DevVarLongArray *Rontec::get_part_of_spectrum(const Tango::DevVarLongArra
 				(const char *)" must provide [0] : start channel, [1] : size ",
 				(const char *)"Rontec::get_part_of_spectrum");
 	}
-	Tango::DevVarLongArray	*argout  = new Tango::DevVarLongArray();
 
 	unsigned long* data = new unsigned long[size];
 
 	if(_mca->is_reading_thread_running()) {
-		// get part of last read spectrum
+		 // get part of last read spectrum
 		_mca->get_spectrum(data,start,size);
 	}
 	else {
-		// read part of spectrum
+		 // read part of spectrum
 		_mca->read_spectrum(data,start,size);
 	}
 
@@ -1132,7 +1216,6 @@ Tango::DevVarLongArray *Rontec::get_part_of_spectrum(const Tango::DevVarLongArra
 		(*argout)[i] = data[i];
 	}
 	delete [] data;
-
 	return argout;
 }
 
@@ -1343,10 +1426,9 @@ void Rontec::clear_data()
  *
  */
 //+------------------------------------------------------------------
-void Rontec::set_rois(const Tango::DevVarLongArray *argin)
+void Rontec::set_rois(const Tango::DevVarDoubleArray *argin)
 {
 	DEBUG_STREAM << "Rontec::set_rois(): entering... !" << endl;
-	DEBUG_STREAM << "Not yet implemented" << endl;
 	//	Add your own code to control device here
 	long nb_args = argin->length();
 	if(nb_args % 2 != 0 || nb_args / 2 > NB_MAX_ROI) {
@@ -1361,8 +1443,8 @@ void Rontec::set_rois(const Tango::DevVarLongArray *argin)
 		if(is_ROI_configured(ttl)) {			
 			long atom = 1;
 			std::string name = "NO";
-			long start = (*argin)[2*i];
-			long end = (*argin)[2*i+1];
+			long start = get_channel_from_energy((*argin)[2*i]);
+			long end = get_channel_from_energy((*argin)[2*i+1]);
 			_mca->roi_set_parameters(ttl, atom, name, start, end);
 		}
 	}
@@ -1384,7 +1466,7 @@ void Rontec::set_rois(const Tango::DevVarLongArray *argin)
  *
  */
 //+------------------------------------------------------------------
-void Rontec::set_single_roi(const Tango::DevVarLongArray *argin)
+void Rontec::set_single_roi(const Tango::DevVarDoubleArray *argin)
 {
 	DEBUG_STREAM << "Rontec::set_single_roi(): entering... !" << endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
@@ -1411,9 +1493,61 @@ void Rontec::set_single_roi(const Tango::DevVarLongArray *argin)
 	}
 	long atom = 1;
 	std::string name = "NO";
-	long start = (*argin)[1];
-	long end = (*argin)[2];
+	long start = get_channel_from_energy((*argin)[1]);
+	long end = get_channel_from_energy((*argin)[2]);
 	_mca->roi_set_parameters(ttl, atom, name, start, end);
 }
 
+double Rontec::get_energy_from_channel(long channel) {
+	double x = channel;
+	if(!energyMode) {
+		return x;
+	}
+	else {
+		return x*x*energyCoeff2 + x*energyCoeff1 + energyCoeff0;
+	}
+}
+
+long Rontec::get_channel_from_energy(double energy) {
+	if(!energyMode) {
+		return (long) energy;
+	}
+	else {
+		long best = 0;
+		long min = 0;
+		long max = 0;
+		double min_val = get_energy_from_channel(min);
+		double max_val = get_energy_from_channel(max);
+		double best_val = get_energy_from_channel(best);
+
+		for(long i=1; i<numberOfChannels; ++i) {
+			double test = get_energy_from_channel(i);
+			if(test<min_val) {
+				min = i;
+				min_val = test;
+			}
+			if(test>max_val) {
+				max = i;
+				max_val = test;
+			}
+			if(fabs(energy-test)<fabs(energy-best_val)) {
+				best = i;
+				best_val = test;
+			}
+		}
+
+		if(best_val<min_val || best_val>max_val) {
+			ostringstream err;
+			err << "Energy is not in valid range [" << min_val << ";" << max_val << "]";
+			Tango::Except::throw_exception (
+				(const char *)"DATA_OUT_OF_RANGE",
+				(const char *)err.str().c_str(),
+				(const char *)"Rontec::get_channel_from_energy");
+		}
+		return best;
+	}
+}
+
 }	//	namespace
+
+//+------------------------------------------------------------------

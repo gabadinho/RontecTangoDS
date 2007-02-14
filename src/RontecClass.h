@@ -12,9 +12,15 @@
 //
 // $Author: tithub $
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.3  2006/08/31 15:51:10  tithub
+// * Les temps sont exprimés en seconde au lieu de millisecondes
+// * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
+// * La commande ClearData arrête le thread de lecture
+// * Attributs StartingChannel et EndingChannel mémorisés
+//
 // Revision 1.2  2006/07/24 14:48:18  tithub
 // Nouvelle interface Tango
 //
@@ -49,6 +55,18 @@ namespace Rontec_ns
 //=====================================
 //	Define classes for attributes
 //=====================================
+class energySpectrumAttrib: public Tango::SpectrumAttr
+{
+public:
+	energySpectrumAttrib():SpectrumAttr("energySpectrum", Tango::DEV_DOUBLE, Tango::READ, 8192) {};
+	~energySpectrumAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_energySpectrum(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_energySpectrum_allowed(ty);}
+};
+
 class timingTypeAttrib: public Tango::Attr
 {
 public:
@@ -63,24 +81,24 @@ public:
 	{return (static_cast<Rontec *>(dev))->is_timingType_allowed(ty);}
 };
 
-class startingChannelAttrib: public Tango::Attr
+class spectrumStartValueAttrib: public Tango::Attr
 {
 public:
-	startingChannelAttrib():Attr("startingChannel", Tango::DEV_SHORT, Tango::WRITE) {};
-	~startingChannelAttrib() {};
+	spectrumStartValueAttrib():Attr("spectrumStartValue", Tango::DEV_DOUBLE, Tango::WRITE) {};
+	~spectrumStartValueAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_startingChannel(att);}
+	{(static_cast<Rontec *>(dev))->read_spectrumStartValue(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_startingChannel(att);}
+	{(static_cast<Rontec *>(dev))->write_spectrumStartValue(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_startingChannel_allowed(ty);}
+	{return (static_cast<Rontec *>(dev))->is_spectrumStartValue_allowed(ty);}
 };
 
 class roisStartsEndsAttrib: public Tango::SpectrumAttr
 {
 public:
-	roisStartsEndsAttrib():SpectrumAttr("roisStartsEnds", Tango::DEV_LONG, Tango::READ, 80) {};
+	roisStartsEndsAttrib():SpectrumAttr("roisStartsEnds", Tango::DEV_DOUBLE, Tango::READ, 80) {};
 	~roisStartsEndsAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
@@ -92,7 +110,7 @@ public:
 class roisStartsAttrib: public Tango::SpectrumAttr
 {
 public:
-	roisStartsAttrib():SpectrumAttr("roisStarts", Tango::DEV_LONG, Tango::READ, 40) {};
+	roisStartsAttrib():SpectrumAttr("roisStarts", Tango::DEV_DOUBLE, Tango::READ, 40) {};
 	~roisStartsAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
@@ -104,7 +122,7 @@ public:
 class roisEndsAttrib: public Tango::SpectrumAttr
 {
 public:
-	roisEndsAttrib():SpectrumAttr("roisEnds", Tango::DEV_LONG, Tango::READ, 40) {};
+	roisEndsAttrib():SpectrumAttr("roisEnds", Tango::DEV_DOUBLE, Tango::READ, 40) {};
 	~roisEndsAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
@@ -301,18 +319,18 @@ public:
 	{return (static_cast<Rontec *>(dev))->is_energyRange_allowed(ty);}
 };
 
-class endingChannelAttrib: public Tango::Attr
+class spectrumEndValueAttrib: public Tango::Attr
 {
 public:
-	endingChannelAttrib():Attr("endingChannel", Tango::DEV_SHORT, Tango::WRITE) {};
-	~endingChannelAttrib() {};
+	spectrumEndValueAttrib():Attr("spectrumEndValue", Tango::DEV_DOUBLE, Tango::WRITE) {};
+	~spectrumEndValueAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_endingChannel(att);}
+	{(static_cast<Rontec *>(dev))->read_spectrumEndValue(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_endingChannel(att);}
+	{(static_cast<Rontec *>(dev))->write_spectrumEndValue(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_endingChannel_allowed(ty);}
+	{return (static_cast<Rontec *>(dev))->is_spectrumEndValue_allowed(ty);}
 };
 
 class detectorTemperatureAttrib: public Tango::Attr

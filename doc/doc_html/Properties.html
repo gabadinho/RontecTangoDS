@@ -18,11 +18,14 @@
 			<IMG SRC="http://www.esrf.fr/computing/cs/tango/elettra_logo.gif" BORDER=0></A>
 
 		</Td>
-        <TD ALIGN="right">
+        <TD ALIGN="center">
 			<A HREF="http://www.synchrotron-soleil.fr/" TARGET=new>
 			<IMG SRC="http://www.esrf.fr/computing/cs/tango/soleil_logo.gif" BORDER=0></A>
 		</Td>
-    	 <Td>
+        <TD ALIGN="right">
+			<A HREF="http://www.cells.es/" TARGET=new>
+			<IMG SRC="http://www.esrf.fr/computing/cs/tango/alba.jpg" BORDER=0></A>
+		</Td>
     	 <Td>
 			<H2><FONT COLOR="#7F00FF">
 			<Center><A HREF="http://www.esrf.fr/Infrastructure/Computing/tango/" TARGET="_top">
@@ -41,7 +44,7 @@ Properties Description 		<Br> <Br>
 Rontec Class	<Br>
 </h1>
 <b>
-Revision:  - Author: tithub -  CVS repository: sourceforge(tango-ds)
+Revision:  - Author: tithub
 </b>
 </center>
 
@@ -56,36 +59,52 @@ Revision:  - Author: tithub -  CVS repository: sourceforge(tango-ds)
 <Td><Center><b>Property name</b></td></Center>
 <Td><Center><b>Property type</b></td></Center>
 <Td><Center><b>Description</b></td></Center>
-<Tr><Td>ConnectedROIMask</Td>
-<Td>Tango::DEV_STRING</Td>
-<Td>list of the TTL outputs connected to a counter
+<Tr><Td><b>ConnectedROIMask</b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>list of the TTL outputs connected to a counter
 just for control and throw exception if try to configure a ROI that is not in the list
 8 TTL outputs are available with the current RONTEC MCA hardware
 example : 1 4 represents : ouptut1, output 4 connected
-default : 1</Td></Tr>
+default : 1</Font></Td></Tr>
 
-<Tr><Td>MaxFluoEnergy</Td>
-<Td>Tango::DEV_DOUBLE</Td>
-<Td>maximum fluo energy of the last MCA channel.
+<Tr><Td><b>MaxFluoEnergy</b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>maximum fluo energy of the last MCA channel.
 with the current RONTEC MCA Hardware can be 10, 20, 40, or 80 KeV
-default : 80.0</Td></Tr>
+default : 80.0</Font></Td></Tr>
 
-<Tr><Td>NumberOfChannels</Td>
-<Td>Tango::DEV_LONG</Td>
-<Td>number of channels of the MCA.
+<Tr><Td><b>NumberOfChannels</b></Td>
+<Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
+<Td><Font Size=-1>number of channels of the MCA.
 The current RONTEC MCA hardware has 4096 channels.
 this is for extentions purpose only,
-let the default value of 4096</Td></Tr>
+let the default value of 4096</Font></Td></Tr>
 
-<Tr><Td>SerialLineUrl</Td>
-<Td>Tango::DEV_STRING</Td>
-<Td>Tango name of the serial line device
+<Tr><Td><b>SerialLineUrl</b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Tango name of the serial line device
 the other serial line properties are fixed for the RONTEC RCL :
-N( no parity),8( data bits),1(stop bit), hardware handshake ( RTS/CTS</Td></Tr>
+N( no parity),8( data bits),1(stop bit), hardware handshake ( RTS/CTS</Font></Td></Tr>
 
-<Tr><Td>SpectrumPacketSize</Td>
-<Td>Tango::DEV_LONG</Td>
-<Td>Spectrum read packet size used in reading thread</Td></Tr>
+<Tr><Td><b>SpectrumPacketSize</b></Td>
+<Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
+<Td><Font Size=-1>Spectrum read packet size used in reading thread</Font></Td></Tr>
+
+<Tr><Td><b>EnergyMode</b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Energy mode or channel mode selection</Font></Td></Tr>
+
+<Tr><Td><b>EnergyCoeff0</b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Energy conversion polynomial coefficient order 0</Font></Td></Tr>
+
+<Tr><Td><b>EnergyCoeff1</b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Energy conversion polynomial coefficient order 0</Font></Td></Tr>
+
+<Tr><Td><b>EnergyCoeff2</b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Energy conversion polynomial coefficient order 2</Font></Td></Tr>
 
 </Table>
 
@@ -97,7 +116,7 @@ There is no Class properties.<Br><Br>
 <Center>
 <Br>
 <HR WIDTH="100%"></H5>
-<H3> ESRF - Software Engineering Group </H33>
+<H3> ESRF - Software Engineering Group </H3>
 </Center>
 </body>
 </html>
