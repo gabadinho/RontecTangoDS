@@ -165,7 +165,7 @@ double RontecImpl::get_remaining_acquisition_real_time(void)
 double RontecImpl::get_elapsed_acquisition_real_time(void)
 {
 	DEBUG_STREAM << "RontecImpl::get_elapsed_acquisition_real_time() entering... "<< endl;
-	if(!_reading_thread) {
+	if(!is_reading_thread_running()) {
 		// forces time update when the spectrum is not read
 		ascii_command("$SS 0 1 1 0");
 	}
@@ -176,7 +176,7 @@ double RontecImpl::get_elapsed_acquisition_real_time(void)
 double RontecImpl::get_elapsed_acquisition_live_time(void)
 {
 	DEBUG_STREAM << "RontecImpl::get_elapsed_acquisition_live_time() entering... "<< endl;
-	if(!_reading_thread) {
+	if(!is_reading_thread_running()) {
 		// forces time update when the spectrum is not read
 		ascii_command("$SS 0 1 1 0");
 	}
@@ -579,7 +579,9 @@ std::string RontecImpl::ascii_command(std::string cmd)
 		try {
 			// communication with RONTEC through serial line device server
 			_proxy->command_in("DevSerFlush", static_cast<Tango::DevLong>(2));
+			//std::cout << "write : " << cmd << std::endl;
 			_proxy->command_inout("WriteRead",dvlsa,resp);
+			//std::cout << "read : " << resp << std::endl;
 		} 
 		catch(Tango::DevFailed &df) {
 			// force proxy init
@@ -803,16 +805,20 @@ void* RontecThread::run_undetached(void* arg) {
 
 			INFO_STREAM << "Read spectrum : " << index << " " << index + size - 1 << endl;
 
+			/*
+			unsigned long* tmp_data = new unsigned long[size];
+			_impl->read_spectrum(tmp_data, index, size);
 			{
-				unsigned long* tmp_data = new unsigned long[size];
-				_impl->read_spectrum(tmp_data, index, size);
-				{
-					omni_mutex_lock spectrum_lock(_spectrum_mutex);
-					for(long i=0; i<size; i++) {
-						_data[i+(index - _first_index)] = tmp_data[i];
-					}
+				omni_mutex_lock spectrum_lock(_spectrum_mutex);
+				for(long i=0; i<size; i++) {
+					_data[i+(index - _first_index)] = tmp_data[i];
 				}
-				delete [] tmp_data;
+			}
+			delete [] tmp_data;
+			*/
+			{
+				omni_mutex_lock spectrum_lock(_spectrum_mutex);
+				_impl->read_spectrum(_data + index - _first_index, index, size);
 			}
 
 			index += size;
@@ -822,8 +828,10 @@ void* RontecThread::run_undetached(void* arg) {
 			if(stop_index>=0 && stop_index==index) {
 				break;
 			}
+			unsigned long next_s,next_ns;
+			omni_thread::get_time(&next_s,&next_ns,wait_ms / 1000,(wait_ms % 1000) * 1000000);
 			_wait_mutex.lock();
-			_wait_cond.timedwait(wait_ms / 1000,(wait_ms % 1000) * 1000000);
+			_wait_cond.timedwait(next_s,next_ns);
 
 		} catch(Tango::DevFailed& df) {
 			_go_on = false;
