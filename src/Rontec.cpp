@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.5 2007-02-14 08:40:27 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.6 2007-03-01 09:05:18 tithub Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: tithub $
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.5  2007/02/14 08:40:27  tithub
+// * added energy mode
+//
 // Revision 1.4  2006/08/31 15:51:10  tithub
 // * Les temps sont exprimés en seconde au lieu de millisecondes
 // * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
@@ -785,11 +788,11 @@ void Rontec::read_roisStartsEnds(Tango::Attribute &attr)
 		ttl = i+1;
 		if(is_ROI_configured(ttl)) {
 			_mca->roi_get_parameters(ttl, atom, name, low_chan, high_chan);
-			attr_roisStartsEnds_read[2*i] = low_chan;
-			attr_roisStartsEnds_read[2*i+1] = high_chan;
+			attr_roisStartsEnds_read[2*i] = get_energy_from_channel(low_chan);
+			attr_roisStartsEnds_read[2*i+1] = get_energy_from_channel(high_chan);
 		} else {
-			attr_roisStartsEnds_read[2*i] = -1;
-			attr_roisStartsEnds_read[2*i+1] = -1;
+			attr_roisStartsEnds_read[2*i] = 0;
+			attr_roisStartsEnds_read[2*i+1] = 0;
 		}
 	}
 	attr.set_value(attr_roisStartsEnds_read,2*NB_MAX_ROI);
@@ -813,9 +816,9 @@ void Rontec::read_roisStarts(Tango::Attribute &attr)
 		ttl = i+1;
 		if(is_ROI_configured(ttl)) {
 			_mca->roi_get_parameters(ttl, atom, name, low_chan, high_chan);
-			attr_roisStarts_read[i] = low_chan;
+			attr_roisStarts_read[i] = get_energy_from_channel(low_chan);
 		} else {
-			attr_roisStarts_read[i] = -1;
+			attr_roisStarts_read[i] = 0;
 		}
 	}
 	attr.set_value(attr_roisStarts_read,NB_MAX_ROI);
@@ -839,9 +842,9 @@ void Rontec::read_roisEnds(Tango::Attribute &attr)
 		ttl = i+1;
 		if(is_ROI_configured(ttl)) {
 			_mca->roi_get_parameters(ttl, atom, name, low_chan, high_chan);
-			attr_roisEnds_read[i] = high_chan;
+			attr_roisEnds_read[i] = get_energy_from_channel(high_chan);
 		} else {
-			attr_roisEnds_read[i] = -1;
+			attr_roisEnds_read[i] = 0;
 		}
 	}
 	attr.set_value(attr_roisEnds_read,NB_MAX_ROI);
