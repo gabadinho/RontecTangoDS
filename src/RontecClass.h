@@ -12,9 +12,12 @@
 //
 // $Author: tithub $
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.4  2007/02/14 08:40:27  tithub
+// * added energy mode
+//
 // Revision 1.3  2006/08/31 15:51:10  tithub
 // * Les temps sont exprimés en seconde au lieu de millisecondes
 // * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
@@ -256,7 +259,7 @@ public:
 class offsetGainAttrib: public Tango::SpectrumAttr
 {
 public:
-	offsetGainAttrib():SpectrumAttr("offsetGain", Tango::DEV_LONG, Tango::READ, 2) {};
+	offsetGainAttrib():SpectrumAttr("offsetGain", Tango::DEV_DOUBLE, Tango::READ, 2) {};
 	~offsetGainAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)

@@ -8,9 +8,12 @@
 //
 // $Author: tithub $
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.4  2007/02/14 08:40:27  tithub
+// * added energy mode
+//
 // Revision 1.3  2006/08/31 15:51:10  tithub
 // * Les temps sont exprimés en seconde au lieu de millisecondes
 // * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
@@ -51,7 +54,7 @@
 
 /**
  * @author	$Author: tithub $
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 
  //	Add your own constants definitions here.
@@ -101,7 +104,7 @@ public :
 		Tango::DevDouble	*attr_liveTime_read;
 		Tango::DevShort	*attr_nbChannels_read;
 		Tango::DevShort	attr_nbChannels_write;
-		Tango::DevLong	*attr_offsetGain_read;
+		Tango::DevDouble	*attr_offsetGain_read;
 		Tango::DevBoolean	attr_readDataSpectrum_write;
 		Tango::DevDouble	*attr_realTime_read;
 		Tango::DevLong	*attr_roi1_read;
@@ -164,15 +167,15 @@ public :
 /**
  *	Energy conversion polynomial coefficient order 0
  */
-	Tango::DevDouble	energyCoeff0;
+	vector<double>	energyCoeff0;
 /**
  *	Energy conversion polynomial coefficient order 0
  */
-	Tango::DevDouble	energyCoeff1;
+	vector<double>	energyCoeff1;
 /**
  *	Energy conversion polynomial coefficient order 2
  */
-	Tango::DevDouble	energyCoeff2;
+	vector<double>	energyCoeff2;
 //@}
 
 /**@name Constructors
@@ -604,7 +607,7 @@ public :
  *	channels are retreived according amplifier and energy calibration.
  *	not alowed if acquisition is running
  *	Exception if ROI number not in the ConnectedROIMask property
- *	@param	argin	[0] : TTL output number, [1] low channel, [2] high channel
+ *	@param	argin	[0] : TTL output number, [1] low energy (eV), [2] high energy (eV)
  *	@exception DevFailed
  */
 	void	set_single_roi(const Tango::DevVarDoubleArray *);
@@ -649,6 +652,9 @@ protected :
 	double _integration_time;	// integration time used with start() command
 	bool _live_time;			// false = integration time in real time, true = integration time in live time
 	bool _start_reading_thread;
+	double _coeff0;
+	double _coeff1;
+	double _coeff2;
 
 	double get_energy_from_channel(long channel);
 	long get_channel_from_energy(double energy);

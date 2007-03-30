@@ -1,5 +1,5 @@
 
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.4 2007-02-14 08:40:27 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.5 2007-03-30 09:43:13 tithub Exp $";
 
 static const char *TagName   = "$Name: not supported by cvs2svn $";
 
@@ -22,9 +22,12 @@ static const char *RCSfile = "$RCSfile: RontecClass.cpp,v $";
 //
 // $Author: tithub $
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.4  2007/02/14 08:40:27  tithub
+// * added energy mode
+//
 // Revision 1.3  2006/08/31 15:51:10  tithub
 // * Les temps sont exprimés en seconde au lieu de millisecondes
 // * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
@@ -485,7 +488,7 @@ void RontecClass::command_factory()
 		Tango::OPERATOR));
 	command_list.push_back(new SetSingleROICmd("SetSingleROI",
 		Tango::DEVVAR_DOUBLEARRAY, Tango::DEV_VOID,
-		"[0] : TTL output number, [1] low channel, [2] high channel",
+		"[0] : TTL output number, [1] low energy (eV), [2] high energy (eV)",
 		"",
 		Tango::OPERATOR));
 	command_list.push_back(new SetSpeedAndResolutionConfigurationCmd("SetSpeedAndResolutionConfiguration",

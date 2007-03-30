@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.6 2007-03-01 09:05:18 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.7 2007-03-30 09:43:13 tithub Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: tithub $
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.6  2007/03/01 09:05:18  tithub
+// * roiStarts and roiEnds attributes in energy
+//
 // Revision 1.5  2007/02/14 08:40:27  tithub
 // * added energy mode
 //
@@ -237,6 +240,12 @@ void Rontec::init_device()
 	_mca = new RontecImpl(this);
 	_mca->init(serialLineUrl,/*baud,timeout,*/spectrumPacketSize);
 
+	// update energy coefficients
+	_coeff0 = 0.0;
+	_coeff1 = 0.0;
+	_coeff2 = 0.0;
+	get_speed_and_resolution_configuration();
+
 	set_state(Tango::UNKNOWN);
 }
 
@@ -258,9 +267,6 @@ void Rontec::get_device_property()
 	maxFluoEnergy = 80.0;
 	spectrumPacketSize = 256;
 	energyMode = false;
-	energyCoeff0 = 0.0;
-	energyCoeff0 = 0.0;
-	energyCoeff0 = 0.0;
 
 	//	Read device properties from database.(Automatic code generation)
 	//-------------------------------------------------------------
@@ -945,11 +951,13 @@ void Rontec::read_offsetGain(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rontec::read_offsetGain(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 
-	long of,g;
+	long roffset,rgain;
 		
-	_mca->retreive_offset_gain(of,g);
-	attr_offsetGain_read[0] = of;
-	attr_offsetGain_read[1] = g;
+	_mca->retreive_offset_gain(roffset,rgain);
+	double offset = -roffset * rgain / 1000000.0;
+	double gain = rgain / 10000.0;
+	attr_offsetGain_read[0] = offset;
+	attr_offsetGain_read[1] = gain;
 	attr.set_value(attr_offsetGain_read,2);
 }
 //+----------------------------------------------------------------------------
@@ -1264,6 +1272,21 @@ Tango::DevLong Rontec::get_speed_and_resolution_configuration()
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 	//	Add your own code to control device here
 	argout = _mca->get_filter_setting();
+
+	if(energyMode
+	&& argout < energyCoeff0.size()
+	&& argout < energyCoeff1.size()
+	&& argout < energyCoeff2.size()) {
+		_coeff0 = energyCoeff0[argout];
+		_coeff1 = energyCoeff1[argout];
+		_coeff2 = energyCoeff2[argout];
+	}
+	else {
+		_coeff0 = 0.0;
+		_coeff1 = 0.0;
+		_coeff2 = 0.0;
+	}
+
 	return argout;
 }
 
@@ -1285,8 +1308,11 @@ void Rontec::set_speed_and_resolution_configuration(Tango::DevLong argin)
 {
 	DEBUG_STREAM << "Rontec::set_speed_and_resolution_configuration(): entering... !" << endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
-	//	Add your own code to control device here	
+	//	Add your own code to control device here
 	_mca->set_filter_setting(argin);
+	// update energy coefficients
+	if(energyMode)
+		get_speed_and_resolution_configuration();
 }
 
 //+------------------------------------------------------------------
@@ -1465,7 +1491,7 @@ void Rontec::set_rois(const Tango::DevVarDoubleArray *argin)
  *	not alowed if acquisition is running
  *	Exception if ROI number not in the ConnectedROIMask property
  *
- * @param	argin	[0] : TTL output number, [1] low channel, [2] high channel
+ * @param	argin	[0] : TTL output number, [1] low energy (eV), [2] high energy (eV)
  *
  */
 //+------------------------------------------------------------------
@@ -1507,7 +1533,13 @@ double Rontec::get_energy_from_channel(long channel) {
 		return x;
 	}
 	else {
-		return x*x*energyCoeff2 + x*energyCoeff1 + energyCoeff0;
+		if(_coeff0==0.0 && _coeff1==0.0 && _coeff2==0.0) {
+			Tango::Except::throw_exception (
+				(const char *)"DEVICE_ERROR",
+				(const char *)"Energy coefficient properties are not properly defined for current selected speed and resolution configuration.",
+				(const char *)"Rontec::get_energy_from_channel");
+		}
+		return x*x*_coeff2 + x*_coeff1 + _coeff0;
 	}
 }
 
@@ -1516,6 +1548,12 @@ long Rontec::get_channel_from_energy(double energy) {
 		return (long) energy;
 	}
 	else {
+		if(_coeff0==0.0 && _coeff1==0.0 && _coeff2==0.0) {
+			Tango::Except::throw_exception (
+				(const char *)"DEVICE_ERROR",
+				(const char *)"Energy coefficient properties are not properly defined for current selected speed and resolution configuration.",
+				(const char *)"Rontec::get_channel_from_energy");
+		}
 		long best = 0;
 		long min = 0;
 		long max = 0;
@@ -1552,5 +1590,3 @@ long Rontec::get_channel_from_energy(double energy) {
 }
 
 }	//	namespace
-
-//+------------------------------------------------------------------
