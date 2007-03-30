@@ -62,7 +62,7 @@ CFG=Rontec - Win32 Debug
 # PROP Use_Debug_Libraries 1
 # PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
-# PROP Cmd_Line "nmake /f Makefile.VC"
+# PROP Cmd_Line "set DEBUG=1 && nmake /f Makefile.VC"
 # PROP Rebuild_Opt "clean all"
 # PROP Target_File "c:\DeviceServers\ds_Rontec.exe"
 # PROP Bsc_Name ""
