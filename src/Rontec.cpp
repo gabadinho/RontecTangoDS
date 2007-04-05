@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.7 2007-03-30 09:43:13 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.8 2007-04-05 15:32:10 dhaussy Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -11,11 +11,15 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // project :      TANGO Device Server
 //
-// $Author: tithub $
+// $Author: dhaussy $
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.7  2007/03/30 09:43:13  tithub
+// * energy conversion coefficient depend on Rontec speed and resolution configuration
+// * offset and gain conversion
+//
 // Revision 1.6  2007/03/01 09:05:18  tithub
 // * roiStarts and roiEnds attributes in energy
 //
@@ -1555,20 +1559,16 @@ long Rontec::get_channel_from_energy(double energy) {
 				(const char *)"Rontec::get_channel_from_energy");
 		}
 		long best = 0;
-		long min = 0;
-		long max = 0;
-		double min_val = get_energy_from_channel(min);
-		double max_val = get_energy_from_channel(max);
-		double best_val = get_energy_from_channel(best);
+		double min_val = get_energy_from_channel(0);
+		double max_val = get_energy_from_channel(0);
+		double best_val = get_energy_from_channel(0);
 
 		for(long i=1; i<numberOfChannels; ++i) {
 			double test = get_energy_from_channel(i);
 			if(test<min_val) {
-				min = i;
 				min_val = test;
 			}
 			if(test>max_val) {
-				max = i;
 				max_val = test;
 			}
 			if(fabs(energy-test)<fabs(energy-best_val)) {
@@ -1577,7 +1577,7 @@ long Rontec::get_channel_from_energy(double energy) {
 			}
 		}
 
-		if(best_val<min_val || best_val>max_val) {
+		if(energy<min_val || energy>max_val) {
 			ostringstream err;
 			err << "Energy is not in valid range [" << min_val << ";" << max_val << "]";
 			Tango::Except::throw_exception (
