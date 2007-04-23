@@ -6,11 +6,15 @@
 //
 // project :	RRontec
 //
-// $Author: tithub $
+// $Author: buteau $
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.5  2007/03/30 09:43:13  tithub
+// * energy conversion coefficient depend on Rontec speed and resolution configuration
+// * offset and gain conversion
+//
 // Revision 1.4  2007/02/14 08:40:27  tithub
 // * added energy mode
 //
@@ -45,7 +49,7 @@
 #ifndef _RONTEC_H
 #define _RONTEC_H
 
-#include <Tango.h>
+#include <tango.h>
 #include <DeviceProxyHelper.h>
 #include "RontecImpl.h"
 
@@ -53,8 +57,8 @@
 //using namespace Tango;
 
 /**
- * @author	$Author: tithub $
- * @version $Revision: 1.5 $
+ * @author	$Author: buteau $
+ * @version $Revision: 1.6 $
  */
 
  //	Add your own constants definitions here.
