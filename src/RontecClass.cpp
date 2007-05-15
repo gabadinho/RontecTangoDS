@@ -1,5 +1,5 @@
 
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.5 2007-03-30 09:43:13 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.6 2007-05-15 08:28:14 dhaussy Exp $";
 
 static const char *TagName   = "$Name: not supported by cvs2svn $";
 
@@ -20,11 +20,15 @@ static const char *RCSfile = "$RCSfile: RontecClass.cpp,v $";
 //
 // project :     TANGO Device Server
 //
-// $Author: tithub $
+// $Author: dhaussy $
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.5  2007/03/30 09:43:13  tithub
+// * energy conversion coefficient depend on Rontec speed and resolution configuration
+// * offset and gain conversion
+//
 // Revision 1.4  2007/02/14 08:40:27  tithub
 // * added energy mode
 //
@@ -770,6 +774,12 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	energySpectrumAttrib	*energy_spectrum = new energySpectrumAttrib();
 	att_list.push_back(energy_spectrum);
 
+	//	Attribute : energyMode
+	energyModeAttrib	*energy_mode = new energyModeAttrib();
+	energy_mode->set_memorized();
+	energy_mode->set_memorized_init(true);
+	att_list.push_back(energy_mode);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }
@@ -886,21 +896,6 @@ void RontecClass::set_default_property()
 	prop_def  = "256";
 	vect_data.clear();
 	vect_data.push_back("256");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "EnergyMode";
-	prop_desc = "Energy mode or channel mode selection";
-	prop_def  = "false";
-	vect_data.clear();
-	vect_data.push_back("false");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

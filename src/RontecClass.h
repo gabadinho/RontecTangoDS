@@ -10,11 +10,15 @@
 //			
 // project :      TANGO Device Server
 //
-// $Author: tithub $
+// $Author: dhaussy $
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.5  2007/03/30 09:43:13  tithub
+// * energy conversion coefficient depend on Rontec speed and resolution configuration
+// * offset and gain conversion
+//
 // Revision 1.4  2007/02/14 08:40:27  tithub
 // * added energy mode
 //
@@ -58,6 +62,20 @@ namespace Rontec_ns
 //=====================================
 //	Define classes for attributes
 //=====================================
+class energyModeAttrib: public Tango::Attr
+{
+public:
+	energyModeAttrib():Attr("energyMode", Tango::DEV_BOOLEAN, Tango::WRITE) {};
+	~energyModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_energyMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_energyMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_energyMode_allowed(ty);}
+};
+
 class energySpectrumAttrib: public Tango::SpectrumAttr
 {
 public:

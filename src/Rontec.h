@@ -6,11 +6,14 @@
 //
 // project :	RRontec
 //
-// $Author: buteau $
+// $Author: dhaussy $
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.6  2007/04/23 14:56:03  buteau
+// Ajout Makefile.linux
+//
 // Revision 1.5  2007/03/30 09:43:13  tithub
 // * energy conversion coefficient depend on Rontec speed and resolution configuration
 // * offset and gain conversion
@@ -57,8 +60,8 @@
 //using namespace Tango;
 
 /**
- * @author	$Author: buteau $
- * @version $Revision: 1.6 $
+ * @author	$Author: dhaussy $
+ * @version $Revision: 1.7 $
  */
 
  //	Add your own constants definitions here.
@@ -126,6 +129,7 @@ public :
 		Tango::DevShort	*attr_timingType_read;
 		Tango::DevShort	attr_timingType_write;
 		Tango::DevDouble	*attr_energySpectrum_read;
+		Tango::DevBoolean	attr_energyMode_write;
 //@}
 		
 /**
@@ -164,10 +168,6 @@ public :
  *	Spectrum read packet size used in reading thread
  */
 	Tango::DevLong	spectrumPacketSize;
-/**
- *	Energy mode or channel mode selection
- */
-	Tango::DevBoolean	energyMode;
 /**
  *	Energy conversion polynomial coefficient order 0
  */
@@ -390,6 +390,14 @@ public :
  */
 	virtual void read_energySpectrum(Tango::Attribute &attr);
 /**
+ *	Extract real attribute values for energyMode acquisition result.
+ */
+	virtual void read_energyMode(Tango::Attribute &attr);
+/**
+ *	Write energyMode attribute values to hardware.
+ */
+	virtual void write_energyMode(Tango::WAttribute &attr);
+/**
  *	Read/Write allowed for countRate attribute.
  */
 	virtual bool is_countRate_allowed(Tango::AttReqType type);
@@ -501,6 +509,10 @@ public :
  *	Read/Write allowed for energySpectrum attribute.
  */
 	virtual bool is_energySpectrum_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for energyMode attribute.
+ */
+	virtual bool is_energyMode_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Abort command.
  */

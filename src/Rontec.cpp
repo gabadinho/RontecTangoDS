@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.8 2007-04-05 15:32:10 dhaussy Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.9 2007-05-15 08:28:14 dhaussy Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: dhaussy $
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.8  2007/04/05 15:32:10  dhaussy
+// * corrected a bug in energy range check
+//
 // Revision 1.7  2007/03/30 09:43:13  tithub
 // * energy conversion coefficient depend on Rontec speed and resolution configuration
 // * offset and gain conversion
@@ -108,6 +111,7 @@ namespace Rontec_ns
 Rontec::Rontec(Tango::DeviceClass *cl,string &s)
 :Tango::Device_3Impl(cl,s.c_str())
 {
+	attr_energyMode_write = false;
 	try {
 		init_device();
 	} catch(...) {
@@ -119,6 +123,7 @@ Rontec::Rontec(Tango::DeviceClass *cl,string &s)
 Rontec::Rontec(Tango::DeviceClass *cl,const char *s)
 :Tango::Device_3Impl(cl,s)
 {
+	attr_energyMode_write = false;
 	try {
 		init_device();
 	} catch(...) {
@@ -130,6 +135,7 @@ Rontec::Rontec(Tango::DeviceClass *cl,const char *s)
 Rontec::Rontec(Tango::DeviceClass *cl,const char *s,const char *d)
 :Tango::Device_3Impl(cl,s,d)
 {
+	attr_energyMode_write = false;
 	try {
 		init_device();
 	} catch(...) {
@@ -270,7 +276,6 @@ void Rontec::get_device_property()
 	numberOfChannels = 4096;
 	maxFluoEnergy = 80.0;
 	spectrumPacketSize = 256;
-	energyMode = false;
 
 	//	Read device properties from database.(Automatic code generation)
 	//-------------------------------------------------------------
@@ -280,7 +285,6 @@ void Rontec::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("NumberOfChannels"));
 	dev_prop.push_back(Tango::DbDatum("SerialLineUrl"));
 	dev_prop.push_back(Tango::DbDatum("SpectrumPacketSize"));
-	dev_prop.push_back(Tango::DbDatum("EnergyMode"));
 	dev_prop.push_back(Tango::DbDatum("EnergyCoeff0"));
 	dev_prop.push_back(Tango::DbDatum("EnergyCoeff1"));
 	dev_prop.push_back(Tango::DbDatum("EnergyCoeff2"));
@@ -338,15 +342,6 @@ void Rontec::get_device_property()
 	if (def_prop.is_empty()==false)	def_prop  >>  spectrumPacketSize;
 	//	And try to extract SpectrumPacketSize value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  spectrumPacketSize;
-
-	//	Try to initialize EnergyMode from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  energyMode;
-	//	Try to initialize EnergyMode from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  energyMode;
-	//	And try to extract EnergyMode value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  energyMode;
 
 	//	Try to initialize EnergyCoeff0 from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -465,6 +460,30 @@ void Rontec::read_attr_hardware(vector<long> &attr_list)
 	DEBUG_STREAM << "Rontec::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
 	//	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::read_energyMode
+// 
+// description : 	Extract real attribute values for energyMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rontec::read_energyMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rontec::read_energyMode(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Rontec::write_energyMode
+// 
+// description : 	Write energyMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Rontec::write_energyMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Rontec::write_energyMode(Tango::WAttribute &attr) entering... "<< endl;
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		Rontec::read_spectrumEndValue
@@ -1277,7 +1296,7 @@ Tango::DevLong Rontec::get_speed_and_resolution_configuration()
 	//	Add your own code to control device here
 	argout = _mca->get_filter_setting();
 
-	if(energyMode
+	if(attr_energyMode_write
 	&& argout < energyCoeff0.size()
 	&& argout < energyCoeff1.size()
 	&& argout < energyCoeff2.size()) {
@@ -1315,7 +1334,7 @@ void Rontec::set_speed_and_resolution_configuration(Tango::DevLong argin)
 	//	Add your own code to control device here
 	_mca->set_filter_setting(argin);
 	// update energy coefficients
-	if(energyMode)
+	if(attr_energyMode_write)
 		get_speed_and_resolution_configuration();
 }
 
@@ -1533,7 +1552,7 @@ void Rontec::set_single_roi(const Tango::DevVarDoubleArray *argin)
 
 double Rontec::get_energy_from_channel(long channel) {
 	double x = channel;
-	if(!energyMode) {
+	if(!attr_energyMode_write) {
 		return x;
 	}
 	else {
@@ -1548,7 +1567,7 @@ double Rontec::get_energy_from_channel(long channel) {
 }
 
 long Rontec::get_channel_from_energy(double energy) {
-	if(!energyMode) {
+	if(!attr_energyMode_write) {
 		return (long) energy;
 	}
 	else {
