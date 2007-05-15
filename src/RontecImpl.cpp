@@ -37,7 +37,7 @@ RontecImpl::~RontecImpl() {
 	}
 }
 
-void RontecImpl::init(string proxy_name,/*unsigned long baud,short timeout,*/long read_size) {
+void RontecImpl::init(string proxy_name,/*unsigned long baud,short timeout,*/long read_size) throw(Tango::DevFailed) {
 	_read_size = read_size;
 	if(proxy_name!="") {
 		_proxy_name = proxy_name;
@@ -63,7 +63,7 @@ void RontecImpl::init(string proxy_name,/*unsigned long baud,short timeout,*/lon
 
 
 
-Tango::ConstDevString RontecImpl::reset()
+Tango::ConstDevString RontecImpl::reset() throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::reset(): entering... !" << endl;
 	if(_proxy) init();
@@ -77,7 +77,7 @@ Tango::ConstDevString RontecImpl::reset()
 	return CORBA::string_dup(resp.c_str());
 }
 
-void RontecImpl::clear()
+void RontecImpl::clear() throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::clear(): entering... !" << endl;
 	// stop reading thread
@@ -89,7 +89,7 @@ void RontecImpl::clear()
 	ascii_command("$CC");
 }
 
-double RontecImpl::get_input_count_rate(void)
+double RontecImpl::get_input_count_rate(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_input_count_rate() entering... "<< endl;
 	long cycle_time = get_cycle_time();
@@ -100,7 +100,7 @@ double RontecImpl::get_input_count_rate(void)
 		return 0;
 }
 
-double RontecImpl::get_output_count_rate(void)
+double RontecImpl::get_output_count_rate(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_output_count_rate() entering... "<< endl;
 	long cycle_time = get_cycle_time();
@@ -111,7 +111,7 @@ double RontecImpl::get_output_count_rate(void)
 		return 0;
 }
 
-double RontecImpl::get_dead_time(void)
+double RontecImpl::get_dead_time(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_dead_time() entering... "<< endl;
 	long icr = get_input_count_rate();
@@ -125,7 +125,7 @@ double RontecImpl::get_dead_time(void)
 	return val/1000.0;
 }
 
-double RontecImpl::get_cycle_time(void)
+double RontecImpl::get_cycle_time(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_cycle_time() entering... "<< endl;
 	double cycle = long_command("$TC");
@@ -139,7 +139,7 @@ double RontecImpl::get_cycle_time(void)
 	return cycle/1000.0;
 }
 
-void RontecImpl::set_cycle_time(double cycle)
+void RontecImpl::set_cycle_time(double cycle) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_cycle_time() entering... "<< endl;
 	if(cycle<=0) {
@@ -155,14 +155,14 @@ void RontecImpl::set_cycle_time(double cycle)
 	// exception raised in scan_response if processor number is invalid
 }
 
-double RontecImpl::get_remaining_acquisition_real_time(void)
+double RontecImpl::get_remaining_acquisition_real_time(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_remaining_acquisition_real_time() entering... "<< endl;
 	double val = long_command("$MR");
 	return val/1000.0;
 }
 
-double RontecImpl::get_elapsed_acquisition_real_time(void)
+double RontecImpl::get_elapsed_acquisition_real_time(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_elapsed_acquisition_real_time() entering... "<< endl;
 	if(!is_reading_thread_running()) {
@@ -173,7 +173,7 @@ double RontecImpl::get_elapsed_acquisition_real_time(void)
 	return val/1000.0;
 }
 
-double RontecImpl::get_elapsed_acquisition_live_time(void)
+double RontecImpl::get_elapsed_acquisition_live_time(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_elapsed_acquisition_live_time() entering... "<< endl;
 	if(!is_reading_thread_running()) {
@@ -184,21 +184,21 @@ double RontecImpl::get_elapsed_acquisition_live_time(void)
 	return val/1000.0;
 }
 
-double RontecImpl::get_detector_temperature(void)
+double RontecImpl::get_detector_temperature(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_output_count_rate() entering... "<< endl;
 	double val = long_command("$DT");
 	return val/10.0;
 }
 
-long RontecImpl::get_filter_setting(void)
+long RontecImpl::get_filter_setting(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_filter_setting() entering... "<< endl;
 	long val = long_command("$FF");
 	return val;
 }
 
-void RontecImpl::set_filter_setting(long value)
+void RontecImpl::set_filter_setting(long value) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_filter_setting() entering... "<< endl;
 	// value must be in 0 1 2 3
@@ -216,7 +216,7 @@ void RontecImpl::set_filter_setting(long value)
 	// exception raised in scan_response if processor number is invalid
 }
 
-long RontecImpl::retreive_energy_range()
+long RontecImpl::retreive_energy_range() throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::retreive_energy_range(): entering... !" << endl;
 	//	Add your own code to control device here
@@ -248,7 +248,7 @@ long RontecImpl::retreive_energy_range()
 	return hw_max_energy;
 }
 
-void RontecImpl::set_energy_range(long energy)
+void RontecImpl::set_energy_range(long energy) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::set_energy_range(): entering... !" << endl;
 	std::ostringstream cmd;
@@ -268,7 +268,7 @@ void RontecImpl::set_energy_range(long energy)
 	ascii_command(cmd.str());
 }
 
-void RontecImpl::retreive_offset_gain(long &offs, long &gain)
+void RontecImpl::retreive_offset_gain(long &offs, long &gain) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::retreive_offset_gain(): entering... !" << endl;
 	//	Add your own code to control device here
@@ -276,10 +276,11 @@ void RontecImpl::retreive_offset_gain(long &offs, long &gain)
 	std::string og_str = ascii_command("$FC");
 
 	std::string dummy;
-	istringstream(og_str) >> dummy >> offs >> gain;
+	istringstream parser(og_str);
+	parser >> dummy >> offs >> gain;
 }
 
-void RontecImpl::configure_acquisition_mode(long format, long mode)
+void RontecImpl::configure_acquisition_mode(long format, long mode) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::configure_acquisition() entering... "<< endl;
 	// value must be in 0 1 2 3
@@ -295,7 +296,7 @@ void RontecImpl::configure_acquisition_mode(long format, long mode)
 	ascii_command(cmd.str());
 }
 
-void RontecImpl::configure_spectrum_reading_properties( long start_ch, long step_w, long summation_num, long max_d )
+void RontecImpl::configure_spectrum_reading_properties( long start_ch, long step_w, long summation_num, long max_d ) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::configure_spectrum_reading_properties() entering... "<< endl;
 	if(  (start_ch > _max_index) || (start_ch < _min_index) || (step_w > _max_index) || (step_w < 0) || (summation_num > _max_index) || (summation_num < 0) || (max_d < 0) )
@@ -312,7 +313,7 @@ void RontecImpl::configure_spectrum_reading_properties( long start_ch, long step
 	_read_last_index		=  max_d;
 }
 
-void RontecImpl::set_spectrum_reading_first_channel(Tango::DevLong start)
+void RontecImpl::set_spectrum_reading_first_channel(Tango::DevLong start) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::set_spectrum_reading_first_channel() entering... "<< endl;
 	if( start < 0 )
@@ -329,7 +330,7 @@ void RontecImpl::set_spectrum_reading_first_channel(Tango::DevLong start)
 //	std::cout << "		_start_channel set to " << this->_start_channel << endl;
 }
 
-void RontecImpl::set_spectrum_reading_last_channel(Tango::DevLong end)
+void RontecImpl::set_spectrum_reading_last_channel(Tango::DevLong end) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::set_spectrum_reading_last_channel() entering... "<< endl;
 	//if(end > rontec_number_of_channels)
@@ -345,7 +346,7 @@ void RontecImpl::set_spectrum_reading_last_channel(Tango::DevLong end)
 //	std::cout << "		_end_channel set to " << this->_end_channel << endl;
 }
 
-void RontecImpl::get_spectrum_reading_properties( long &start_ch, long &step_w, long &summation_num, long &end_chan )
+void RontecImpl::get_spectrum_reading_properties( long &start_ch, long &step_w, long &summation_num, long &end_chan ) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::get_spectrum_reading_properties() entering... "<< endl;
 	//DEBUG_STREAM << "_start_channel=" << this->_start_channel << "		end_channel=" << this->_end_channel << endl;
@@ -356,7 +357,7 @@ void RontecImpl::get_spectrum_reading_properties( long &start_ch, long &step_w, 
 	 end_chan		= _read_last_index;
 }
 
-long RontecImpl::get_spectrum(unsigned long* dest,long begin, long length) {
+long RontecImpl::get_spectrum(unsigned long* dest,long begin, long length) throw(Tango::DevFailed) {
 	if(!_reading_thread) {
 		ERROR_STREAM << "RontecImpl::get_spectrum(): reading thread not started." << endl;
 		Tango::Except::throw_exception (
@@ -368,7 +369,7 @@ long RontecImpl::get_spectrum(unsigned long* dest,long begin, long length) {
 	return _reading_thread->get_spectrum(dest,begin,length);
 }
 
-void RontecImpl::start_acquisition(double time,bool live,bool start_reading_thread)
+void RontecImpl::start_acquisition(double time,bool live,bool start_reading_thread) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::start_acquisition() entering... "<< endl;
 
@@ -408,19 +409,19 @@ void RontecImpl::start_acquisition(double time,bool live,bool start_reading_thre
 	}
 }
 
-void RontecImpl::pause(void)
+void RontecImpl::pause(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::pause() entering... "<< endl;
 	ascii_command("$MP ON");
 }
 
-void RontecImpl::resume(void)
+void RontecImpl::resume(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::pause() entering... "<< endl;
 	ascii_command("$MP NO");
 }
 
-std::string RontecImpl::get_pause_status(void)
+std::string RontecImpl::get_pause_status(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::pause() entering... "<< endl;
 	std::string resp = ascii_command("$FP");
@@ -436,6 +437,7 @@ void RontecImpl::roi_get_parameters(	long & ttl_num,		// argin/argout : TTL outp
 										std::string &name,	// argout : atomic name as configured in the RONTEC
 										long &low_channel,	// argout : low channel configured
 										long &high_channel) // argout : high channel configured
+throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::roi_get_parameters(): entering... !" << endl;
 
@@ -481,7 +483,8 @@ void RontecImpl::roi_get_parameters(	long & ttl_num,		// argin/argout : TTL outp
 	long high_energy = 0.0;
 	long low_energy = 0.0;
 	std::string dummy;
-	istringstream(resp) >> mnemo >> atomic_number >> name >> low_energy >> high_energy;
+	istringstream parser(resp);
+	parser >> mnemo >> atomic_number >> name >> low_energy >> high_energy;
 	double chan = 0.0;
 
 	// the low energy
@@ -515,6 +518,7 @@ void RontecImpl::roi_set_parameters(	long ttl_num,		// argin/argout : TTL output
 										long low_channel,	// argout : low channel configured
 										long high_channel) 	// argout : high channel configured
 
+throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::roi_set_parameters(): entering... !" << endl;
 	if(( ttl_num < 1 ) || ( ttl_num > 8 ) )
@@ -547,7 +551,7 @@ void RontecImpl::roi_set_parameters(	long ttl_num,		// argin/argout : TTL output
 	ascii_command(cmd.str());
 }
 
-double RontecImpl::roi_get_count(long ttl_num)
+double RontecImpl::roi_get_count(long ttl_num) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::roi_get_count(): entering... !" << endl;
 	double cycle_time = get_cycle_time();
@@ -560,7 +564,7 @@ double RontecImpl::roi_get_count(long ttl_num)
 		return 0;
 }
 
-std::string RontecImpl::ascii_command(std::string cmd)
+std::string RontecImpl::ascii_command(std::string cmd) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::ascii_command() : " << cmd << endl;
 	if(!_proxy) init();
@@ -573,7 +577,7 @@ std::string RontecImpl::ascii_command(std::string cmd)
 	dvlsa.svalue[0] = CORBA::string_dup(cmd.c_str());
 	dvlsa.lvalue.length(1);
 	dvlsa.lvalue[0] = SL_LINE;
-	Tango::DevString resp;
+	std::string resp;
 	{
 		omni_mutex_lock proxy_lock(_proxy_mutex);
 		try {
@@ -602,15 +606,16 @@ std::string RontecImpl::ascii_command(std::string cmd)
 	return response;
 }
 
-long RontecImpl::long_command(std::string cmd) {
+long RontecImpl::long_command(std::string cmd) throw(Tango::DevFailed) {
 	long val = 0;
 	std::string resp = ascii_command(cmd);
 	std::string dummy;
-	istringstream(resp) >> dummy >> val;
+	std::istringstream parser(resp);
+	parser >> dummy >> val;
 	return val;
 }
 
-void RontecImpl::scan_response(std::string resp)
+void RontecImpl::scan_response(std::string resp) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::scan_response(): entering... !" << endl;
 
@@ -676,7 +681,7 @@ void RontecImpl::scan_response(std::string resp)
 	}
 }
 
-void RontecImpl::read_spectrum(unsigned long* data,long begin, long length)
+void RontecImpl::read_spectrum(unsigned long* data,long begin, long length) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::read_spectrum(): entering... !" << endl;
 	if(!_proxy) init();
@@ -690,7 +695,7 @@ void RontecImpl::read_spectrum(unsigned long* data,long begin, long length)
 	// on envoie la commande $SS et on lit le retour
 	std::string resp = ascii_command(cmd.str());
 	// on recupere les buff!
-	Tango::DevVarCharArray* buff;
+	const Tango::DevVarCharArray* buff;
 	long i=0;
 	while(i<length) {
 		long nboctetslus= 0;

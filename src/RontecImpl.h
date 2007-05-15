@@ -68,7 +68,7 @@ public:
 
 // retreives the energy configured command $FE
 // Tango::DevFailed exception if RONTEC returns an error
-	long retreive_energy_range();
+	long retreive_energy_range() throw (Tango::DevFailed);
 
 // sets the energy configured command $SE
 // possible input values : 10000, 20000, 40000, 80000 with rounding to lower value
@@ -118,7 +118,7 @@ public:
 
 // read partial spectrum beginning at begin for length channel and write them in buffertac
 // Taco DS like code
-	 void read_spectrum(unsigned long* data,long begin, long length);
+	 void read_spectrum(unsigned long* data,long begin, long length) throw (Tango::DevFailed);
 
 // Pauses the acquisition
 	void pause(void) throw (Tango::DevFailed);

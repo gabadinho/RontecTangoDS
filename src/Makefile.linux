@@ -95,10 +95,10 @@ include $(SOLEIL_ROOT)/env/tango.opt
 #=============================================================================
 # SVC_OBJS is the list of all objects needed to make the output
 #
-SVC_OBJS =	$(OBJDIR)/ClassFactory.o  \
+SVC_OBJS =	$(OBJDIR)/RontecImpl.o \
+		$(OBJDIR)/ClassFactory.o  \
 		$(OBJDIR)/main.o  \
 		$(OBJDIR)/$(PACKAGE_NAME)StateMachine.o \
-		$(OBJDIR)/$(PACKAGE_NAME)Impl.o \
 		$(OBJDIR)/$(PACKAGE_NAME)Class.o \
 		$(OBJDIR)/$(PACKAGE_NAME).o
 
