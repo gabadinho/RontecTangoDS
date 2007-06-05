@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.9 2007-05-15 08:28:14 dhaussy Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.10 2007-06-05 14:38:30 dhaussy Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: dhaussy $
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.9  2007/05/15 08:28:14  dhaussy
+// * changed energyMode from property to attribute
+//
 // Revision 1.8  2007/04/05 15:32:10  dhaussy
 // * corrected a bug in energy range check
 //
@@ -482,6 +485,7 @@ void Rontec::read_energyMode(Tango::Attribute &attr)
 void Rontec::write_energyMode(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Rontec::write_energyMode(Tango::WAttribute &attr) entering... "<< endl;
+	attr.get_write_value(attr_energyMode_write);
 }
 
 //+----------------------------------------------------------------------------

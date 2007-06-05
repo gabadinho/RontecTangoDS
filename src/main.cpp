@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/main.cpp,v 1.3 2006-08-31 15:51:10 tithub Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/main.cpp,v 1.4 2007-06-05 14:38:30 dhaussy Exp $";
 //+=============================================================================
 //
 // file :        main.cpp
@@ -10,11 +10,17 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // project :     TANGO Device Server
 //
-// $Author: tithub $
+// $Author: dhaussy $
 //
-// $Revision: 1.3 $ $
+// $Revision: 1.4 $ $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.3  2006/08/31 15:51:10  tithub
+// * Les temps sont exprimés en seconde au lieu de millisecondes
+// * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
+// * La commande ClearData arrête le thread de lecture
+// * Attributs StartingChannel et EndingChannel mémorisés
+//
 // Revision 1.2  2006/07/24 14:48:18  tithub
 // Nouvelle interface Tango
 //
@@ -51,7 +57,7 @@ int main(int argc,char *argv[])
 		//----------------------------------------
 		tg = Tango::Util::init(argc,argv);
 
-		cout << "ds_Rontec.exe version 060831c" << endl;
+		//cout << "ds_Rontec.exe version 060831c" << endl;
 		// Create the device server singleton 
 		//	which will create everything
 		//----------------------------------------
