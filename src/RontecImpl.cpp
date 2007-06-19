@@ -122,7 +122,7 @@ double RontecImpl::get_dead_time(void) throw(Tango::DevFailed)
 	// MODIF PATRICK LE 28/06/2005
 //	float val = ( (static_cast<float>(icr) - static_cast<float>(ocr)) / static_cast<float>(icr) );
 	double val = (1.0 - ((static_cast<float>(ocr)) / static_cast<float>(icr) )) * 100.0;
-	return val/1000.0;
+	return val;
 }
 
 double RontecImpl::get_cycle_time(void) throw(Tango::DevFailed)
