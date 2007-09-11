@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.11 2007-06-05 15:33:18 dhaussy Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.12 2007-09-11 08:50:49 jean_coquet Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -11,11 +11,14 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // project :      TANGO Device Server
 //
-// $Author: dhaussy $
+// $Author: jean_coquet $
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.11  2007/06/05 15:33:18  dhaussy
+// * corrected a bug in energySpectrum
+//
 // Revision 1.10  2007/06/05 14:38:30  dhaussy
 // * corrected a bug in energyMode attribute write
 //
@@ -1473,6 +1476,8 @@ void Rontec::clear_data()
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 	//	Add your own code to control device here
 	_mca->clear();
+	if (get_state() == Tango::RUNNING)
+	  start();
 }
 
 //+------------------------------------------------------------------
