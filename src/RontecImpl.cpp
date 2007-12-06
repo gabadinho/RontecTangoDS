@@ -413,6 +413,11 @@ void RontecImpl::pause(void) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::pause() entering... "<< endl;
 	ascii_command("$MP ON");
+
+if(_reading_thread &&_reading_thread->is_running())
+   _reading_thread->pause();
+
+
 }
 
 void RontecImpl::resume(void) throw(Tango::DevFailed)
@@ -747,6 +752,7 @@ _wait_cond(&_wait_mutex) {
 	_impl = impl;
 	_go_on = false;
 	_running = false;
+	_force_pause_thread = false;
 	_first_index = _impl->_read_first_index;
 	_last_index = _impl->_read_last_index;
 	_length = _last_index - _first_index + 1;
@@ -758,6 +764,7 @@ _wait_cond(&_wait_mutex) {
 
 void RontecThread::go() {
 	_go_on = true;
+	_force_pause_thread = false;
 	start_undetached();
 }
 
@@ -769,6 +776,7 @@ void RontecThread::abort() {
 	// !!! here the RontecThread object is deleted
 	delete [] data;
 }
+
 
 long RontecThread::get_spectrum(unsigned long* dest,long begin, long length) {
 	long i = 0;
@@ -800,6 +808,10 @@ void* RontecThread::run_undetached(void* arg) {
 	long stop_index = -1;
 	while(_go_on) {
 		try {
+			// try to stop immediately the thread 
+			if (_force_pause_thread)
+				break;
+
 			if(stop_index<0 && _impl->get_pause_status()=="PAUSE") {
 				stop_index = index;
 				INFO_STREAM << "Last spectrum read..." << endl;

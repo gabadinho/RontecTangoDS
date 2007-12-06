@@ -210,6 +210,7 @@ public:
 	RontecThread(RontecImpl* impl);
 	void go();
 	void abort();
+	void pause(){ _force_pause_thread = true; }
 	bool is_running() { return _running; }
 	//long get_spectrum(unsigned long* &dest);
 	long get_spectrum(unsigned long* dest,long begin, long length);
@@ -217,6 +218,7 @@ protected:
 	RontecImpl* _impl;
 	bool _go_on;
 	bool _running;
+	bool _force_pause_thread;
 	omni_mutex _spectrum_mutex;
 	omni_mutex _wait_mutex;
 	omni_condition _wait_cond;
