@@ -44,20 +44,26 @@ void RontecImpl::init(string proxy_name,/*unsigned long baud,short timeout,*/lon
 //		_baud = baud;
 //		_timeout = timeout;
 	}
-	omni_mutex_lock proxy_lock(_proxy_mutex);
-	if( _proxy )
+	//- critical section
 	{
-		delete _proxy;
-		_proxy = 0;
-	}
-	_proxy = new Tango::DeviceProxyHelper(_proxy_name,_dev);
-	/*
-	_proxy->command_in("DevSerSetBaudrate", static_cast<Tango::DevULong>(_baud));
-	*/
-	_proxy->command_in("DevSerSetNewline", static_cast<Tango::DevShort>(13));
-	/*
-	_proxy->command_in("DevSerSetTimeout", static_cast<Tango::DevShort>(_timeout));
-	*/
+		omni_mutex_lock proxy_lock(_proxy_mutex);
+		if( _proxy )
+		{
+			delete _proxy;
+			_proxy = 0;
+		}
+		_proxy = new Tango::DeviceProxyHelper(_proxy_name,_dev);
+		/*
+		_proxy->command_in("DevSerSetBaudrate", static_cast<Tango::DevULong>(_baud));
+		*/
+		_proxy->command_in("DevSerSetNewline", static_cast<Tango::DevShort>(13));
+		/*
+		_proxy->command_in("DevSerSetTimeout", static_cast<Tango::DevShort>(_timeout));
+		*/
+	} //- end critical section 
+
+	//- caution pause() locks the _proxy_mutex!
+	//- deadlock under linux, strangely, it worked under W32
 	pause();
 }
 
