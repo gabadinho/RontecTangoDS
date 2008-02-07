@@ -64,7 +64,7 @@ void RontecImpl::init(string proxy_name,/*unsigned long baud,short timeout,*/lon
 
 	//- caution pause() locks the _proxy_mutex!
 	//- deadlock under linux, strangely, it worked under W32
-	pause();
+	 pause();
 }
 
 
@@ -422,8 +422,6 @@ void RontecImpl::pause(void) throw(Tango::DevFailed)
 
 if(_reading_thread &&_reading_thread->is_running())
    _reading_thread->pause();
-
-
 }
 
 void RontecImpl::resume(void) throw(Tango::DevFailed)
@@ -538,8 +536,9 @@ throw(Tango::DevFailed)
 		Tango::Except::throw_exception (
 				(const char *)"DATA_OUT_OF_RANGE",
 				(const char *)" TTL output out of range 1..8",
-				(const char *)"RontecImpl::roi_get_parameters()");
+				(const char *)"RontecImpl::roi_set_parameters()");
 	}
+// cout << "roi_set_parameters : low channel : " << low_channel << "    high channel : " << high_channel << endl;
 
 	// compute low_energy and high_energy from channel
 	long energy = this->retreive_energy_range();
@@ -547,9 +546,11 @@ throw(Tango::DevFailed)
 	this->retreive_offset_gain(hw_offset,hw_gain);
 	double gain 	= static_cast<double>(hw_gain);
 	double offset = static_cast<double>(hw_offset);
+// cout << "roi_set_parameters : gain : " << gain << "   offset : " << offset << endl;
+
 	double low_energy = (0.0001 * ( static_cast<double>(low_channel) - (0.01 * offset)) * gain);
 	double high_energy = (0.0001 * ( static_cast<double>(high_channel) - (0.01 * offset)) * gain);
-
+// cout << "roi_set_parameters : low energy : " << low_energy << "    high energy : " << high_energy << endl;
 	// MODIF PATRICK G. Le 20/06/2005
 	// Permet un arrondi correct
 	low_energy += 0.5;
@@ -559,6 +560,7 @@ throw(Tango::DevFailed)
 //	cmd << "$SK " << ttl_num << " " << atomic_number << " " << name << " " <<  static_cast<long>(low_energy) << " " << static_cast<long>(high_energy) ;
 	cmd << "$SK " << ttl_num << " " << atomic_number << " " << name << " " <<  static_cast<long>(low_energy) << " " << static_cast<long>(high_energy) ;
 	INFO_STREAM << "RontecImpl::roi_set_parameters() command sent to RONTEC : " << cmd.str() << endl;
+// cout << "RontecImpl::roi_set_parameters() command sent to RONTEC : " << cmd.str() << endl;
 	ascii_command(cmd.str());
 }
 

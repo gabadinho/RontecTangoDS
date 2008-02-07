@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.12 2007-09-11 08:50:49 jean_coquet Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.13 2008-02-07 09:35:24 jean_coquet Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: jean_coquet $
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.12  2007/09/11 08:50:49  jean_coquet
+// ClearData method now lets the RONTEC states unchnged
+//
 // Revision 1.11  2007/06/05 15:33:18  dhaussy
 // * corrected a bug in energySpectrum
 //
@@ -1306,6 +1309,16 @@ Tango::DevLong Rontec::get_speed_and_resolution_configuration()
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
 	//	Add your own code to control device here
 	argout = _mca->get_filter_setting();
+// cout << "get_speed_and_resolution_configuration() : mca->get_filter_setting() returned " << argout << std::endl;
+// cout << "get_speed_and_resolution_configuration() : " 
+//     << std::endl
+//		 << " energyCoeff0.size() = " << energyCoeff0.size() << endl
+//		 << " energyCoeff1.size() = " << energyCoeff1.size() << endl
+//		 << " energyCoeff2.size() = " << energyCoeff2.size() << endl
+//		 << " energyCoeff0[0] = " << energyCoeff0[0] << endl
+//		 << " energyCoeff1[0] = " << energyCoeff1[0] << endl
+//		 << " energyCoeff2[0] = " << energyCoeff2[0] << endl;
+
 
 	if(attr_energyMode_write
 	&& argout < energyCoeff0.size()
@@ -1315,11 +1328,24 @@ Tango::DevLong Rontec::get_speed_and_resolution_configuration()
 		_coeff1 = energyCoeff1[argout];
 		_coeff2 = energyCoeff2[argout];
 	}
+// workaround : for the new RONTEC with only 1 card and responds 5 to command $FF
+// we get the 1rst line of the properties energyCoeff(x)
+	else if(argout == 5){
+		_coeff0 = energyCoeff0[0];
+		_coeff1 = energyCoeff1[0];
+		_coeff2 = energyCoeff2[0];
+	}
 	else {
 		_coeff0 = 0.0;
 		_coeff1 = 0.0;
 		_coeff2 = 0.0;
 	}
+// cout << "get_speed_and_resolution_configuration() : " 
+//     << std::endl
+//		 << " _coeff0 = " << _coeff0 << endl
+//		 << " _coeff1 = " << _coeff1 << endl
+//		 << " _coeff2 = " << _coeff2 << endl;
+
 
 	return argout;
 }
@@ -1558,8 +1584,12 @@ void Rontec::set_single_roi(const Tango::DevVarDoubleArray *argin)
 	}
 	long atom = 1;
 	std::string name = "NO";
+// cout << "set_single_roi : before call to start = get_channel_from_energy((*argin)[1])" << endl;
 	long start = get_channel_from_energy((*argin)[1]);
+// cout << " start channel = " << start << endl;
+// cout << "set_single_roi : before call to start = get_channel_from_energy((*argin)[1])" << endl;
 	long end = get_channel_from_energy((*argin)[2]);
+// cout << " end channel = " << end << endl;
 	_mca->roi_set_parameters(ttl, atom, name, start, end);
 }
 
