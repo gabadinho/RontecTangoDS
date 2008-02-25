@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.13 2008-02-07 09:35:24 jean_coquet Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.14 2008-02-25 15:42:02 jean_coquet Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,15 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: jean_coquet $
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.13  2008/02/07 09:35:24  jean_coquet
+// added support for RONTEC XFlash Max :
+// different electronic, that responds 5 to command $FF (filter setting of the electronic amplifier.
+// Partial support : some others functions are not supported by the XFlash Max HW (set filter setting, live time)
+// to be improved
+//
 // Revision 1.12  2007/09/11 08:50:49  jean_coquet
 // ClearData method now lets the RONTEC states unchnged
 //
@@ -568,7 +574,7 @@ void Rontec::read_energySpectrum(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rontec::read_energySpectrum(Tango::Attribute &attr) entering... "<< endl;
 	long first = _mca->get_read_spectrum_first_channel();
 	long length = _mca->get_read_spectrum_length();
-	double* energy = new double[length];
+//	double* energy = new double[length];
 	for(long i=0; i<length; ++i) {
 		attr_energySpectrum_read[i] = (Tango::DevDouble) get_energy_from_channel(first+i);
 	}
