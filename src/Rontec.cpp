@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.14 2008-02-25 15:42:02 jean_coquet Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.15 2009-06-09 14:22:15 jean_coquet Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: jean_coquet $
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.14  2008/02/25 15:42:02  jean_coquet
+// correction leak memoire sur energySpectrum
+//
 // Revision 1.13  2008/02/07 09:35:24  jean_coquet
 // added support for RONTEC XFlash Max :
 // different electronic, that responds 5 to command $FF (filter setting of the electronic amplifier.
@@ -1017,6 +1020,7 @@ void Rontec::read_roi1(Tango::Attribute &attr)
 	if(!is_ROI_configured(1) )
 	{
 		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+    return;
 		Tango::Except::throw_exception (
 			(const char *)"DATA_OUT_OF_RANGE",
 			(const char *)" ttl output number not configured in property ",
@@ -1041,6 +1045,7 @@ void Rontec::read_roi2(Tango::Attribute &attr)
 	if(!is_ROI_configured(2) )
 	{
 		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+    return;
 		Tango::Except::throw_exception (
 			(const char *)"DATA_OUT_OF_RANGE",
 			(const char *)" ttl output number not configured in property ",
@@ -1065,6 +1070,7 @@ void Rontec::read_roi3(Tango::Attribute &attr)
 	if(!is_ROI_configured(3) )
 	{
 		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+    return;
 		Tango::Except::throw_exception (
 			(const char *)"DATA_OUT_OF_RANGE",
 			(const char *)" ttl output number not configured in property ",
@@ -1089,6 +1095,7 @@ void Rontec::read_roi4(Tango::Attribute &attr)
 	if(!is_ROI_configured(4) )
 	{
 		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+    return;
 		Tango::Except::throw_exception (
 			(const char *)"DATA_OUT_OF_RANGE",
 			(const char *)" ttl output number not configured in property ",
@@ -1113,6 +1120,7 @@ void Rontec::read_roi5(Tango::Attribute &attr)
 	if(!is_ROI_configured(5) )
 	{
 		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+    return;
 		Tango::Except::throw_exception (
 			(const char *)"DATA_OUT_OF_RANGE",
 			(const char *)" ttl output number not configured in property ",
@@ -1137,6 +1145,7 @@ void Rontec::read_roi6(Tango::Attribute &attr)
 	if(!is_ROI_configured(6) )
 	{
 		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+    return;
 		Tango::Except::throw_exception (
 			(const char *)"DATA_OUT_OF_RANGE",
 			(const char *)" ttl output number not configured in property ",
@@ -1161,6 +1170,7 @@ void Rontec::read_roi7(Tango::Attribute &attr)
 	if(!is_ROI_configured(7) )
 	{
 		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+    return;
 		Tango::Except::throw_exception (
 			(const char *)"DATA_OUT_OF_RANGE",
 			(const char *)" ttl output number not configured in property ",
@@ -1185,6 +1195,7 @@ void Rontec::read_roi8(Tango::Attribute &attr)
 	if(!is_ROI_configured(8) )
 	{
 		ERROR_STREAM << "DATA_OUT_OF_RANGE Rontec::read_roi(): ttl output number not configured in property" << endl;
+    return;
 		Tango::Except::throw_exception (
 			(const char *)"DATA_OUT_OF_RANGE",
 			(const char *)" ttl output number not configured in property ",
