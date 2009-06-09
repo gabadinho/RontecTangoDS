@@ -148,7 +148,7 @@ public:
 // controls if response is an error response,
 // if error throws exception
 // Tango::DevFailed exception if RONTEC returns an error
-	void scan_response(std::string resp) throw (Tango::DevFailed);
+	void scan_response(std::string resp, std::string cmd) throw (Tango::DevFailed);
 
 // ===================== ROI METHODS ========================
 //	 roi_get_parameters( long ttl_num,					TTL output number

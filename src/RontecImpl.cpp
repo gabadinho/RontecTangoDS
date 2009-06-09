@@ -615,7 +615,7 @@ std::string RontecImpl::ascii_command(std::string cmd) throw(Tango::DevFailed)
 	if(response.size() <= 0) {
 		Tango::Except::throw_exception ((const char *)"COMMUNICATION_BROKEN",(const char *)"The Rontec device did not respond !",(const char *)"RontecImpl::ascii_command()");
 	}
-	scan_response(response);
+	scan_response(response,cmd);
 	return response;
 }
 
@@ -628,7 +628,7 @@ long RontecImpl::long_command(std::string cmd) throw(Tango::DevFailed) {
 	return val;
 }
 
-void RontecImpl::scan_response(std::string resp) throw(Tango::DevFailed)
+void RontecImpl::scan_response(std::string resp, std::string cmd) throw(Tango::DevFailed)
 {
 	DEBUG_STREAM << "RontecImpl::scan_response(): entering... !" << endl;
 
@@ -686,6 +686,7 @@ void RontecImpl::scan_response(std::string resp) throw(Tango::DevFailed)
 			default:
 				err = "Rontec error "+resp.substr(8)+" : non documented error";
 		}
+		err += "origin command : " + cmd;
 		ERROR_STREAM	<< "HARDWARE_FAILURE RontecImpl::scan_response(): error returned : " << err << endl;
 		Tango::Except::throw_exception (
 				(const char *)"HARDWARE_FAILURE",

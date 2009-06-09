@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.15 2009-06-09 14:22:15 jean_coquet Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.16 2009-06-09 15:36:48 jean_coquet Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,13 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: jean_coquet $
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.15  2009/06/09 14:22:15  jean_coquet
+// pas d'exception dans les attributs ROI
+// *** EXPERIMENTAL*****
+//
 // Revision 1.14  2008/02/25 15:42:02  jean_coquet
 // correction leak memoire sur energySpectrum
 //
@@ -816,6 +820,8 @@ void Rontec::read_liveTime(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Rontec::read_liveTime(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
+	return;
+
 	
 	double live = _mca->get_elapsed_acquisition_live_time();
 	*attr_liveTime_read = live;
