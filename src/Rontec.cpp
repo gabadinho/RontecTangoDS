@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.17 2009-06-10 11:48:26 jean_coquet Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.18 2009-06-10 11:56:00 jean_coquet Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,12 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: jean_coquet $
 //
-// $Revision: 1.17 $
+// $Revision: 1.18 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.17  2009/06/10 11:48:26  jean_coquet
+// added property to enable/disable the live time reading in the device (the HW does not always support live time and returns "unknown command"
+//
 // Revision 1.16  2009/06/09 15:36:48  jean_coquet
 // added name of command on error on scan-response on rontec-impl
 // do not throw exception in attributes
@@ -431,24 +434,6 @@ void Rontec::get_device_property()
 
 
 
-	serialLineUrl = "rontec/test/serial";
-	connectedROIMask = "";
-	numberOfChannels = 4096;
-	maxFluoEnergy = 80.0;
-	spectrumPacketSize = 256;
-	isLiveTimeImplemented = true;
-	//	End of Automatic code generation
-	//-------------------------------------------------------------
-	// create properties ( init to default values ) if necessary
-	dev_prop.push_back(Tango::DbDatum("ConnectedROIMask"));
-	dev_prop.push_back(Tango::DbDatum("MaxFluoEnergy"));
-	dev_prop.push_back(Tango::DbDatum("NumberOfChannels"));
-	dev_prop.push_back(Tango::DbDatum("SerialLineUrl"));
-	dev_prop.push_back(Tango::DbDatum("SpectrumPacketSize"));
-	dev_prop.push_back(Tango::DbDatum("EnergyCoeff0"));
-	dev_prop.push_back(Tango::DbDatum("EnergyCoeff1"));
-	dev_prop.push_back(Tango::DbDatum("EnergyCoeff2"));
-	dev_prop.push_back(Tango::DbDatum("IsLiveTimeImplemented"));
 	
 	Tango::DbData data_put;
 	if (dev_prop[0].is_empty()==true)
