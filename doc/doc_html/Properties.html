@@ -11,20 +11,20 @@
     <TR>
         <TD ALIGN="left">
 			<A HREF="http://www.esrf.fr/" TARGET=new>
-			<IMG SRC="http://www.esrf.fr/gifs/logo/80.gif" BORDER=0></A>
+			<IMG SRC="http://controle/icons/esrf_logo.gif" BORDER=0></A>
 		</Td>
         <TD ALIGN="center">
 			<A HREF="http://www.elettra.trieste.it/" TARGET=new>
-			<IMG SRC="http://www.esrf.fr/computing/cs/tango/elettra_logo.gif" BORDER=0></A>
+			<IMG SRC="http://controle/icons/elettra_logo.gif" BORDER=0></A>
 
 		</Td>
         <TD ALIGN="center">
 			<A HREF="http://www.synchrotron-soleil.fr/" TARGET=new>
-			<IMG SRC="http://www.esrf.fr/computing/cs/tango/soleil_logo.gif" BORDER=0></A>
+			<IMG SRC="http://controle/icons/soleil_logo.gif" BORDER=0></A>
 		</Td>
         <TD ALIGN="right">
 			<A HREF="http://www.cells.es/" TARGET=new>
-			<IMG SRC="http://www.esrf.fr/computing/cs/tango/alba.jpg" BORDER=0></A>
+			<IMG SRC="http://controle/icons/alba_logo.gif" BORDER=0></A>
 		</Td>
     	 <Td>
 			<H2><FONT COLOR="#7F00FF">
@@ -44,7 +44,7 @@ Properties Description 		<Br> <Br>
 Rontec Class	<Br>
 </h1>
 <b>
-Revision:  - Author: tithub
+Revision:  - Author: dhaussy
 </b>
 </center>
 
@@ -59,7 +59,7 @@ Revision:  - Author: tithub
 <Td><Center><b>Property name</b></td></Center>
 <Td><Center><b>Property type</b></td></Center>
 <Td><Center><b>Description</b></td></Center>
-<Tr><Td><b>ConnectedROIMask</b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>ConnectedROIMask </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>list of the TTL outputs connected to a counter
 just for control and throw exception if try to configure a ROI that is not in the list
@@ -67,51 +67,107 @@ just for control and throw exception if try to configure a ROI that is not in th
 example : 1 4 represents : ouptut1, output 4 connected
 default : 1</Font></Td></Tr>
 
-<Tr><Td><b>MaxFluoEnergy</b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>MaxFluoEnergy </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
 <Td><Font Size=-1>maximum fluo energy of the last MCA channel.
 with the current RONTEC MCA Hardware can be 10, 20, 40, or 80 KeV
 default : 80.0</Font></Td></Tr>
 
-<Tr><Td><b>NumberOfChannels</b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>NumberOfChannels </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
 <Td><Font Size=-1>number of channels of the MCA.
 The current RONTEC MCA hardware has 4096 channels.
 this is for extentions purpose only,
 let the default value of 4096</Font></Td></Tr>
 
-<Tr><Td><b>SerialLineUrl</b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>SerialLineUrl </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Tango name of the serial line device
 the other serial line properties are fixed for the RONTEC RCL :
 N( no parity),8( data bits),1(stop bit), hardware handshake ( RTS/CTS</Font></Td></Tr>
 
-<Tr><Td><b>SpectrumPacketSize</b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>SpectrumPacketSize </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
 <Td><Font Size=-1>Spectrum read packet size used in reading thread</Font></Td></Tr>
 
-<Tr><Td><b>EnergyMode</b></Td>
-<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
-<Td><Font Size=-1>Energy mode or channel mode selection</Font></Td></Tr>
-
-<Tr><Td><b>EnergyCoeff0</b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>EnergyCoeff0 </a></b></Td>
 <Td><Font Size=-1>Array of double</Font></Td>
 <Td><Font Size=-1>Energy conversion polynomial coefficient order 0</Font></Td></Tr>
 
-<Tr><Td><b>EnergyCoeff1</b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>EnergyCoeff1 </a></b></Td>
 <Td><Font Size=-1>Array of double</Font></Td>
 <Td><Font Size=-1>Energy conversion polynomial coefficient order 0</Font></Td></Tr>
 
-<Tr><Td><b>EnergyCoeff2</b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>EnergyCoeff2 </a></b></Td>
 <Td><Font Size=-1>Array of double</Font></Td>
 <Td><Font Size=-1>Energy conversion polynomial coefficient order 2</Font></Td></Tr>
 
+<Tr><Td><b><a href=#Dev_DefaultValues>IsLiveTimeImplemented </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>some RONTEC have live time implemented, some not.
+If live time is implemented, set this attribute to TRUE
+otherwise to false
+important for performance and memory leak
+
+
+</Font></Td></Tr>
+
+</Table>
+
+</Center>
+<Br><Br><Br>
+<Br><Br><Br>
+
+<A name=Dev_DefaultValues><!---  ---></a>
+<Font Size=+1>Device Properties Default Values:</Font><Br>
+<Table Border=2 Cellpadding=2 CELLSPACING=2>
+    <tr BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+        <Td><b>Property Name</b></td>
+        <td><b>Default Values</b></td>
+    </Tr>
+    <Tr>
+        <Td>ConnectedROIMask</Td>
+        <td>1 2 3 4</td>
+    </Tr>
+    <Tr>
+        <Td>MaxFluoEnergy</Td>
+        <td>80</td>
+    </Tr>
+    <Tr>
+        <Td>NumberOfChannels</Td>
+        <td>4096</td>
+    </Tr>
+    <Tr>
+        <Td>SerialLineUrl</Td>
+        <td>test/rontec/serial</td>
+    </Tr>
+    <Tr>
+        <Td>SpectrumPacketSize</Td>
+        <td>256</td>
+    </Tr>
+    <Tr>
+        <Td>EnergyCoeff0</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>EnergyCoeff1</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>EnergyCoeff2</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>IsLiveTimeImplemented</Td>
+        <td>true</td>
+    </Tr>
 </Table>
 
 <Br><Br><Br>
 <Center><b>
 There is no Class properties.<Br><Br>
 </Center></b>
+<Br> <Br> <Br> 
 
 <Center>
 <Br>
