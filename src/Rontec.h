@@ -6,11 +6,14 @@
 //
 // project :	RRontec
 //
-// $Author: dhaussy $
+// $Author: jean_coquet $
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.7  2007/05/15 08:28:14  dhaussy
+// * changed energyMode from property to attribute
+//
 // Revision 1.6  2007/04/23 14:56:03  buteau
 // Ajout Makefile.linux
 //
@@ -60,8 +63,8 @@
 //using namespace Tango;
 
 /**
- * @author	$Author: dhaussy $
- * @version $Revision: 1.7 $
+ * @author	$Author: jean_coquet $
+ * @version $Revision: 1.8 $
  */
 
  //	Add your own constants definitions here.
@@ -100,7 +103,6 @@ public :
 		Tango::DevDouble	*attr_cycleTime_read;
 		Tango::DevDouble	attr_cycleTime_write;
 		Tango::DevString	*attr_dataSource_read;
-		Tango::DevDouble	*attr_dataSpectrum_read;
 		Tango::DevDouble	*attr_deadTime_read;
 		Tango::DevDouble	*attr_detectorTemperature_read;
 		Tango::DevDouble	attr_spectrumEndValue_write;
@@ -111,7 +113,6 @@ public :
 		Tango::DevDouble	*attr_liveTime_read;
 		Tango::DevShort	*attr_nbChannels_read;
 		Tango::DevShort	attr_nbChannels_write;
-		Tango::DevDouble	*attr_offsetGain_read;
 		Tango::DevBoolean	attr_readDataSpectrum_write;
 		Tango::DevDouble	*attr_realTime_read;
 		Tango::DevLong	*attr_roi1_read;
@@ -122,14 +123,16 @@ public :
 		Tango::DevLong	*attr_roi6_read;
 		Tango::DevLong	*attr_roi7_read;
 		Tango::DevLong	*attr_roi8_read;
-		Tango::DevDouble	*attr_roisEnds_read;
-		Tango::DevDouble	*attr_roisStarts_read;
-		Tango::DevDouble	*attr_roisStartsEnds_read;
 		Tango::DevDouble	attr_spectrumStartValue_write;
 		Tango::DevShort	*attr_timingType_read;
 		Tango::DevShort	attr_timingType_write;
-		Tango::DevDouble	*attr_energySpectrum_read;
 		Tango::DevBoolean	attr_energyMode_write;
+		Tango::DevDouble	*attr_dataSpectrum_read;
+		Tango::DevDouble	*attr_offsetGain_read;
+		Tango::DevDouble	*attr_roisEnds_read;
+		Tango::DevDouble	*attr_roisStarts_read;
+		Tango::DevDouble	*attr_roisStartsEnds_read;
+		Tango::DevDouble	*attr_energySpectrum_read;
 //@}
 		
 /**
@@ -180,6 +183,16 @@ public :
  *	Energy conversion polynomial coefficient order 2
  */
 	vector<double>	energyCoeff2;
+/**
+ *	some RONTEC have live time implemented, some not.
+ *	If live time is implemented, set this attribute to TRUE
+ *	otherwise to false
+ *	important for performance and memory leak
+ *	
+ *	
+ *	
+ */
+	Tango::DevBoolean	isLiveTimeImplemented;
 //@}
 
 /**@name Constructors
@@ -262,10 +275,6 @@ public :
  */
 	virtual void read_dataSource(Tango::Attribute &attr);
 /**
- *	Extract real attribute values for dataSpectrum acquisition result.
- */
-	virtual void read_dataSpectrum(Tango::Attribute &attr);
-/**
  *	Extract real attribute values for deadTime acquisition result.
  */
 	virtual void read_deadTime(Tango::Attribute &attr);
@@ -309,10 +318,6 @@ public :
  *	Write nbChannels attribute values to hardware.
  */
 	virtual void write_nbChannels(Tango::WAttribute &attr);
-/**
- *	Extract real attribute values for offsetGain acquisition result.
- */
-	virtual void read_offsetGain(Tango::Attribute &attr);
 /**
  *	Extract real attribute values for readDataSpectrum acquisition result.
  */
@@ -358,18 +363,6 @@ public :
  */
 	virtual void read_roi8(Tango::Attribute &attr);
 /**
- *	Extract real attribute values for roisEnds acquisition result.
- */
-	virtual void read_roisEnds(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for roisStarts acquisition result.
- */
-	virtual void read_roisStarts(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for roisStartsEnds acquisition result.
- */
-	virtual void read_roisStartsEnds(Tango::Attribute &attr);
-/**
  *	Extract real attribute values for spectrumStartValue acquisition result.
  */
 	virtual void read_spectrumStartValue(Tango::Attribute &attr);
@@ -386,10 +379,6 @@ public :
  */
 	virtual void write_timingType(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for energySpectrum acquisition result.
- */
-	virtual void read_energySpectrum(Tango::Attribute &attr);
-/**
  *	Extract real attribute values for energyMode acquisition result.
  */
 	virtual void read_energyMode(Tango::Attribute &attr);
@@ -397,6 +386,30 @@ public :
  *	Write energyMode attribute values to hardware.
  */
 	virtual void write_energyMode(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for dataSpectrum acquisition result.
+ */
+	virtual void read_dataSpectrum(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for offsetGain acquisition result.
+ */
+	virtual void read_offsetGain(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for roisEnds acquisition result.
+ */
+	virtual void read_roisEnds(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for roisStarts acquisition result.
+ */
+	virtual void read_roisStarts(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for roisStartsEnds acquisition result.
+ */
+	virtual void read_roisStartsEnds(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for energySpectrum acquisition result.
+ */
+	virtual void read_energySpectrum(Tango::Attribute &attr);
 /**
  *	Read/Write allowed for countRate attribute.
  */
@@ -409,10 +422,6 @@ public :
  *	Read/Write allowed for dataSource attribute.
  */
 	virtual bool is_dataSource_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for dataSpectrum attribute.
- */
-	virtual bool is_dataSpectrum_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for deadTime attribute.
  */
@@ -441,10 +450,6 @@ public :
  *	Read/Write allowed for nbChannels attribute.
  */
 	virtual bool is_nbChannels_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for offsetGain attribute.
- */
-	virtual bool is_offsetGain_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for readDataSpectrum attribute.
  */
@@ -486,6 +491,26 @@ public :
  */
 	virtual bool is_roi8_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for spectrumStartValue attribute.
+ */
+	virtual bool is_spectrumStartValue_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for timingType attribute.
+ */
+	virtual bool is_timingType_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for energyMode attribute.
+ */
+	virtual bool is_energyMode_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for dataSpectrum attribute.
+ */
+	virtual bool is_dataSpectrum_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for offsetGain attribute.
+ */
+	virtual bool is_offsetGain_allowed(Tango::AttReqType type);
+/**
  *	Read/Write allowed for roisEnds attribute.
  */
 	virtual bool is_roisEnds_allowed(Tango::AttReqType type);
@@ -498,21 +523,9 @@ public :
  */
 	virtual bool is_roisStartsEnds_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for spectrumStartValue attribute.
- */
-	virtual bool is_spectrumStartValue_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for timingType attribute.
- */
-	virtual bool is_timingType_allowed(Tango::AttReqType type);
-/**
  *	Read/Write allowed for energySpectrum attribute.
  */
 	virtual bool is_energySpectrum_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for energyMode attribute.
- */
-	virtual bool is_energyMode_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Abort command.
  */

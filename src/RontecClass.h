@@ -10,11 +10,14 @@
 //			
 // project :      TANGO Device Server
 //
-// $Author: dhaussy $
+// $Author: jean_coquet $
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.6  2007/05/15 08:28:14  dhaussy
+// * changed energyMode from property to attribute
+//
 // Revision 1.5  2007/03/30 09:43:13  tithub
 // * energy conversion coefficient depend on Rontec speed and resolution configuration
 // * offset and gain conversion
@@ -62,20 +65,6 @@ namespace Rontec_ns
 //=====================================
 //	Define classes for attributes
 //=====================================
-class energyModeAttrib: public Tango::Attr
-{
-public:
-	energyModeAttrib():Attr("energyMode", Tango::DEV_BOOLEAN, Tango::WRITE) {};
-	~energyModeAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_energyMode(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_energyMode(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_energyMode_allowed(ty);}
-};
-
 class energySpectrumAttrib: public Tango::SpectrumAttr
 {
 public:
@@ -86,34 +75,6 @@ public:
 	{(static_cast<Rontec *>(dev))->read_energySpectrum(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Rontec *>(dev))->is_energySpectrum_allowed(ty);}
-};
-
-class timingTypeAttrib: public Tango::Attr
-{
-public:
-	timingTypeAttrib():Attr("timingType", Tango::DEV_SHORT, Tango::READ_WRITE) {};
-	~timingTypeAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_timingType(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_timingType(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_timingType_allowed(ty);}
-};
-
-class spectrumStartValueAttrib: public Tango::Attr
-{
-public:
-	spectrumStartValueAttrib():Attr("spectrumStartValue", Tango::DEV_DOUBLE, Tango::WRITE) {};
-	~spectrumStartValueAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_spectrumStartValue(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Rontec *>(dev))->write_spectrumStartValue(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_spectrumStartValue_allowed(ty);}
 };
 
 class roisStartsEndsAttrib: public Tango::SpectrumAttr
@@ -150,6 +111,72 @@ public:
 	{(static_cast<Rontec *>(dev))->read_roisEnds(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Rontec *>(dev))->is_roisEnds_allowed(ty);}
+};
+
+class offsetGainAttrib: public Tango::SpectrumAttr
+{
+public:
+	offsetGainAttrib():SpectrumAttr("offsetGain", Tango::DEV_DOUBLE, Tango::READ, 2) {};
+	~offsetGainAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_offsetGain(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_offsetGain_allowed(ty);}
+};
+
+class dataSpectrumAttrib: public Tango::SpectrumAttr
+{
+public:
+	dataSpectrumAttrib():SpectrumAttr("dataSpectrum", Tango::DEV_DOUBLE, Tango::READ, 8192) {};
+	~dataSpectrumAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_dataSpectrum(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_dataSpectrum_allowed(ty);}
+};
+
+class energyModeAttrib: public Tango::Attr
+{
+public:
+	energyModeAttrib():Attr("energyMode", Tango::DEV_BOOLEAN, Tango::WRITE) {};
+	~energyModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_energyMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_energyMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_energyMode_allowed(ty);}
+};
+
+class timingTypeAttrib: public Tango::Attr
+{
+public:
+	timingTypeAttrib():Attr("timingType", Tango::DEV_SHORT, Tango::READ_WRITE) {};
+	~timingTypeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_timingType(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_timingType(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_timingType_allowed(ty);}
+};
+
+class spectrumStartValueAttrib: public Tango::Attr
+{
+public:
+	spectrumStartValueAttrib():Attr("spectrumStartValue", Tango::DEV_DOUBLE, Tango::WRITE) {};
+	~spectrumStartValueAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rontec *>(dev))->read_spectrumStartValue(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Rontec *>(dev))->write_spectrumStartValue(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rontec *>(dev))->is_spectrumStartValue_allowed(ty);}
 };
 
 class roi8Attrib: public Tango::Attr
@@ -274,18 +301,6 @@ public:
 	{return (static_cast<Rontec *>(dev))->is_readDataSpectrum_allowed(ty);}
 };
 
-class offsetGainAttrib: public Tango::SpectrumAttr
-{
-public:
-	offsetGainAttrib():SpectrumAttr("offsetGain", Tango::DEV_DOUBLE, Tango::READ, 2) {};
-	~offsetGainAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_offsetGain(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_offsetGain_allowed(ty);}
-};
-
 class nbChannelsAttrib: public Tango::Attr
 {
 public:
@@ -376,18 +391,6 @@ public:
 	{(static_cast<Rontec *>(dev))->read_deadTime(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Rontec *>(dev))->is_deadTime_allowed(ty);}
-};
-
-class dataSpectrumAttrib: public Tango::SpectrumAttr
-{
-public:
-	dataSpectrumAttrib():SpectrumAttr("dataSpectrum", Tango::DEV_DOUBLE, Tango::READ, 8192) {};
-	~dataSpectrumAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Rontec *>(dev))->read_dataSpectrum(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Rontec *>(dev))->is_dataSpectrum_allowed(ty);}
 };
 
 class dataSourceAttrib: public Tango::Attr

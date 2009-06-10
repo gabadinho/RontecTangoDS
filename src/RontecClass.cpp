@@ -1,5 +1,5 @@
 
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.6 2007-05-15 08:28:14 dhaussy Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.7 2009-06-10 11:48:26 jean_coquet Exp $";
 
 static const char *TagName   = "$Name: not supported by cvs2svn $";
 
@@ -20,11 +20,14 @@ static const char *RCSfile = "$RCSfile: RontecClass.cpp,v $";
 //
 // project :     TANGO Device Server
 //
-// $Author: dhaussy $
+// $Author: jean_coquet $
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.6  2007/05/15 08:28:14  dhaussy
+// * changed energyMode from property to attribute
+//
 // Revision 1.5  2007/03/30 09:43:13  tithub
 // * energy conversion coefficient depend on Rontec speed and resolution configuration
 // * offset and gain conversion
@@ -620,14 +623,6 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	data_source->set_default_properties(data_source_prop);
 	att_list.push_back(data_source);
 
-	//	Attribute : dataSpectrum
-	dataSpectrumAttrib	*data_spectrum = new dataSpectrumAttrib();
-	Tango::UserDefaultAttrProp	data_spectrum_prop;
-	data_spectrum_prop.set_label("fluo spectrum");
-	data_spectrum_prop.set_description("fluo spectrum returned by the RONTEC MCA\nmax channels number set in NumberOfChannels property\nstarting channel fixed by SetStartingChannel,\nending channel set by SetEndingChannel");
-	data_spectrum->set_default_properties(data_spectrum_prop);
-	att_list.push_back(data_spectrum);
-
 	//	Attribute : deadTime
 	deadTimeAttrib	*dead_time = new deadTimeAttrib();
 	Tango::UserDefaultAttrProp	dead_time_prop;
@@ -681,10 +676,6 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	nb_channels->set_default_properties(nb_channels_prop);
 	att_list.push_back(nb_channels);
 
-	//	Attribute : offsetGain
-	offsetGainAttrib	*offset_gain = new offsetGainAttrib();
-	att_list.push_back(offset_gain);
-
 	//	Attribute : readDataSpectrum
 	readDataSpectrumAttrib	*read_data_spectrum = new readDataSpectrumAttrib();
 	att_list.push_back(read_data_spectrum);
@@ -731,6 +722,40 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	roi8Attrib	*roi8 = new roi8Attrib();
 	att_list.push_back(roi8);
 
+	//	Attribute : spectrumStartValue
+	spectrumStartValueAttrib	*spectrum_start_value = new spectrumStartValueAttrib();
+	spectrum_start_value->set_memorized();
+	spectrum_start_value->set_memorized_init(true);
+	att_list.push_back(spectrum_start_value);
+
+	//	Attribute : timingType
+	timingTypeAttrib	*timing_type = new timingTypeAttrib();
+	Tango::UserDefaultAttrProp	timing_type_prop;
+	timing_type_prop.set_label("Timing Type");
+	timing_type_prop.set_format("%1d");
+	timing_type_prop.set_description("Type of timing:<BR>\n0 -> Live (like an OS time)<BR>\n1 -> Real (the real time according to deadTime).");
+	timing_type->set_default_properties(timing_type_prop);
+	timing_type->set_disp_level(Tango::EXPERT);
+	att_list.push_back(timing_type);
+
+	//	Attribute : energyMode
+	energyModeAttrib	*energy_mode = new energyModeAttrib();
+	energy_mode->set_memorized();
+	energy_mode->set_memorized_init(true);
+	att_list.push_back(energy_mode);
+
+	//	Attribute : dataSpectrum
+	dataSpectrumAttrib	*data_spectrum = new dataSpectrumAttrib();
+	Tango::UserDefaultAttrProp	data_spectrum_prop;
+	data_spectrum_prop.set_label("fluo spectrum");
+	data_spectrum_prop.set_description("fluo spectrum returned by the RONTEC MCA\nmax channels number set in NumberOfChannels property\nstarting channel fixed by SetStartingChannel,\nending channel set by SetEndingChannel");
+	data_spectrum->set_default_properties(data_spectrum_prop);
+	att_list.push_back(data_spectrum);
+
+	//	Attribute : offsetGain
+	offsetGainAttrib	*offset_gain = new offsetGainAttrib();
+	att_list.push_back(offset_gain);
+
 	//	Attribute : roisEnds
 	roisEndsAttrib	*rois_ends = new roisEndsAttrib();
 	Tango::UserDefaultAttrProp	rois_ends_prop;
@@ -754,31 +779,9 @@ void RontecClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	rois_starts_ends->set_disp_level(Tango::EXPERT);
 	att_list.push_back(rois_starts_ends);
 
-	//	Attribute : spectrumStartValue
-	spectrumStartValueAttrib	*spectrum_start_value = new spectrumStartValueAttrib();
-	spectrum_start_value->set_memorized();
-	spectrum_start_value->set_memorized_init(true);
-	att_list.push_back(spectrum_start_value);
-
-	//	Attribute : timingType
-	timingTypeAttrib	*timing_type = new timingTypeAttrib();
-	Tango::UserDefaultAttrProp	timing_type_prop;
-	timing_type_prop.set_label("Timing Type");
-	timing_type_prop.set_format("%1d");
-	timing_type_prop.set_description("Type of timing:<BR>\n0 -> Live (like an OS time)<BR>\n1 -> Real (the real time according to deadTime).");
-	timing_type->set_default_properties(timing_type_prop);
-	timing_type->set_disp_level(Tango::EXPERT);
-	att_list.push_back(timing_type);
-
 	//	Attribute : energySpectrum
 	energySpectrumAttrib	*energy_spectrum = new energySpectrumAttrib();
 	att_list.push_back(energy_spectrum);
-
-	//	Attribute : energyMode
-	energyModeAttrib	*energy_mode = new energyModeAttrib();
-	energy_mode->set_memorized();
-	energy_mode->set_memorized_init(true);
-	att_list.push_back(energy_mode);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
@@ -941,6 +944,21 @@ void RontecClass::set_default_property()
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "IsLiveTimeImplemented";
+	prop_desc = "some RONTEC have live time implemented, some not.\nIf live time is implemented, set this attribute to TRUE\notherwise to false\nimportant for performance and memory leak\n\n\n";
+	prop_def  = "true";
+	vect_data.clear();
+	vect_data.push_back("true");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

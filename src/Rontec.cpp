@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.16 2009-06-09 15:36:48 jean_coquet Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.17 2009-06-10 11:48:26 jean_coquet Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -13,9 +13,14 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // $Author: jean_coquet $
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.16  2009/06/09 15:36:48  jean_coquet
+// added name of command on error on scan-response on rontec-impl
+// do not throw exception in attributes
+// we will add a property to toggle support of live time thatis not supported by all rontec HW
+//
 // Revision 1.15  2009/06/09 14:22:15  jean_coquet
 // pas d'exception dans les attributs ROI
 // *** EXPERIMENTAL*****
@@ -90,10 +95,10 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 
 //===================================================================
 //
-//	The following table gives the correspondance
-//	between commands and method's name.
+//	The following table gives the correspondence
+//	between commands and method name.
 //
-//  Command's name                      |  Method's name
+//  Command name                        |  Method name
 //	----------------------------------------
 //  State                               |  dev_state()
 //  Status                              |  dev_status()
@@ -301,6 +306,7 @@ void Rontec::get_device_property()
 	numberOfChannels = 4096;
 	maxFluoEnergy = 80.0;
 	spectrumPacketSize = 256;
+	isLiveTimeImplemented = true;
 
 	//	Read device properties from database.(Automatic code generation)
 	//-------------------------------------------------------------
@@ -313,6 +319,7 @@ void Rontec::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("EnergyCoeff0"));
 	dev_prop.push_back(Tango::DbDatum("EnergyCoeff1"));
 	dev_prop.push_back(Tango::DbDatum("EnergyCoeff2"));
+	dev_prop.push_back(Tango::DbDatum("IsLiveTimeImplemented"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -326,114 +333,164 @@ void Rontec::get_device_property()
 	//	Try to initialize ConnectedROIMask from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  connectedROIMask;
-	//	Try to initialize ConnectedROIMask from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  connectedROIMask;
+	else {
+		//	Try to initialize ConnectedROIMask from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  connectedROIMask;
+	}
 	//	And try to extract ConnectedROIMask value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  connectedROIMask;
 
 	//	Try to initialize MaxFluoEnergy from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  maxFluoEnergy;
-	//	Try to initialize MaxFluoEnergy from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  maxFluoEnergy;
+	else {
+		//	Try to initialize MaxFluoEnergy from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  maxFluoEnergy;
+	}
 	//	And try to extract MaxFluoEnergy value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  maxFluoEnergy;
 
 	//	Try to initialize NumberOfChannels from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  numberOfChannels;
-	//	Try to initialize NumberOfChannels from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  numberOfChannels;
+	else {
+		//	Try to initialize NumberOfChannels from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  numberOfChannels;
+	}
 	//	And try to extract NumberOfChannels value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  numberOfChannels;
 
 	//	Try to initialize SerialLineUrl from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  serialLineUrl;
-	//	Try to initialize SerialLineUrl from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  serialLineUrl;
+	else {
+		//	Try to initialize SerialLineUrl from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  serialLineUrl;
+	}
 	//	And try to extract SerialLineUrl value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  serialLineUrl;
 
 	//	Try to initialize SpectrumPacketSize from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  spectrumPacketSize;
-	//	Try to initialize SpectrumPacketSize from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  spectrumPacketSize;
+	else {
+		//	Try to initialize SpectrumPacketSize from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  spectrumPacketSize;
+	}
 	//	And try to extract SpectrumPacketSize value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  spectrumPacketSize;
 
 	//	Try to initialize EnergyCoeff0 from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  energyCoeff0;
-	//	Try to initialize EnergyCoeff0 from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  energyCoeff0;
+	else {
+		//	Try to initialize EnergyCoeff0 from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  energyCoeff0;
+	}
 	//	And try to extract EnergyCoeff0 value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  energyCoeff0;
 
 	//	Try to initialize EnergyCoeff1 from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  energyCoeff1;
-	//	Try to initialize EnergyCoeff1 from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  energyCoeff1;
+	else {
+		//	Try to initialize EnergyCoeff1 from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  energyCoeff1;
+	}
 	//	And try to extract EnergyCoeff1 value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  energyCoeff1;
 
 	//	Try to initialize EnergyCoeff2 from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  energyCoeff2;
-	//	Try to initialize EnergyCoeff2 from default device value
-	def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-	if (def_prop.is_empty()==false)	def_prop  >>  energyCoeff2;
+	else {
+		//	Try to initialize EnergyCoeff2 from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  energyCoeff2;
+	}
 	//	And try to extract EnergyCoeff2 value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  energyCoeff2;
 
+	//	Try to initialize IsLiveTimeImplemented from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  isLiveTimeImplemented;
+	else {
+		//	Try to initialize IsLiveTimeImplemented from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  isLiveTimeImplemented;
+	}
+	//	And try to extract IsLiveTimeImplemented value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  isLiveTimeImplemented;
 
 
+
+	serialLineUrl = "rontec/test/serial";
+	connectedROIMask = "";
+	numberOfChannels = 4096;
+	maxFluoEnergy = 80.0;
+	spectrumPacketSize = 256;
+	isLiveTimeImplemented = true;
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 	// create properties ( init to default values ) if necessary
-	/*
+	dev_prop.push_back(Tango::DbDatum("ConnectedROIMask"));
+	dev_prop.push_back(Tango::DbDatum("MaxFluoEnergy"));
+	dev_prop.push_back(Tango::DbDatum("NumberOfChannels"));
+	dev_prop.push_back(Tango::DbDatum("SerialLineUrl"));
+	dev_prop.push_back(Tango::DbDatum("SpectrumPacketSize"));
+	dev_prop.push_back(Tango::DbDatum("EnergyCoeff0"));
+	dev_prop.push_back(Tango::DbDatum("EnergyCoeff1"));
+	dev_prop.push_back(Tango::DbDatum("EnergyCoeff2"));
+	dev_prop.push_back(Tango::DbDatum("IsLiveTimeImplemented"));
+	
 	Tango::DbData data_put;
 	if (dev_prop[0].is_empty()==true)
 	{
-		Tango::DbDatum	property("Baud");
-		property	<<	baud;
-		data_put.push_back(property);
+		Tango::DbDatum	prop("ConnectedROIMask");
+		prop <<	connectedROIMask;
+		data_put.push_back(prop);
 	}
 	if (dev_prop[1].is_empty()==true)
 	{
-		Tango::DbDatum	property("SerialLineUrl");
-		property	<<	serialLineUrl;
-		data_put.push_back(property);
+		Tango::DbDatum	prop("MaxFluoEnergy");
+		prop	<<	maxFluoEnergy;
+		data_put.push_back(prop);
 	}
 	if (dev_prop[2].is_empty()==true)
 	{
-		Tango::DbDatum	property("ConnectedROIMask");
-		property	<<	connectedROIMask;
-		data_put.push_back(property);
+		Tango::DbDatum	prop("NumberOfChannels");
+		prop	<<	numberOfChannels;
+		data_put.push_back(prop);
 	}
 	if (dev_prop[3].is_empty()==true)
 	{
-		Tango::DbDatum	property("NumberOfChannels");
-		property	<<	numberOfChannels;
-		data_put.push_back(property);
+		Tango::DbDatum	prop("SerialLineUrl");
+		prop	<<	serialLineUrl;
+		data_put.push_back(prop);
 	}
 	if (dev_prop[4].is_empty()==true)
 	{
-		Tango::DbDatum	property("MaxFluoEnergy");
-		property	<<	maxFluoEnergy;
-		data_put.push_back(property);
+		Tango::DbDatum	prop("SpectrumPacketSize");
+		prop	<<	spectrumPacketSize;
+		data_put.push_back(prop);
 	}
-	get_db_device()->put_property(data_put);
-	*/
+	if (dev_prop[8].is_empty()==true)
+	{
+		Tango::DbDatum	prop("IsLiveTimeImplemented");
+		prop	<<	true;
+		data_put.push_back(prop);
+	}
+
+	if (!data_put.empty ())
+	  get_db_device()->put_property(data_put);
+	
 }
 //+----------------------------------------------------------------------------
 //
@@ -820,7 +877,8 @@ void Rontec::read_liveTime(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Rontec::read_liveTime(Tango::Attribute &attr) entering... "<< endl;
 	if(!_mca) Tango::Except::throw_exception((const char *)"OPERATION_NOT_ALLOWED",(const char *)"The _mca object is not initialized!",(const char *)"_mca check");
-	return;
+	if (!isLiveTimeImplemented)
+	  return;
 
 	
 	double live = _mca->get_elapsed_acquisition_live_time();
@@ -1673,5 +1731,6 @@ long Rontec::get_channel_from_energy(double energy) {
 		return best;
 	}
 }
+
 
 }	//	namespace
