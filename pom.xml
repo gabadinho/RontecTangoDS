@@ -21,6 +21,8 @@
       </plugin>
     </plugins>
   </build>
+    <dependencies>
+    </dependencies>
   <scm>
     <connection>${scm.connection.cvs.tango-ds}:Instrumentation/Rontec</connection>
     <developerConnection>${scm.developerConnection.cvs.tango-ds}:Instrumentation/Rontec</developerConnection>
