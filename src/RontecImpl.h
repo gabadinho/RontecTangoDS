@@ -187,7 +187,7 @@ public:
 protected:
 	Tango::DeviceImpl* _dev;
 	Tango::DeviceProxyHelper* _proxy;
-	RontecThread* _reading_thread;
+	class RontecThread* _reading_thread;
 	omni_mutex _proxy_mutex;
 
 	std::string _proxy_name;
