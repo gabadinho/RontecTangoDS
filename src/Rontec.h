@@ -6,11 +6,14 @@
 //
 // project :	RRontec
 //
-// $Author: jean_coquet $
+// $Author: vince_soleil $
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.8  2009/06/10 11:48:26  jean_coquet
+// added property to enable/disable the live time reading in the device (the HW does not always support live time and returns "unknown command"
+//
 // Revision 1.7  2007/05/15 08:28:14  dhaussy
 // * changed energyMode from property to attribute
 //
@@ -25,10 +28,10 @@
 // * added energy mode
 //
 // Revision 1.3  2006/08/31 15:51:10  tithub
-// * Les temps sont exprimés en seconde au lieu de millisecondes
+// * Les temps sont exprimï¿½s en seconde au lieu de millisecondes
 // * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
-// * La commande ClearData arrête le thread de lecture
-// * Attributs StartingChannel et EndingChannel mémorisés
+// * La commande ClearData arrï¿½te le thread de lecture
+// * Attributs StartingChannel et EndingChannel mï¿½morisï¿½s
 //
 // Revision 1.2  2006/07/24 14:48:18  tithub
 // Nouvelle interface Tango
@@ -63,8 +66,8 @@
 //using namespace Tango;
 
 /**
- * @author	$Author: jean_coquet $
- * @version $Revision: 1.8 $
+ * @author	$Author: vince_soleil $
+ * @version $Revision: 1.9 $
  */
 
  //	Add your own constants definitions here.
@@ -86,7 +89,7 @@ namespace Rontec_ns
  */
 
 
-class Rontec: public Tango::Device_3Impl
+class Rontec: public Tango::Device_4Impl
 {
 public :
 	//	Add your own data members here
