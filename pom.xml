@@ -8,7 +8,7 @@
    </parent>
    <groupId>fr.soleil.device</groupId>
    <artifactId>Rontec-${aol}-${mode}</artifactId>
-   <version>1.0.13</version>
+   <version>1.0.14</version>
    <packaging>nar</packaging>
    <name>Rontec</name>
    <description>Rontec device</description>

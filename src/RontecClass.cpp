@@ -1,5 +1,5 @@
 
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.7 2009-06-10 11:48:26 jean_coquet Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/RontecClass.cpp,v 1.8 2010-03-26 09:44:14 vince_soleil Exp $";
 
 static const char *TagName   = "$Name: not supported by cvs2svn $";
 
@@ -20,11 +20,14 @@ static const char *RCSfile = "$RCSfile: RontecClass.cpp,v $";
 //
 // project :     TANGO Device Server
 //
-// $Author: jean_coquet $
+// $Author: vince_soleil $
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.7  2009/06/10 11:48:26  jean_coquet
+// added property to enable/disable the live time reading in the device (the HW does not always support live time and returns "unknown command"
+//
 // Revision 1.6  2007/05/15 08:28:14  dhaussy
 // * changed energyMode from property to attribute
 //
@@ -36,10 +39,10 @@ static const char *RCSfile = "$RCSfile: RontecClass.cpp,v $";
 // * added energy mode
 //
 // Revision 1.3  2006/08/31 15:51:10  tithub
-// * Les temps sont exprimés en seconde au lieu de millisecondes
+// * Les temps sont exprimï¿½s en seconde au lieu de millisecondes
 // * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
-// * La commande ClearData arrête le thread de lecture
-// * Attributs StartingChannel et EndingChannel mémorisés
+// * La commande ClearData arrï¿½te le thread de lecture
+// * Attributs StartingChannel et EndingChannel mï¿½morisï¿½s
 //
 // Revision 1.2  2006/07/24 14:48:18  tithub
 // Nouvelle interface Tango
@@ -1053,7 +1056,7 @@ void RontecClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Device_3Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

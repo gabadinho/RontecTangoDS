@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.18 2009-06-10 11:56:00 jean_coquet Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/Rontec.cpp,v 1.19 2010-03-26 09:44:14 vince_soleil Exp $";
 //+=============================================================================
 //
 // file :         Rontec.cpp
@@ -11,11 +11,14 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // project :      TANGO Device Server
 //
-// $Author: jean_coquet $
+// $Author: vince_soleil $
 //
-// $Revision: 1.18 $
+// $Revision: 1.19 $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.18  2009/06/10 11:56:00  jean_coquet
+// oups
+//
 // Revision 1.17  2009/06/10 11:48:26  jean_coquet
 // added property to enable/disable the live time reading in the device (the HW does not always support live time and returns "unknown command"
 //
@@ -63,10 +66,10 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 // * added energy mode
 //
 // Revision 1.4  2006/08/31 15:51:10  tithub
-// * Les temps sont exprimés en seconde au lieu de millisecondes
+// * Les temps sont exprimï¿½s en seconde au lieu de millisecondes
 // * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
-// * La commande ClearData arrête le thread de lecture
-// * Attributs StartingChannel et EndingChannel mémorisés
+// * La commande ClearData arrï¿½te le thread de lecture
+// * Attributs StartingChannel et EndingChannel mï¿½morisï¿½s
 //
 // Revision 1.3  2006/07/25 07:56:05  tithub
 // no message
@@ -142,7 +145,7 @@ namespace Rontec_ns
 //
 //-----------------------------------------------------------------------------
 Rontec::Rontec(Tango::DeviceClass *cl,string &s)
-:Tango::Device_3Impl(cl,s.c_str())
+:Tango::Device_4Impl(cl,s.c_str())
 {
 	attr_energyMode_write = false;
 	try {
@@ -154,7 +157,7 @@ Rontec::Rontec(Tango::DeviceClass *cl,string &s)
 }
 
 Rontec::Rontec(Tango::DeviceClass *cl,const char *s)
-:Tango::Device_3Impl(cl,s)
+:Tango::Device_4Impl(cl,s)
 {
 	attr_energyMode_write = false;
 	try {
@@ -166,7 +169,7 @@ Rontec::Rontec(Tango::DeviceClass *cl,const char *s)
 }
 
 Rontec::Rontec(Tango::DeviceClass *cl,const char *s,const char *d)
-:Tango::Device_3Impl(cl,s,d)
+:Tango::Device_4Impl(cl,s,d)
 {
 	attr_energyMode_write = false;
 	try {
