@@ -1,4 +1,4 @@
-static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/main.cpp,v 1.4 2007-06-05 14:38:30 dhaussy Exp $";
+static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentation/Rontec/src/main.cpp,v 1.5 2010-10-06 21:41:17 vince_soleil Exp $";
 //+=============================================================================
 //
 // file :        main.cpp
@@ -10,16 +10,19 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 //
 // project :     TANGO Device Server
 //
-// $Author: dhaussy $
+// $Author: vince_soleil $
 //
-// $Revision: 1.4 $ $
+// $Revision: 1.5 $ $
 //
 // $Log: not supported by cvs2svn $
+// Revision 1.4  2007/06/05 14:38:30  dhaussy
+// * corrected a bug in energyMode attribute write
+//
 // Revision 1.3  2006/08/31 15:51:10  tithub
-// * Les temps sont exprimés en seconde au lieu de millisecondes
+// * Les temps sont exprimï¿½s en seconde au lieu de millisecondes
 // * La commande GetPartOfSpectrum renvoie une partie du spectre lu si le thread est running, ou lit une partie du spectre sur le Rontec sinon
-// * La commande ClearData arrête le thread de lecture
-// * Attributs StartingChannel et EndingChannel mémorisés
+// * La commande ClearData arrï¿½te le thread de lecture
+// * Attributs StartingChannel et EndingChannel mï¿½morisï¿½s
 //
 // Revision 1.2  2006/07/24 14:48:18  tithub
 // Nouvelle interface Tango
@@ -46,11 +49,21 @@ static const char *RcsId = "$Header: /users/chaize/newsvn/cvsroot/Instrumentatio
 
 #include <tango.h>
 
+#if defined(ENABLE_CRASH_REPORT)
+# include <crashreporting/crash_report.h>
+#else
+# define DECLARE_CRASH_HANDLER
+# define INSTALL_CRASH_HANDLER
+#endif
 
-int main(int argc,char *argv[])
+DECLARE_CRASH_HANDLER;
+
+int main(int argc, char *argv[])
 {
+  INSTALL_CRASH_HANDLER;
 
-	Tango::Util *tg;
+
+	Tango::Util *tg = 0;
 	try
 	{
 		// Initialise the device server
