@@ -580,11 +580,11 @@ double RontecImpl::roi_get_count(long ttl_num) throw(Tango::DevFailed)
 std::string RontecImpl::ascii_command(std::string cmd) throw(Tango::DevFailed)
 {
   DEBUG_STREAM << "RontecImpl::ascii_command() : " << cmd << endl;
-  std::cout << "RontecImpl::ascii_command() : " << cmd << endl;
+//  std::cout << "RontecImpl::ascii_command() : " << cmd << endl;
 	if(!_proxy)
   {
     ERROR_STREAM << "RontecImpl::ascii_command in !proxy <" << cmd << ">\n";
-    std::cout << "RontecImpl::ascii_command in !_proxy, trying to init () \n";
+//    std::cout << "RontecImpl::ascii_command in !_proxy, trying to init () \n";
     init();
   }
 
@@ -601,17 +601,17 @@ std::string RontecImpl::ascii_command(std::string cmd) throw(Tango::DevFailed)
 		omni_mutex_lock proxy_lock(_proxy_mutex);
 		try {
 			// communication with RONTEC through serial line device server
-      std::cout << "RontecImpl::ascii_command before DevSerFlush \n";
+//      std::cout << "RontecImpl::ascii_command before DevSerFlush \n";
 			_proxy->command_in("DevSerFlush", static_cast<Tango::DevLong>(2));
 			//std::cout << "write : " << cmd << std::endl;
-      std::cout << "RontecImpl::ascii_command before WriteRead \n";
+//      std::cout << "RontecImpl::ascii_command before WriteRead \n";
 			_proxy->command_inout("WriteRead",dvlsa,resp);
 			//std::cout << "read : " << resp << std::endl;
-      std::cout << "RontecImpl::ascii_command() : cmd <" << cmd << "> resp <" << resp << ">" << endl;
+//      std::cout << "RontecImpl::ascii_command() : cmd <" << cmd << "> resp <" << resp << ">" << endl;
 		} 
     catch(Tango::DevFailed &df) {
       FATAL_STREAM << "RontecImpl::ascii_command caught DevFailed <" << df.errors[0].desc << "> trying to WriteRead cmd <" << cmd << ">\n";
-      std::cout << "RontecImpl::ascii_command caught DevFailed <" << df.errors[0].desc << "> trying to WriteRead cmd <" << cmd << ">\n";
+//      std::cout << "RontecImpl::ascii_command caught DevFailed <" << df.errors[0].desc << "> trying to WriteRead cmd <" << cmd << ">\n";
       // force proxy init
       delete _proxy;
       _proxy = 0;
@@ -622,7 +622,7 @@ std::string RontecImpl::ascii_command(std::string cmd) throw(Tango::DevFailed)
     }
     catch(...) {
       FATAL_STREAM << "RontecImpl::ascii_command caught (...) trying to WriteRead cmd <" << cmd << ">\n";
-      std::cout << "RontecImpl::ascii_command caught (...) trying to WriteRead cmd <" << cmd << ">\n";
+//      std::cout << "RontecImpl::ascii_command caught (...) trying to WriteRead cmd <" << cmd << ">\n";
       // force proxy init
       delete _proxy;
       _proxy = 0;
@@ -634,7 +634,7 @@ std::string RontecImpl::ascii_command(std::string cmd) throw(Tango::DevFailed)
 	std::string response(resp);
 	if(response.size() <= 0) {
       FATAL_STREAM << "RontecImpl::ascii_command response.size <= 0!\n";
-      std::cout << "RontecImpl::ascii_command response.size <= 0!\n";
+//      std::cout << "RontecImpl::ascii_command response.size <= 0!\n";
 		Tango::Except::throw_exception ((const char *)"COMMUNICATION_BROKEN",
                                     (const char *)"The Rontec device did not respond !",
                                     (const char *)"RontecImpl::ascii_command()");
@@ -722,7 +722,7 @@ void RontecImpl::scan_response(std::string resp, std::string cmd) throw(Tango::D
 void RontecImpl::read_spectrum(unsigned long* data,long begin, long length) throw(Tango::DevFailed)
 {
   DEBUG_STREAM << "RontecImpl::read_spectrum(): entering... !" << endl;
-  std::cout << "RontecImpl::read_spectrum(): entering... !" << endl;
+//  std::cout << "RontecImpl::read_spectrum(): entering... !" << endl;
 	if(!_proxy) init();
 	//if(!_proxy) Tango::Except::throw_exception ((const char *)"OPERATION_NOT_ALLOWED",(const char *)"Serial line device proxy not initialized !",(const char *)"RontecImpl::ascii_command()");
 
@@ -735,12 +735,12 @@ void RontecImpl::read_spectrum(unsigned long* data,long begin, long length) thro
   long nb_char_written = 0;
 	//- std::string resp = ascii_command(cmd.str());
    _proxy->command_inout("DevSerWriteString", cmd.str (), nb_char_written);
-  std::cout << "RontecImpl::read_spectrum(): after ascii_cmd" << endl;
+//  std::cout << "RontecImpl::read_spectrum(): after ascii_cmd" << endl;
 	// on recupere les buff!
 	const Tango::DevVarCharArray* buff;
 	long i=0;
 	while(i<length) {
-		std::cout << " RontecImpl::read_spectrum trying to read <" << i << "> long data "<< std::endl;
+//		std::cout << " RontecImpl::read_spectrum trying to read <" << i << "> long data "<< std::endl;
     long nboctetslus= 0;
 		long nb_to_read = 4 * (length - i);
 		// Limitation � la lecture de 2048 octets en une fois. 
