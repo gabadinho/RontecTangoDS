@@ -733,8 +733,8 @@ void RontecImpl::read_spectrum(unsigned long* data,long begin, long length) thro
 	cmd << "$SS " << begin << " " << this->_step_width << " " << this->_summation_number << " " << length << '\r';
 	// on envoie la commande $SS et on lit le retour
   long nb_char_written = 0;
-	//- std::string resp = ascii_command(cmd.str());
-   _proxy->command_inout("DevSerWriteString", cmd.str (), nb_char_written);
+	std::string resp = ascii_command(cmd.str());
+   //_proxy->command_inout("DevSerWriteString", cmd.str (), nb_char_written);
 //  std::cout << "RontecImpl::read_spectrum(): after ascii_cmd" << endl;
 	// on recupere les buff!
 	const Tango::DevVarCharArray* buff;
