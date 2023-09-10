@@ -1,0 +1,7 @@
+.project
+bin
+target
+# Ignore all files in folder test_package
+test_package/*
+# except conanfile.py
+!test_package/conanfile.py
