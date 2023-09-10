@@ -11,4 +11,8 @@ class RontecTestConan(ConanFile):
 
     def test(self):
         if can_run(self):
-            self.run("ds_Rontec 2>&1 | grep \"^usage\"", env="conanrun")
+            if self.settings.os == "Windows":
+                self.run("ds_Rontec 2>&1 | findstr \"usage\"", env="conanrun")
+            else:
+                self.run("ds_Rontec 2>&1 | grep \"^usage\"", env="conanrun")
+                
