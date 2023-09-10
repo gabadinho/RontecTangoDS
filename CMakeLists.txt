@@ -9,7 +9,7 @@ endif()
 add_compile_definitions(PROJECT_NAME=${PROJECT_NAME})
 add_compile_definitions(PROJECT_VERSION=${PROJECT_VERSION})
 
-file(GLOB sources
+file(GLOB_RECURSE sources
     src/*.cpp
 )
 
