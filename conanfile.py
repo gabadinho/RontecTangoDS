@@ -20,7 +20,7 @@ class RontecRecipe(ConanFile):
     exports_sources = "CMakeLists.txt", "src/*"
     
     def requirements(self):
-        self.requires("cpptango/[>=9.0]@soleil/stable")
+        self.requires("cpptango/9.2.5@soleil/stable")
         if self.settings.os == "Linux":
             self.requires("crashreporting2/[>=1.0]@soleil/stable")
     
