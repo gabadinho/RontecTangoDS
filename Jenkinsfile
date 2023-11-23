@@ -1,1 +1,1 @@
-conan.create(['win7-msvc12-x86-static'])
+conan.create(['win7-msvc12-x86'])
