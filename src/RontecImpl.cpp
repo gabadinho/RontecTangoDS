@@ -56,7 +56,7 @@ void RontecImpl::init(string proxy_name,/*unsigned long baud,short timeout,*/lon
 		/*
 		_proxy->command_in("DevSerSetBaudrate", static_cast<Tango::DevULong>(_baud));
 		*/
-		_proxy->command_in("DevSerSetNewline", static_cast<Tango::DevShort>(13));
+		_proxy->command_in("DevSerSetNewline", static_cast<Tango::DevUShort>(13));
 		/*
 		_proxy->command_in("DevSerSetTimeout", static_cast<Tango::DevShort>(_timeout));
 		*/
@@ -502,7 +502,7 @@ throw(Tango::DevFailed)
 		// MODIF PATRICK G. Le 20/06/2005
 		// Permet un arrondi correct
 		chan += 0.5;
-		low_channel = static_cast<Tango::DevLong>(chan);
+		low_channel = static_cast<long>(chan);
 	} 
 	else {
 		low_channel = -1;
@@ -602,7 +602,7 @@ std::string RontecImpl::ascii_command(std::string cmd) throw(Tango::DevFailed)
 		try {
 			// communication with RONTEC through serial line device server
 //      std::cout << "RontecImpl::ascii_command before DevSerFlush \n";
-			_proxy->command_in("DevSerFlush", static_cast<Tango::DevLong>(2));
+			_proxy->command_in("DevSerFlush", static_cast<Tango::DevLong64>(2));
 			//std::cout << "write : " << cmd << std::endl;
 //      std::cout << "RontecImpl::ascii_command before WriteRead \n";
 			_proxy->command_inout("WriteRead",dvlsa,resp);

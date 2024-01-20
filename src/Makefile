@@ -32,13 +32,13 @@
 #
 
 CLASS =	Rontec
-RELEASE  = Release_1_0
+RELEASE  = Release_1_1
 
 #-----------------------------------------
 #	Set default home directories
 #-----------------------------------------
 
-TANGO_HOME   =  /segfs/tango
+TANGO_HOME   =  /usr/local
 CPP_SERVERS  =  $(TANGO_HOME)/cppserver
 
 ifdef no_debug
@@ -52,15 +52,15 @@ CC = CC
 BIN_DIR = solaris9_CC
 endif
 
-ifdef linux
+#ifdef linux
 CC = c++
 AR = ar
 BIN_DIR=suse82
-endif
+#endif
 
 INCLUDE_DIRS =  -I$(TANGO_HOME)/include/$(BIN_DIR)	-I.	\
                 -I$(CPP_SERVERS)/include
-LIB_DIRS     =  -L $(TANGO_HOME)/lib/$(BIN_DIR)
+LIB_DIRS     =  -L $(TANGO_HOME)/lib
 
 TARGET_LIB = $(CPP_SERVERS)/lib/$(BIN_DIR)/libtgclasses.a
 
@@ -81,7 +81,7 @@ LFLAGS =  $(DEBUG) $(LIB_DIRS)  		\
 				-lposix4 -lsocket -lnsl
 endif
 
-ifdef linux
+#ifdef linux
 CXXFLAGS =  $(DEBUG) -D_REENTRANT $(INCLUDE_DIRS)
 LFLAGS =  $(DEBUG) $(LIB_DIRS)  		\
 				-ltango			\
@@ -91,7 +91,7 @@ LFLAGS =  $(DEBUG) $(LIB_DIRS)  		\
 				-lomnithread	\
 				-lCOS4			\
 				-ldl -lpthread
-endif
+#endif
 
 
 
@@ -105,9 +105,11 @@ SVC_OBJS = 	main.o	\
 		ClassFactory.o	\
 		$(CLASS)Class.o	\
 		$(CLASS)StateMachine.o	\
+		$(CLASS)Impl.o \
 		$(CLASS).o
 
 SVC_INC = 	$(CLASS)Class.h \
+			$(CLASS)Impl.h
 			$(CLASS).h
 
 
@@ -143,6 +145,7 @@ lib: clean
 	cp *.h $(CPP_SERVERS)/include
 	ar ruv $(TARGET_LIB) $(CLASS).o
 	ar ruv $(TARGET_LIB) $(CLASS)Class.o
+	ar ruv $(TARGET_LIB) $(CLASS)Impl.o
 	ar ruv $(TARGET_LIB) $(CLASS)StateMachine.o
 	ident  $(TARGET_LIB)
 
