@@ -58,8 +58,7 @@ AR = ar
 BIN_DIR=suse82
 #endif
 
-INCLUDE_DIRS =  -I$(TANGO_HOME)/include/$(BIN_DIR)	-I.	\
-                -I$(CPP_SERVERS)/include
+INCLUDE_DIRS =  -I$(TANGO_HOME)/include/tango -I.
 LIB_DIRS     =  -L $(TANGO_HOME)/lib
 
 TARGET_LIB = $(CPP_SERVERS)/lib/$(BIN_DIR)/libtgclasses.a
@@ -70,7 +69,7 @@ TARGET_LIB = $(CPP_SERVERS)/lib/$(BIN_DIR)/libtgclasses.a
 #-----------------------------------------
 ifdef _solaris
 CXXFLAGS =  $(DEBUG) -mt -D_PTHREADS $(INCLUDE_DIRS)
-LFLAGS =  $(DEBUG) $(LIB_DIRS)  		\
+LFLAGS =  $(DEBUG) $(LIB_DIRS) 	\
 				-ltango			\
 				-llog4tango		\
 				-lomniORB4 		\
@@ -83,7 +82,7 @@ endif
 
 #ifdef linux
 CXXFLAGS =  $(DEBUG) -D_REENTRANT $(INCLUDE_DIRS)
-LFLAGS =  $(DEBUG) $(LIB_DIRS)  		\
+LFLAGS =  $(DEBUG) $(LIB_DIRS) 	\
 				-ltango			\
 				-llog4tango		\
 				-lomniORB4 		\
@@ -101,15 +100,15 @@ LFLAGS =  $(DEBUG) $(LIB_DIRS)  		\
 #-----------------------------------------
 
 
-SVC_OBJS = 	main.o	\
-		ClassFactory.o	\
-		$(CLASS)Class.o	\
-		$(CLASS)StateMachine.o	\
+SVC_OBJS = 	main.o \
+		ClassFactory.o \
+		$(CLASS)Class.o \
+		$(CLASS)StateMachine.o \
 		$(CLASS)Impl.o \
 		$(CLASS).o
 
 SVC_INC = 	$(CLASS)Class.h \
-			$(CLASS)Impl.h
+			$(CLASS)Impl.h \
 			$(CLASS).h
 
 
